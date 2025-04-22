@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhà Hàng Ẩm Thực Phương Nam - Hương Vị Đặc Trưng</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #e53e3e;
+            --secondary-color: #f6ad55;
+            --accent-color: #718096;
+            --text-color: #2d3748;
+            --light-color: #f7fafc;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+        
+        .font-cursive {
+            font-family: 'Dancing Script', cursive;
+        }
+        
+        .bg-primary {
+            background-color: var(--primary-color);
+        }
+        
+        .text-primary {
+            color: var(--primary-color);
+        }
+        
+        .bg-secondary {
+            background-color: var(--secondary-color);
+        }
+        
+        .text-secondary {
+            color: var(--secondary-color);
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .banner {
+            background-image: url('https://cdn.jsdelivr.net/gh/codediodeio/code-snippets/nba-trader/wood.jpg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .banner::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .chatbot-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .chatbot-panel {
+            display: none;
+            width: 350px;
+            height: 450px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+        }
+        
+        .chatbot-header {
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .chatbot-messages {
+            height: 330px;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .chatbot-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        @media (max-width: 768px) {
+            .chatbot-panel {
+                width: 300px;
+                right: -10px;
+            }
+        }
+        
+        .ad-banner {
+            background-color: #feebc8;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .scroll-container {
+            display: flex;
+            animation: scroll 20s linear infinite;
+        }
+        
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .nav-link {
+            position: relative;
+            padding-bottom: 5px;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Header -->
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-2">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="text-2xl font-bold text-primary mr-2">
+                        <span class="font-cursive">Phương Nam</span>
+                    </div>
+                    <div class="text-sm">
+                        <div>Ẩm Thực</div>
+                    </div>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="Index.html" class="nav-link active" data-target="home">Trang Chủ</a>
+                    <a href="gioithieu.html" class="nav-link" data-target="about">Giới Thiệu</a>
+                    <a href="Menu.html" class="nav-link" data-target="menu">Thực Đơn</a>
+                    <a href="lienhe&datban.html" class="nav-link" data-target="reservation">Đặt Bàn & Liên Hệ</a>
+                </nav>
+                
+                <div class="flex items-center">
+                    <button id="loginBtn" class="hidden md:block bg-white text-primary px-4 py-2 rounded-lg border border-primary hover:bg-primary hover:text-white transition duration-300 mr-3">
+                        Đăng Nhập
+                    </button>
+                    <button id="cartBtn" class="relative">
+                        <i class="fas fa-shopping-cart text-gray-600 text-xl"></i>
+                        <span class="absolute -top-2 -right-2 bg-primary text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">0</span>
+                    </button>
+                    <button id="menuToggle" class="md:hidden ml-4 focus:outline-none">
+                        <i class="fas fa-bars text-2xl text-gray-600"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <nav id="mobileNav" class="md:hidden hidden mt-4 pb-4">
+                <div class="flex flex-col space-y-3">
+                    <a href="Index.htmhtm" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-target="home">Trang Chủ</a>
+                    <a href="gioithieu.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-target="about">Giới Thiệu</a>
+                    <a href="Menu.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-target="menu">Thực Đơn</a>
+                    <a href="lienhe&datban.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-target="reservation">Đặt Bàn & Liên Hệ</a>
+                    <button id="mobileLoginBtn" class="text-left py-2 px-4 rounded hover:bg-gray-100">Đăng Nhập</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Ad Banner -->
+    <div class="ad-banner py-2">
+        <div class="scroll-container">
+            <div class="flex space-x-8 items-center px-4">
+                <span class="text-orange-700 font-semibold whitespace-nowrap">⭐ Khuyến mãi đặc biệt: Giảm 20% cho nhóm từ 4 người trở lên vào các ngày thứ 3-5 hàng tuần</span>
+                <span class="text-orange-700 font-semibold whitespace-nowrap">🔥 Món mới: Cơm cháy sườn rim mật ong - Hương vị độc đáo chỉ có tại Phương Nam</span>
+                <span class="text-orange-700 font-semibold whitespace-nowrap">🎁 Đặt bàn online - Tặng ngay món khai vị</span>
+                <span class="text-orange-700 font-semibold whitespace-nowrap">📱 Tải app - Tích điểm thưởng và nhận ưu đãi độc quyền</span>
+            </div>
+            <div class="flex space-x-8 items-center px-4">
+                <span class="text-orange-700 font-semibold whitespace-nowrap">⭐ Khuyến mãi đặc biệt: Giảm 20% cho nhóm từ 4 người trở lên vào các ngày thứ 3-5 hàng tuần</span>
+                <span class="text-orange-700 font-semibold whitespace-nowrap">🔥 Món mới: Cơm cháy sườn rim mật ong - Hương vị độc đáo chỉ có tại Phương Nam</span>
+                <span class="text-orange-700 font-semibold whitespace-nowrap">🎁 Đặt bàn online - Tặng ngay món khai vị</span>
+                <span class="text-orange-700 font-semibold whitespace-nowrap">📱 Tải app - Tích điểm thưởng và nhận ưu đãi độc quyền</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <!-- Hero Banner -->
+            <div class="banner h-96 md:h-[500px] relative">
+                <div class="container mx-auto px-4 h-full flex items-center relative z-10">
+                    <div class="max-w-2xl text-white">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-cursive mb-4">Hương Vị Phương Nam</h1>
+                        <p class="text-lg md:text-xl mb-8">Đắm chìm trong không gian ẩm thực truyền thống Nam Bộ với những món ăn độc đáo, hương vị đậm đà không thể nào quên.</p>
+                        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                            <a href="#" class="bg-primary hover:bg-red-700 text-white py-3 px-6 rounded-lg text-center transition duration-300 flex-1 sm:flex-none" data-target="reservation">Đặt Bàn Ngay</a>
+                            <a href="#" class="bg-white hover:bg-gray-100 text-primary py-3 px-6 rounded-lg text-center transition duration-300 flex-1 sm:flex-none" data-target="menu">Xem Thực Đơn</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Menu -->
+            <div class="container mx-auto px-4 py-12">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-2">Món Ăn Đặc Sắc</h2>
+                    <p class="text-gray-600">Khám phá những món ăn được yêu thích nhất tại Phương Nam</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Featured Item 1 -->
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-lg transition duration-300">
+                        <div class="h-64 bg-gray-300 flex items-center justify-center">
+                            <span class="text-gray-500">Hình ảnh: Cá Lóc Nướng Trui</span>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-xl">Cá Lóc Nướng Trui</h3>
+                                <span class="text-primary font-bold">185.000đ</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Cá lóc tươi nướng trui trên than hoa, phết mỡ hành và ăn kèm với các loại rau thơm đặc trưng miền Nam.</p>
+                            <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Featured Item 2 -->
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-lg transition duration-300">
+                        <div class="h-64 bg-gray-300 flex items-center justify-center">
+                            <span class="text-gray-500">Hình ảnh: Lẩu Mắm</span>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-xl">Lẩu Mắm</h3>
+                                <span class="text-primary font-bold">250.000đ</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Nước lẩu được nấu từ mắm cá linh, thêm các loại rau đồng và hải sản tươi ngon, tạo nên hương vị đậm đà khó quên.</p>
+                            <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Featured Item 3 -->
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-lg transition duration-300">
+                        <div class="h-64 bg-gray-300 flex items-center justify-center">
+                            <span class="text-gray-500">Hình ảnh: Bánh Xèo Miền Tây</span>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-xl">Bánh Xèo Miền Tây</h3>
+                                <span class="text-primary font-bold">95.000đ</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Bánh xèo giòn tan với nhân tôm, thịt, giá và đậu xanh, ăn kèm với rau sống và nước mắm chua ngọt.</p>
+                            <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-8">
+                    <a href="#" class="inline-block border-2 border-primary text-primary hover:bg-primary hover:text-white py-2 px-6 rounded-lg transition duration-300" data-target="menu">Xem Toàn Bộ Thực Đơn</a>
+                </div>
+            </div>
+            
+            <!-- Testimonials -->
+            <div class="bg-gray-100 py-12">
+                <div class="container mx-auto px-4">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-bold mb-2">Khách Hàng Nói Gì</h2>
+                        <p class="text-gray-600">Những đánh giá chân thực từ thực khách</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Testimonial 1 -->
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-gray-300 rounded-full mr-4"></div>
+                                <div>
+                                    <h4 class="font-bold">Nguyễn Văn An</h4>
+                                    <div class="flex text-yellow-400">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600">"Tôi đã thử nhiều nhà hàng miền Nam, nhưng Phương Nam thực sự mang đến hương vị đúng điệu và chuẩn mực nhất. Đặc biệt là món cá lóc nướng trui, tuyệt vời!"</p>
+                        </div>
+                        
+                        <!-- Testimonial 2 -->
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-gray-300 rounded-full mr-4"></div>
+                                <div>
+                                    <h4 class="font-bold">Trần Thị Mỹ Linh</h4>
+                                    <div class="flex text-yellow-400">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600">"Không gian nhà hàng rất ấm cúng và sang trọng. Nhân viên phục vụ nhiệt tình, chu đáo. Các món ăn đều rất ngon và được trình bày đẹp mắt."</p>
+                        </div>
+                        
+                        <!-- Testimonial 3 -->
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <div class="flex items-center mb-4">
+                                <div class="w-12 h-12 bg-gray-300 rounded-full mr-4"></div>
+                                <div>
+                                    <h4 class="font-bold">Lê Minh Tuấn</h4>
+                                    <div class="flex text-yellow-400">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-gray-600">"Lẩu mắm ở đây là số một! Hương vị đậm đà, nước lẩu đặc trưng và thơm ngon. Mỗi lần về Sài Gòn, tôi đều ghé Phương Nam để thưởng thức."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Promotion -->
+            <div class="bg-secondary bg-opacity-20 py-12">
+                <div class="container mx-auto px-4">
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                        <div class="md:flex">
+                            <div class="md:w-1/2 bg-gray-300 h-64 md:h-auto flex items-center justify-center">
+                                <span class="text-gray-500">Hình ảnh: Khuyến mãi đặc biệt</span>
+                            </div>
+                            <div class="md:w-1/2 p-8">
+                                <div class="flex items-center mb-4">
+                                    <div class="text-primary text-4xl mr-3">
+                                        <i class="fas fa-gift"></i>
+                                    </div>
+                                    <h3 class="text-2xl font-bold">Ưu Đãi Đặc Biệt</h3>
+                                </div>
+                                <p class="text-gray-600 mb-6">Đặt bàn online thông qua website và nhận ngay <span class="font-bold text-primary">giảm 10%</span> tổng hóa đơn cho lần đầu tiên.</p>
+                                <p class="text-gray-600 mb-6">Đặc biệt, đăng ký thành viên để tích điểm và nhận nhiều ưu đãi hấp dẫn khác!</p>
+                                <a href="#" class="inline-block bg-primary hover:bg-red-700 text-white py-2 px-6 rounded-lg transition duration-300" data-target="reservation">Đặt Bàn Ngay</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="section py-12">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-2">Giới Thiệu</h2>
+                    <p class="text-gray-600">Câu chuyện về Nhà hàng Ẩm thực Phương Nam</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-16">
+                    <div class="bg-gray-300 h-80 md:h-96 rounded-lg flex items-center justify-center">
+                        <span class="text-gray-500">Hình ảnh: Nhà hàng Phương Nam</span>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4">Hành Trình Của Chúng Tôi</h3>
+                        <p class="text-gray-600 mb-4">Nhà hàng Ẩm thực Phương Nam được thành lập vào năm 2010 với mong muốn mang đến cho thực khách những trải nghiệm ẩm thực Nam Bộ đích thực nhất.</p>
+                        <p class="text-gray-600 mb-4">Từ một quán nhỏ với vài món đặc sản, chúng tôi đã dần phát triển và trở thành điểm đến quen thuộc cho những ai yêu thích ẩm thực miền Nam, đặc biệt là các món ăn dân dã, đậm đà hương vị quê hương.</p>
+                        <p class="text-gray-600">Đến nay, Phương Nam tự hào là một trong những nhà hàng hàng đầu về ẩm thực Nam Bộ, nơi không chỉ mang đến những món ăn ngon mà còn là nơi lưu giữ và phát huy những giá trị văn hóa ẩm thực truyền thống của vùng đất phương Nam trù phú.</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-16">
+                    <div class="order-2 md:order-1">
+                        <h3 class="text-2xl font-bold mb-4">Triết Lý Ẩm Thực</h3>
+                        <p class="text-gray-600 mb-4">Tại Phương Nam, chúng tôi tin rằng ẩm thực không chỉ đơn thuần là việc thưởng thức món ăn, mà còn là cách để kết nối con người với nhau và với văn hóa bản địa.</p>
+                        <p class="text-gray-600 mb-4">Mỗi món ăn tại Phương Nam đều được chế biến cẩn thận từ những nguyên liệu tươi ngon nhất, theo công thức truyền thống được giữ gìn và phát triển qua nhiều thế hệ.</p>
+                        <p class="text-gray-600">Chúng tôi tôn trọng bản sắc của từng món ăn, đồng thời không ngừng sáng tạo để mang đến những trải nghiệm ẩm thực mới mẻ nhưng vẫn giữ được hồn cốt của ẩm thực Nam Bộ.</p>
+                    </div>
+                    <div class="order-1 md:order-2 bg-gray-300 h-80 md:h-96 rounded-lg flex items-center justify-center">
+                        <span class="text-gray-500">Hình ảnh: Đầu bếp của Phương Nam</span>
+                    </div>
+                </div>
+                
+                <div class="text-center mb-12">
+                    <h3 class="text-2xl font-bold mb-4">Đội Ngũ Của Chúng Tôi</h3>
+                    <p class="text-gray-600 mb-8">Đằng sau mỗi món ăn ngon là những con người tài năng và đam mê</p>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                    <!-- Chef 1 -->
+                    <div class="bg-white rounded-lg overflow-hidden shadow-md text-center">
+                        <div class="bg-gray-300 h-64 flex items-center justify-center">
+                            <span class="text-gray-500">Hình ảnh: Đầu bếp</span>
+                        </div>
+                        <div class="p-6">
+                            <h4 class="font-bold text-xl mb-1">Nguyễn Minh Đạt</h4>
+                            <p class="text-primary mb-2">Bếp Trưởng</p>
+                            <p class="text-gray-600">Với hơn 20 năm kinh nghiệm trong ẩm thực Nam Bộ, Chef Đạt là linh hồn của nhà hàng Phương Nam.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Chef 2 -->
+                    <div class="bg-white rounded-lg overflow-hidden shadow-md text-center">
+                        <div class="bg-gray-300 h-64 flex items-center justify-center">
+                            <span class="text-gray-500">Hình ảnh: Đầu bếp</span>
+                        </div>
+                        <div class="p-6">
+                            <h4 class="font-bold text-xl mb-1">Trần Thị Ngọc Ánh</h4>
+                            <p class="text-primary mb-2">Bếp Phó</p>
+                            <p class="text-gray-600">Chuyên gia về các món canh và lẩu, mang đến hương vị đặc trưng cho Phương Nam.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Chef 3 -->
+                    <div class="bg-white rounded-lg overflow-hidden shadow-md text-center">
+                        <div class="bg-gray-300 h-64 flex items-center justify-center">
+                            <span class="text-gray-500">Hình ảnh: Đầu bếp</span>
+                        </div>
+                        <div class="p-6">
+                            <h4 class="font-bold text-xl mb-1">Lê Hoàng Nam</h4>
+                            <p class="text-primary mb-2">Đầu Bếp Món Nướng</p>
+                            <p class="text-gray-600">Bậc thầy về các món nướng, đặc biệt là cá lóc nướng trui và các món nướng miền Tây.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Chef 4 -->
+                    <div class="bg-white rounded-lg overflow-hidden shadow-md text-center">
+                        <div class="bg-gray-300 h-64 flex items-center justify-center">
+                            <span class="text-gray-500">Hình ảnh: Đầu bếp</span>
+                        </div>
+                        <div class="p-6">
+                            <h4 class="font-bold text-xl mb-1">Phạm Thị Hồng</h4>
+                            <p class="text-primary mb-2">Chuyên Gia Món Chay</p>
+                            <p class="text-gray-600">Người sáng tạo ra nhiều món chay độc đáo mang hương vị đặc trưng phương Nam.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Restaurant Photos -->
+                <div class="text-center mb-12">
+                    <h3 class="text-2xl font-bold mb-4">Không Gian Nhà Hàng</h3>
+                    <p class="text-gray-600 mb-8">Khung cảnh ấm cúng và sang trọng tại Phương Nam</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-gray-300 h-64 rounded-lg flex items-center justify-center">
+                        <span class="text-gray-500">Hình ảnh: Không gian nhà hàng</span>
+                    </div>
+                    <div class="bg-gray-300 h-64 rounded-lg flex items-center justify-center">
+                        <span class="text-gray-500">Hình ảnh: Khu vực VIP</span>
+                    </div>
+                    <div class="bg-gray-300 h-64 rounded-lg flex items-center justify-center">
+                        <span class="text-gray-500">Hình ảnh: Sân vườn</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Menu Section -->
+        <section id="menu" class="section py-12">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-2">Thực Đơn</h2>
+                    <p class="text-gray-600">Khám phá hương vị Nam Bộ đích thực</p>
+                </div>
+                
+                <!-- Menu Categories -->
+                <div class="mb-8 flex flex-wrap justify-center gap-4">
+                    <button class="menu-category bg-primary text-white px-4 py-2 rounded-full active" data-category="all">Tất Cả</button>
+                    <button class="menu-category bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full" data-category="appetizers">Khai Vị</button>
+                    <button class="menu-category bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full" data-category="maindishes">Món Chính</button>
+                    <button class="menu-category bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full" data-category="hotpot">Lẩu</button>
+                    <button class="menu-category bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full" data-category="rice">Cơm & Bánh</button>
+                    <button class="menu-category bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full" data-category="desserts">Tráng Miệng</button>
+                    <button class="menu-category bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full" data-category="drinks">Đồ Uống</button>
+                </div>
+                
+                <!-- Menu Items -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Khai Vị -->
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="appetizers">
+                        <div class="h-64 bg-gray-300 flex items-center justify-center">
+                            <span class="text-gray-500">Hình ảnh: Gỏi Ngó Sen Tôm Thịt</span>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-xl">Gỏi Ngó Sen Tôm Thịt</h3>
+                                <span class="text-primary font-bold">85.000đ</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Ngó sen giòn ngọt hòa quyện cùng tôm tươi, thịt ba chỉ thái mỏng và nước sốt đặc biệt.</p>
+                            <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="appetizers">
+                        <div class="h-64 bg-gray-300 flex items-center justify-center">
+                            <span class="text-gray-500">Hình ảnh: Chả Giò Phương Nam</span>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-xl">Chả Giò Phương Nam</h3>
+                                <span class="text-primary font-bold">75.000đ</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Chả giò giòn rụm với nhân tôm thịt, miến và nấm, ăn kèm với rau sống và nước mắm chua ngọt.</p>
+                            <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Món Chính -->
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="maindishes">
+                        <div class="h-64 bg-gray-300 flex items-center justify-center">
+                            <span class="text-gray-500">Hình ảnh: Cá Lóc Nướng Trui</span>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-xl">Cá Lóc Nướng Trui</h3>
+                                <span class="text-primary font-bold">185.000đ</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Cá lóc tươi nướng trui trên than hoa, phết mỡ hành và ăn kèm với các loại rau thơm đặc trưng miền Nam.</p>
+                            <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="maindishes">
+                        <div class="h-64 bg-gray-300 flex items-center justify-center">
+                            <span class="text-gray-500">Hình ảnh: Sườn Nướng Chao</span>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-xl">Sườn Nướng Chao</h3>
+                                <span class="text-primary font-bold">165.000đ</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Sườn heo ướp chao đỏ, nướng than hoa thơm lừng, ăn kèm với kim chi cải chua và đồ chua.</p>
+                            <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Lẩu -->
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="hotpot">
+                        <div class="h-64 bg-gray-300 flex items-center justify-center">
+                            <span class="text-gray-500">Hình ảnh: Lẩu Mắm</span>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-xl">Lẩu Mắm</h3>
+                                <span class="text-primary font-bold">250.000đ</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Nước lẩu được nấu từ mắm cá linh, thêm các loại rau đồng và hải sản tươi ngon, tạo nên hương vị đậm đà khó quên.</p>
+                            <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="hotpot">
+                        <div class="h-64 bg-gray-300 flex items-center justify-center">
+                            <span class="text-gray-500">Hình ảnh: Lẩu Cá Kèo</span>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-xl">Lẩu Cá Kèo</h3>
+                                <span class="text-primary font-bold">225.000đ</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Lẩu cá kèo chua cay với nước dùng đặc biệt nấu từ xương heo và me chua, ăn kèm với rau muống, bông điên điển.</p>
+                            <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Cơm & Bánh -->
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="rice">
+                        <div class="h-64 bg-gray-300 flex items-center justify-center">
+                            <span class="text-gray-500">Hình ảnh: Bánh Xèo Miền Tây</span>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-xl">Bánh Xèo Miền Tây</h3>
+                                <span class="text-primary font-bold">95.000đ</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Bánh xèo giòn tan với nhân tôm, thịt, giá và đậu xanh, ăn kèm với rau sống và nước mắm chua ngọt.</p>
+                            <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="rice">
+                        <div class="h-64 bg-gray-300 flex items-center justify-center">
+                            <span class="text-gray-500">Hình ảnh: Cơm Cháy Sườn Rim</span>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-xl">Cơm Cháy Sườn Rim</h3>
+                                <span class="text-primary font-bold">125.000đ</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Cơm được chiên giòn, ăn kèm với sườn rim mặn ngọt đậm đà, rưới thêm mỡ hành thơm phức.</p>
+                            <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Tráng Miệng -->
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="desserts">
+                        <div class="h-64 bg-gray-300 flex items-center justify-center">
+                            <span class="text-gray-500">Hình ảnh: Chè Bắp</span>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="font-bold text-xl">Chè Bắp</h3>
+                                <span class="text-primary font-bold">45.000đ</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Chè bắp béo ngậy với vị ngọt tự nhiên từ bắp, nước cốt dừa và đậu xanh.</p>
+                            <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+                                Thêm vào giỏ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reservation Section -->
+        <section id="reservation" class="section py-12 bg-gray-100">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-2">Đặt Bàn & Liên Hệ</h2>
+                    <p class="text-gray-600">Đặt bàn trước để có trải nghiệm tốt nhất</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Reservation Form -->
+                    <div class="bg-white p-8 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-bold mb-6">Đặt Bàn</h3>
+                        <form id="reservationForm">
+                            <div class="mb-4">
+                                <label for="name" class="block text-gray-700 mb-2">Họ và tên</label>
+                                <input type="text" id="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Nguyễn Văn A" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="phone" class="block text-gray-700 mb-2">Số điện thoại</label>
+                                <input type="tel" id="phone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="0901234567" required>
+                            </div>
+                            <div class="mb-4">
+                                <label for="email" class="block text-gray-700 mb-2">Email</label>
+                                <input type="email" id="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="example@email.com">
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label for="date" class="block text-gray-700 mb-2">Ngày</label>
+                                    <input type="date" id="date" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                                </div>
+                                <div>
+                                    <label for="time" class="block text-gray-700 mb-2">Giờ</label>
+                                    <input type="time" id="time" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label for="guests" class="block text-gray-700 mb-2">Số lượng khách</label>
+                                <input type="number" id="guests" min="1" max="20" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                            </div>
+                            <div class="mb-6">
+                                <label for="notes" class="block text-gray-700 mb-2">Ghi chú</label>
+                                <textarea id="notes" rows="3" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Yêu cầu đặc biệt"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-primary hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300">
+                                Đặt Bàn Ngay
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Contact Information -->
+                    <div>
+                        <div class="bg-white p-8 rounded-lg shadow-md mb-8">
+                            <h3 class="text-2xl font-bold mb-6">Thông Tin Liên Hệ</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-start">
+                                    <div class="text-primary text-xl mr-4">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold mb-1">Địa Chỉ</h4>
+                                        <p class="text-gray-600">123 Nguyễn Văn Linh, Quận 7, TP. Hồ Chí Minh</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="text-primary text-xl mr-4">
+                                        <i class="fas fa-phone-alt"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold mb-1">Điện Thoại</h4>
+                                        <p class="text-gray-600">028 1234 5678</p>
+                                        <p class="text-gray-600">0901 234 567</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="text-primary text-xl mr-4">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold mb-1">Email</h4>
+                                        <p class="text-gray-600"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bfd6d1d9d0ffcfd7cad0d1d8d1ded291dcd0d2">[email&#160;protected]</a></p>
+                                        <p class="text-gray-600"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d2b6b3a6b0b3bc92a2baa7bdbcb5bcb3bffcb1bdbf">[email&#160;protected]</a></p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <div class="text-primary text-xl mr-4">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold mb-1">Giờ Mở Cửa</h4>
+                                        <p class="text-gray-600">Thứ 2 - Chủ Nhật: 10:00 - 22:00</p>
+                                        <p class="text-gray-600">Giờ cao điểm: 11:30 - 13:30 và 18:00 - 20:00</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Map -->
+                        <div class="bg-white p-8 rounded-lg shadow-md">
+                            <h3 class="text-2xl font-bold mb-6">Bản Đồ</h3>
+                            <div class="bg-gray-300 h-64 rounded-lg flex items-center justify-center">
+                                <span class="text-gray-500">Bản đồ tới nhà hàng</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white pt-12 pb-6">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-2xl font-cursive mb-4">Phương Nam</h3>
+                    <p class="mb-4">Nhà hàng Ẩm thực Phương Nam mang đến trải nghiệm ẩm thực Nam Bộ đích thực với không gian sang trọng và ấm cúng.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-white hover:text-primary transition duration-300">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-white hover:text-primary transition duration-300">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-white hover:text-primary transition duration-300">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="#" class="text-white hover:text-primary transition duration-300">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Liên Kết Nhanh</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-primary transition duration-300" data-target="home">Trang Chủ</a></li>
+                        <li><a href="#" class="hover:text-primary transition duration-300" data-target="about">Giới Thiệu</a></li>
+                        <li><a href="#" class="hover:text-primary transition duration-300" data-target="menu">Thực Đơn</a></li>
+                        <li><a href="#" class="hover:text-primary transition duration-300" data-target="reservation">Đặt Bàn</a></li>
+                        <li><a href="#" class="hover:text-primary transition duration-300">Blog</a></li>
+                        <li><a href="#" class="hover:text-primary transition duration-300">Tuyển Dụng</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Thông Tin Liên Hệ</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mr-3 mt-1"></i>
+                            <span>123 Nguyễn Văn Linh, Quận 7, TP. Hồ Chí Minh</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-phone-alt mr-3 mt-1"></i>
+                            <span>028 1234 5678</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-envelope mr-3 mt-1"></i>
+                            <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="cba2a5ada48bbba3bea4a5aca5aaa6e5a8a4a6">[email&#160;protected]</a></span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Đăng Ký Nhận Tin</h4>
+                    <p class="mb-4">Đăng ký để nhận thông tin về ưu đãi đặc biệt và sự kiện mới nhất.</p>
+                    <form>
+                        <div class="flex">
+                            <input type="email" placeholder="Email của bạn" class="px-4 py-2 rounded-l-lg w-full focus:outline-none text-gray-800">
+                            <button type="submit" class="bg-primary hover:bg-red-700 px-4 py-2 rounded-r-lg transition duration-300">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <hr class="border-gray-700 mb-6">
+            
+            <div class="text-center text-gray-400">
+                <p>&copy; 2023 Nhà Hàng Ẩm Thực Phương Nam. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chatbot -->
+    <div class="chatbot-container">
+        <div class="chatbot-button" id="chatbotButton">
+            <i class="fas fa-comments text-white text-2xl"></i>
+        </div>
+        <div class="chatbot-panel" id="chatbotPanel">
+            <div class="chatbot-header flex justify-between items-center">
+                <div>
+                    <h3 class="font-bold">Trợ Lý Ảo Phương Nam</h3>
+                    <p class="text-sm">Hỗ trợ 24/7</p>
+                </div>
+                <button id="closeChatbot" class="text-white hover:text-gray-200">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="mb-4">
+                    <div class="bg-gray-200 rounded-lg p-3 inline-block max-w-xs">
+                        <p>Xin chào! Tôi là trợ lý ảo của Nhà hàng Phương Nam. Tôi có thể giúp gì cho bạn?</p>
+                    </div>
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbotInput" placeholder="Nhập tin nhắn..." class="flex-1 border rounded-lg px-4 py-2 mr-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                <button id="sendMessage" class="bg-primary hover:bg-red-700 text-white px-4 py-2 rounded-lg transition duration-300">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="bg-white rounded-lg overflow-hidden shadow-xl w-full max-w-md">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold">Đăng Nhập</h3>
+                    <button id="closeLoginModal" class="text-gray-400 hover:text-gray-500">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="tabs mb-6">
+                    <div class="flex border-b">
+                        <button id="loginTab" class="py-2 px-4 text-primary border-b-2 border-primary">Đăng Nhập</button>
+                        <button id="registerTab" class="py-2 px-4 text-gray-500">Đăng Ký</button>
+                    </div>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="loginForm" class="tab-content">
+                    <div class="mb-4">
+                        <label for="loginEmail" class="block text-gray-700 mb-2">Email</label>
+                        <input type="email" id="loginEmail" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="example@email.com" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="loginPassword" class="block text-gray-700 mb-2">Mật khẩu</label>
+                        <input type="password" id="loginPassword" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="remember" class="mr-2">
+                            <label for="remember" class="text-gray-700">Ghi nhớ đăng nhập</label>
+                        </div>
+                        <a href="#" class="text-primary hover:underline">Quên mật khẩu?</a>
+                    </div>
+                    <button type="submit" class="w-full bg-primary hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300">
+                        Đăng Nhập
+                    </button>
+                </form>
+                
+                <!-- Register Form -->
+                <form id="registerForm" class="tab-content hidden">
+                    <div class="mb-4">
+                        <label for="registerName" class="block text-gray-700 mb-2">Họ và tên</label>
+                        <input type="text" id="registerName" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="registerEmail" class="block text-gray-700 mb-2">Email</label>
+                        <input type="email" id="registerEmail" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="registerPhone" class="block text-gray-700 mb-2">Số điện thoại</label>
+                        <input type="tel" id="registerPhone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="registerPassword" class="block text-gray-700 mb-2">Mật khẩu</label>
+                        <input type="password" id="registerPassword" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    <div class="mb-6">
+                        <label for="confirmPassword" class="block text-gray-700 mb-2">Xác nhận mật khẩu</label>
+                        <input type="password" id="confirmPassword" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    <div class="mb-6">
+                        <input type="checkbox" id="terms" class="mr-2" required>
+                        <label for="terms" class="text-gray-700">Tôi đồng ý với <a href="#" class="text-primary hover:underline">Điều khoản dịch vụ</a></label>
+                    </div>
+                    <button type="submit" class="w-full bg-primary hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300">
+                        Đăng Ký
+                    </button>
+                </form>
+                
+                <div class="mt-6 text-center">
+                    <p class="text-gray-600">Hoặc đăng nhập với</p>
+                    <div class="flex justify-center space-x-4 mt-4">
+                        <button class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition duration-300">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                        <button class="flex items-center justify-center w-12 h-12 rounded-full bg-red-500 text-white hover:bg-red-600 transition duration-300">
+                            <i class="fab fa-google"></i>
+                        </button>
+                        <button class="flex items-center justify-center w-12 h-12 rounded-full bg-sky-500 text-white hover:bg-sky-600 transition duration-300">
+                            <i class="fab fa-twitter"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // Navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.section');
+            const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+            
+            // Function to navigate to a section
+            function navigateTo(targetId) {
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                document.getElementById(targetId).classList.add('active');
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('data-target') === targetId) {
+                        link.classList.add('active');
+                    }
+                });
+                
+                // Scroll to top
+                window.scrollTo(0, 0);
+            }
+            
+            // Set up navigation click events
+            document.querySelectorAll('[data-target]').forEach(element => {
+                element.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('data-target');
+                    navigateTo(targetId);
+                    
+                    // Close mobile menu if open
+                    document.getElementById('mobileNav').classList.add('hidden');
+                });
+            });
+            
+            // Mobile menu toggle
+            document.getElementById('menuToggle').addEventListener('click', function() {
+                document.getElementById('mobileNav').classList.toggle('hidden');
+            });
+            
+            // Menu category filtering
+            const menuCategories = document.querySelectorAll('.menu-category');
+            const menuItems = document.querySelectorAll('.menu-item');
+            
+            menuCategories.forEach(category => {
+                category.addEventListener('click', function() {
+                    const targetCategory = this.getAttribute('data-category');
+                    
+                    menuCategories.forEach(cat => cat.classList.remove('bg-primary', 'text-white'));
+                    menuCategories.forEach(cat => cat.classList.add('bg-gray-200'));
+                    this.classList.remove('bg-gray-200');
+                    this.classList.add('bg-primary', 'text-white');
+                    
+                    menuItems.forEach(item => {
+                        if (targetCategory === 'all' || item.getAttribute('data-category') === targetCategory) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Chatbot functionality
+            const chatbotButton = document.getElementById('chatbotButton');
+            const chatbotPanel = document.getElementById('chatbotPanel');
+            const closeChatbot = document.getElementById('closeChatbot');
+            const chatbotInput = document.getElementById('chatbotInput');
+            const sendMessage = document.getElementById('sendMessage');
+            const chatbotMessages = document.getElementById('chatbotMessages');
+            
+            chatbotButton.addEventListener('click', function() {
+                chatbotPanel.style.display = chatbotPanel.style.display === 'block' ? 'none' : 'block';
+            });
+            
+            closeChatbot.addEventListener('click', function() {
+                chatbotPanel.style.display = 'none';
+            });
+            
+            function sendChatMessage() {
+                const message = chatbotInput.value.trim();
+                if (message === '') return;
+                
+                // Add user message
+                const userMessageHTML = `
+                    <div class="mb-4 text-right">
+                        <div class="bg-primary text-white rounded-lg p-3 inline-block max-w-xs">
+                            <p>${message}</p>
+                        </div>
+                    </div>
+                `;
+                chatbotMessages.innerHTML += userMessageHTML;
+                chatbotInput.value = '';
+                
+                // Simulate bot response (in a real app, this would call the Gemini API)
+                setTimeout(() => {
+                    const botResponses = [
+                        "Cảm ơn bạn đã liên hệ với Nhà hàng Phương Nam. Chúng tôi có thể giúp gì cho bạn?",
+                        "Nhà hàng chúng tôi mở cửa từ 10:00 đến 22:00 hàng ngày.",
+                        "Bạn có thể đặt bàn qua website hoặc gọi số 028 1234 5678.",
+                        "Món đặc sản của chúng tôi là Cá Lóc Nướng Trui và Lẩu Mắm.",
+                        "Chúng tôi có dịch vụ giao hàng trong phạm vi 5km từ nhà hàng."
+                    ];
+                    
+                    const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
+                    
+                    const botMessageHTML = `
+                        <div class="mb-4">
+                            <div class="bg-gray-200 rounded-lg p-3 inline-block max-w-xs">
+                                <p>${randomResponse}</p>
+                            </div>
+                        </div>
+                    `;
+                    chatbotMessages.innerHTML += botMessageHTML;
+                    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                }, 1000);
+                
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            }
+            
+            sendMessage.addEventListener('click', sendChatMessage);
+            
+            chatbotInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendChatMessage();
+                }
+            });
+            
+            // Login Modal
+            const loginBtn = document.getElementById('loginBtn');
+            const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+            const loginModal = document.getElementById('loginModal');
+            const closeLoginModal = document.getElementById('closeLoginModal');
+            
+            loginBtn.addEventListener('click', function() {
+                loginModal.classList.add('active');
+            });
+            
+            mobileLoginBtn.addEventListener('click', function() {
+                loginModal.classList.add('active');
+                document.getElementById('mobileNav').classList.add('hidden');
+            });
+            
+            closeLoginModal.addEventListener('click', function() {
+                loginModal.classList.remove('active');
+            });
+            
+            // Close modal when clicking outside
+            loginModal.addEventListener('click', function(e) {
+                if (e.target === loginModal) {
+                    loginModal.classList.remove('active');
+                }
+            });
+            
+            // Login/Register tabs
+            const loginTab = document.getElementById('loginTab');
+            const registerTab = document.getElementById('registerTab');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            
+            loginTab.addEventListener('click', function() {
+                loginTab.classList.add('text-primary', 'border-primary', 'border-b-2');
+                registerTab.classList.remove('text-primary', 'border-primary', 'border-b-2');
+                registerTab.classList.add('text-gray-500');
+                
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+            });
+            
+            registerTab.addEventListener('click', function() {
+                registerTab.classList.add('text-primary', 'border-primary', 'border-b-2');
+                loginTab.classList.remove('text-primary', 'border-primary', 'border-b-2');
+                loginTab.classList.add('text-gray-500');
+                
+                registerForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            });
+            
+            // Form submissions (placeholder functionality)
+            document.getElementById('reservationForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Đặt bàn thành công! Chúng tôi sẽ liên hệ để xác nhận trong thời gian sớm nhất.');
+            });
+            
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Đăng nhập thành công!');
+                loginModal.classList.remove('active');
+            });
+            
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản.');
+                loginModal.classList.remove('active');
+            });
+            
+            // Shopping cart functionality
+            const addToCartButtons = document.querySelectorAll('.add-to-cart');
+            const cartCounter = document.querySelector('#cartBtn span');
+            let cartCount = 0;
+            
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    cartCount++;
+                    cartCounter.textContent = cartCount;
+                    
+                    // Show quick notification
+                    const menuItem = this.closest('.menu-item');
+                    const itemName = menuItem.querySelector('h3').textContent;
+                    
+                    const notification = document.createElement('div');
+                    notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50';
+                    notification.textContent = `Đã thêm ${itemName} vào giỏ hàng!`;
+                    document.body.appendChild(notification);
+                    
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 3000);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+   
+        
