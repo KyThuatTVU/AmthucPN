@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -124,128 +122,266 @@
                 </div>
 
                 <!-- Menu Categories -->
-                <div class="mb-8 flex flex-wrap justify-center gap-4">
-                    <button class="menu-category bg-primary text-white px-4 py-2 rounded-full active" data-category="all">Tất Cả</button>
-                    <button class="menu-category bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full" data-category="appetizers">Khai Vị</button>
-                    <button class="menu-category bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full" data-category="maindishes">Món Chính</button>
-                    <button class="menu-category bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full" data-category="hotpot">Lẩu</button>
-                    <button class="menu-category bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full" data-category="rice">Cơm & Bánh</button>
-                    <button class="menu-category bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full" data-category="desserts">Tráng Miệng</button>
-                    <button class="menu-category bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full" data-category="drinks">Đồ Uống</button>
+              <!-- nút lọc -->
+<div class="flex flex-wrap justify-center gap-4 mb-8">
+    <button class="menu-category-btn bg-yellow-600 text-white px-4 py-2 rounded-full" data-category="all">Tất Cả</button>
+    <button class="menu-category-btn bg-gray-200 text-gray-800 px-4 py-2 rounded-full" data-category="appetizers">Khai Vị</button>
+    <button class="menu-category-btn bg-gray-200 text-gray-800 px-4 py-2 rounded-full" data-category="maindishes">Món Chính</button>
+    <button class="menu-category-btn bg-gray-200 text-gray-800 px-4 py-2 rounded-full" data-category="rice">Cơm & Bún</button>
+    <button class="menu-category-btn bg-gray-200 text-gray-800 px-4 py-2 rounded-full" data-category="hotpot">Canh & Lẩu</button>
+    <button class="menu-category-btn bg-gray-200 text-gray-800 px-4 py-2 rounded-full" data-category="desserts">Tráng Miệng</button>
+    <button class="menu-category-btn bg-gray-200 text-gray-800 px-4 py-2 rounded-full" data-category="drinks">Đồ Uống</button>
+  </div>
+  
+  <!-- script lọc -->
+  <script>
+    const btns = document.querySelectorAll('.menu-category-btn');
+    const items = document.querySelectorAll('.menu-item');
+  
+    btns.forEach(b => {
+      b.addEventListener('click', () => {
+        const cat = b.dataset.category;
+  
+        // active style
+        btns.forEach(x => {
+          x.classList.remove('bg-yellow-600','text-white');
+          x.classList.add('bg-gray-200','text-gray-800');
+        });
+        b.classList.add('bg-yellow-600','text-white');
+        b.classList.remove('bg-gray-200','text-gray-800');
+  
+        // filter
+        items.forEach(i => {
+          const ic = i.dataset.category;
+          if (cat === 'all' || ic === cat) i.classList.remove('hidden');
+          else i.classList.add('hidden');
+        });
+      });
+    });
+  </script>
+  
+                <!-- Search Bar -->
+                <div class="w-full max-w-2xl mx-auto mb-8">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            id="searchInput"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                            placeholder="Tìm kiếm món ăn..."
+                        >
+                        <button 
+                            id="searchButton"
+                            class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-primary"
+                            type="button"
+                        >
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Menu Items Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Kết quả tìm kiếm động -->
+                <div id="searchResults" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8"></div>
+
+                <!-- Menu Items Grid (giữ nguyên các món ăn tĩnh) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="menuItemsContainer">
                     <!-- Khai Vị Item 1 -->
-                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="appetizers">
-                        <div class="h-64 bg-gray-300 flex items-center justify-center"><span class="text-gray-500">Hình ảnh: Gỏi Ngó Sen</span></div>
-                        <div class="p-6">
-                            <div class="flex justify-between items-start mb-2"><h3 class="font-bold text-xl">Gỏi Ngó Sen Tôm Thịt</h3><span class="text-primary font-bold">85.000đ</span></div>
-                            <p class="text-gray-600 mb-4">Ngó sen giòn ngọt hòa quyện cùng tôm tươi, thịt ba chỉ thái mỏng và nước sốt đặc biệt.</p>
-                            <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">Thêm vào giỏ</button>
-                        </div>
-                    </div>
-                    <!-- Khai Vị Item 2 -->
-                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="appetizers">
-                        <div class="h-64 bg-gray-300 flex items-center justify-center"><span class="text-gray-500">Hình ảnh: Chả Giò</span></div>
-                        <div class="p-6">
-                             <div class="flex justify-between items-start mb-2"><h3 class="font-bold text-xl">Chả Giò Phương Nam</h3><span class="text-primary font-bold">75.000đ</span></div>
-                             <p class="text-gray-600 mb-4">Chả giò giòn rụm với nhân tôm thịt, miến và nấm, ăn kèm với rau sống và nước mắm chua ngọt.</p>
-                             <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">Thêm vào giỏ</button>
-                         </div>
-                    </div>
-                    <!-- Món Chính Item 1 -->
-                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="maindishes">
-                        <div class="h-64 bg-gray-300 flex items-center justify-center"><span class="text-gray-500">Hình ảnh: Cá Lóc Nướng</span></div>
-                        <div class="p-6">
-                             <div class="flex justify-between items-start mb-2"><h3 class="font-bold text-xl">Cá Lóc Nướng Trui</h3><span class="text-primary font-bold">185.000đ</span></div>
-                             <p class="text-gray-600 mb-4">Cá lóc tươi nướng trui trên than hoa, phết mỡ hành và ăn kèm với các loại rau thơm đặc trưng miền Nam.</p>
-                             <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">Thêm vào giỏ</button>
-                         </div>
-                    </div>
-                    <!-- Món Chính Item 2 -->
-                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="maindishes">
-                        <div class="h-64 bg-gray-300 flex items-center justify-center"><span class="text-gray-500">Hình ảnh: Sườn Nướng</span></div>
-                        <div class="p-6">
-                             <div class="flex justify-between items-start mb-2"><h3 class="font-bold text-xl">Sườn Nướng Chao</h3><span class="text-primary font-bold">165.000đ</span></div>
-                             <p class="text-gray-600 mb-4">Sườn heo ướp chao đỏ, nướng than hoa thơm lừng, ăn kèm với kim chi cải chua và đồ chua.</p>
-                             <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">Thêm vào giỏ</button>
-                         </div>
-                    </div>
-                    <!-- Lẩu Item 1 -->
-                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="hotpot">
-                        <div class="h-64 bg-gray-300 flex items-center justify-center"><span class="text-gray-500">Hình ảnh: Lẩu Mắm</span></div>
-                        <div class="p-6">
-                             <div class="flex justify-between items-start mb-2"><h3 class="font-bold text-xl">Lẩu Mắm</h3><span class="text-primary font-bold">250.000đ</span></div>
-                             <p class="text-gray-600 mb-4">Nước lẩu được nấu từ mắm cá linh, thêm các loại rau đồng và hải sản tươi ngon, tạo nên hương vị đậm đà khó quên.</p>
-                             <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">Thêm vào giỏ</button>
-                         </div>
-                    </div>
-                    <!-- Lẩu Item 2 -->
-                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="hotpot">
-                        <div class="h-64 bg-gray-300 flex items-center justify-center"><span class="text-gray-500">Hình ảnh: Lẩu Cá Kèo</span></div>
-                        <div class="p-6">
-                             <div class="flex justify-between items-start mb-2"><h3 class="font-bold text-xl">Lẩu Cá Kèo</h3><span class="text-primary font-bold">225.000đ</span></div>
-                             <p class="text-gray-600 mb-4">Lẩu cá kèo chua cay với nước dùng đặc biệt nấu từ xương heo và me chua, ăn kèm với rau muống, bông điên điển.</p>
-                             <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">Thêm vào giỏ</button>
-                         </div>
-                    </div>
-                    <!-- Cơm & Bánh Item 1 -->
-                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="rice">
-                        <div class="h-64 bg-gray-300 flex items-center justify-center"><span class="text-gray-500">Hình ảnh: Bánh Xèo</span></div>
-                        <div class="p-6">
-                             <div class="flex justify-between items-start mb-2"><h3 class="font-bold text-xl">Bánh Xèo Miền Tây</h3><span class="text-primary font-bold">95.000đ</span></div>
-                             <p class="text-gray-600 mb-4">Bánh xèo giòn tan với nhân tôm, thịt, giá và đậu xanh, ăn kèm với rau sống và nước mắm chua ngọt.</p>
-                             <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">Thêm vào giỏ</button>
-                         </div>
-                    </div>
-                    <!-- Cơm & Bánh Item 2 -->
-                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="rice">
-                        <div class="h-64 bg-gray-300 flex items-center justify-center"><span class="text-gray-500">Hình ảnh: Cơm Cháy</span></div>
-                        <div class="p-6">
-                             <div class="flex justify-between items-start mb-2"><h3 class="font-bold text-xl">Cơm Cháy Sườn Rim</h3><span class="text-primary font-bold">125.000đ</span></div>
-                             <p class="text-gray-600 mb-4">Cơm được chiên giòn, ăn kèm với sườn rim mặn ngọt đậm đà, rưới thêm mỡ hành thơm phức.</p>
-                             <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">Thêm vào giỏ</button>
-                         </div>
-                    </div>
-                    <!-- Tráng Miệng Item 1 -->
-                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="desserts">
-                        <div class="h-64 bg-gray-300 flex items-center justify-center"><span class="text-gray-500">Hình ảnh: Chè Bắp</span></div>
-                        <div class="p-6">
-                             <div class="flex justify-between items-start mb-2"><h3 class="font-bold text-xl">Chè Bắp</h3><span class="text-primary font-bold">45.000đ</span></div>
-                             <p class="text-gray-600 mb-4">Chè bắp béo ngậy với vị ngọt tự nhiên từ bắp, nước cốt dừa và đậu xanh.</p>
-                             <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">Thêm vào giỏ</button>
-                         </div>
-                    </div>
-                     <!-- Đồ Uống Item 1 -->
-                     <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="drinks">
-                        <div class="h-64 bg-gray-300 flex items-center justify-center"><span class="text-gray-500">Hình ảnh: Nước Sâm</span></div>
-                        <div class="p-6">
-                            <div class="flex justify-between items-start mb-2"><h3 class="font-bold text-xl">Nước Sâm Lạnh</h3><span class="text-primary font-bold">35.000đ</span></div>
-                            <p class="text-gray-600 mb-4">Nước sâm mát lạnh giải nhiệt, nấu từ các loại thảo mộc tự nhiên tốt cho sức khỏe.</p>
-                            <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">Thêm vào giỏ</button>
-                        </div>
-                    </div>
-                    <!-- Add more menu items here following the same structure -->
-                    <!-- Example: Another Drink -->
-                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="drinks">
-                        <div class="h-64 bg-gray-300 flex items-center justify-center"><span class="text-gray-500">Hình ảnh: Trà Tắc</span></div>
-                        <div class="p-6">
-                            <div class="flex justify-between items-start mb-2"><h3 class="font-bold text-xl">Trà Tắc</h3><span class="text-primary font-bold">30.000đ</span></div>
-                            <p class="text-gray-600 mb-4">Trà tắc chua ngọt thanh mát, giải khát hiệu quả.</p>
-                            <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">Thêm vào giỏ</button>
-                        </div>
-                    </div>
+                   <!-- Khai Vị Item 1 -->
+<div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="appetizers">
+    <div class="h-64 overflow-hidden">
+      <img src="img/goingosen.jpg" alt="Gỏi Ngó Sen Tôm Thịt" class="w-full h-full object-cover">
+    </div>
+    <div class="p-6">
+      <div class="flex justify-between items-start mb-2">
+        <h3 class="font-bold text-xl">Gỏi Ngó Sen Tôm Thịt</h3>
+        <span class="text-primary font-bold">85.000đ</span>
+      </div>
+      <p class="text-gray-600 mb-4">Ngó sen giòn ngọt hòa quyện cùng tôm tươi, thịt ba chỉ thái mỏng và nước sốt đặc biệt.</p>
+      <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+        Thêm vào giỏ
+      </button>
+    </div>
+  </div>
+  
+  <!-- Khai Vị Item 2 -->
+  <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="appetizers">
+    <div class="h-64 overflow-hidden">
+      <img src="img/chagioPN.jpg" alt="Chả Giò Phương Nam" class="w-full h-full object-cover">
+    </div>
+    <div class="p-6">
+      <div class="flex justify-between items-start mb-2">
+        <h3 class="font-bold text-xl">Chả Giò Phương Nam</h3>
+        <span class="text-primary font-bold">75.000đ</span>
+      </div>
+      <p class="text-gray-600 mb-4">Chả giò giòn rụm với nhân tôm thịt, miến và nấm, ăn kèm với rau sống và nước mắm chua ngọt.</p>
+      <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+        Thêm vào giỏ
+      </button>
+    </div>
+  </div>
+  
+  <!-- Món Chính Item 1 -->
+  <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="maindishes">
+    <div class="h-64 overflow-hidden">
+      <img src="img/calocnuongtrui.jpg" alt="Cá Lóc Nướng Trui" class="w-full h-full object-cover">
+    </div>
+    <div class="p-6">
+      <div class="flex justify-between items-start mb-2">
+        <h3 class="font-bold text-xl">Cá Lóc Nướng Trui</h3>
+        <span class="text-primary font-bold">185.000đ</span>
+      </div>
+      <p class="text-gray-600 mb-4">Cá lóc tươi nướng trui trên than hoa, phết mỡ hành và ăn kèm với các loại rau thơm đặc trưng miền Nam.</p>
+      <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+        Thêm vào giỏ
+      </button>
+    </div>
+  </div>
+  
+  <!-- Món Chính Item 2 -->
+  <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="maindishes">
+    <div class="h-64 overflow-hidden">
+      <img src="img/suonnuongchao.webp" alt="Sườn Nướng Chao" class="w-full h-full object-cover">
+    </div>
+    <div class="p-6">
+      <div class="flex justify-between items-start mb-2">
+        <h3 class="font-bold text-xl">Sườn Nướng Chao</h3>
+        <span class="text-primary font-bold">165.000đ</span>
+      </div>
+      <p class="text-gray-600 mb-4">Sườn heo ướp chao đỏ, nướng than hoa thơm lừng, ăn kèm với kim chi cải chua và đồ chua.</p>
+      <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+        Thêm vào giỏ
+      </button>
+    </div>
+  </div>
+  
+  <!-- Lẩu Item 1 -->
+  <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="hotpot">
+    <div class="h-64 overflow-hidden">
+      <img src="img/laumam.webp" alt="Lẩu Mắm" class="w-full h-full object-cover">
+    </div>
+    <div class="p-6">
+      <div class="flex justify-between items-start mb-2">
+        <h3 class="font-bold text-xl">Lẩu Mắm</h3>
+        <span class="text-primary font-bold">250.000đ</span>
+      </div>
+      <p class="text-gray-600 mb-4">Nước lẩu được nấu từ mắm cá linh, thêm các loại rau đồng và hải sản tươi ngon, tạo nên hương vị đậm đà khó quên.</p>
+      <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+        Thêm vào giỏ
+      </button>
+    </div>
+  </div>
+  
+  <!-- Lẩu Item 2 -->
+  <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="hotpot">
+    <div class="h-64 overflow-hidden">
+      <img src="img/laucakeo.jpg" alt="Lẩu Cá Kèo" class="w-full h-full object-cover">
+    </div>
+    <div class="p-6">
+      <div class="flex justify-between items-start mb-2">
+        <h3 class="font-bold text-xl">Lẩu Cá Kèo</h3>
+        <span class="text-primary font-bold">225.000đ</span>
+      </div>
+      <p class="text-gray-600 mb-4">Lẩu cá kèo chua cay với nước dùng đặc biệt nấu từ xương heo và me chua, ăn kèm với rau muống, bông điên điển.</p>
+      <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+        Thêm vào giỏ
+      </button>
+    </div>
+  </div>
+  
+  <!-- Cơm & Bánh Item 1 -->
+  <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="rice">
+    <div class="h-64 overflow-hidden">
+      <img src="img/banhxeo.jpg" alt="Bánh Xèo Miền Tây" class="w-full h-full object-cover">
+    </div>
+    <div class="p-6">
+      <div class="flex justify-between items-start mb-2">
+        <h3 class="font-bold text-xl">Bánh Xèo Miền Tây</h3>
+        <span class="text-primary font-bold">95.000đ</span>
+      </div>
+      <p class="text-gray-600 mb-4">Bánh xèo giòn tan với nhân tôm, thịt, giá và đậu xanh, ăn kèm với rau sống và nước mắm chua ngọt.</p>
+      <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+        Thêm vào giỏ
+      </button>
+    </div>
+  </div>
+  
+  <!-- Cơm & Bánh Item 2 -->
+  <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="rice">
+    <div class="h-64 overflow-hidden">
+      <img src="img/comchaysuonrim.webp" alt="Cơm Cháy Sườn Rim" class="w-full h-full object-cover">
+    </div>
+    <div class="p-6">
+      <div class="flex justify-between items-start mb-2">
+        <h3 class="font-bold text-xl">Cơm Cháy Sườn Rim</h3>
+        <span class="text-primary font-bold">125.000đ</span>
+      </div>
+      <p class="text-gray-600 mb-4">Cơm được chiên giòn, ăn kèm với sườn rim mặn ngọt đậm đà, rưới thêm mỡ hành thơm phức.</p>
+      <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+        Thêm vào giỏ
+      </button>
+    </div>
+  </div>
+  
+  <!-- Tráng Miệng Item 1 -->
+  <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="desserts">
+    <div class="h-64 overflow-hidden">
+      <img src="img/chebap.webp" alt="Chè Bắp" class="w-full h-full object-cover">
+    </div>
+    <div class="p-6">
+      <div class="flex justify-between items-start mb-2">
+        <h3 class="font-bold text-xl">Chè Bắp</h3>
+        <span class="text-primary font-bold">45.000đ</span>
+      </div>
+      <p class="text-gray-600 mb-4">Chè bắp béo ngậy với vị ngọt tự nhiên từ bắp, nước cốt dừa và đậu xanh.</p>
+      <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+        Thêm vào giỏ
+      </button>
+    </div>
+  </div>
+  
+  <!-- Đồ Uống Item 1 -->
+  <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="drinks">
+    <div class="h-64 overflow-hidden">
+      <img src="img/nuocsamlanh.jpg" alt="Nước Sâm Lạnh" class="w-full h-full object-cover">
+    </div>
+    <div class="p-6">
+      <div class="flex justify-between items-start mb-2">
+        <h3 class="font-bold text-xl">Nước Sâm Lạnh</h3>
+        <span class="text-primary font-bold">35.000đ</span>
+      </div>
+      <p class="text-gray-600 mb-4">Nước sâm mát lạnh giải nhiệt, nấu từ các loại thảo mộc tự nhiên tốt cho sức khỏe.</p>
+      <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+        Thêm vào giỏ
+      </button>
+    </div>
+  </div>
+  
+  <!-- Đồ Uống Item 2 -->
+  <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="drinks">
+    <div class="h-64 overflow-hidden">
+      <img src="img/tratac.jpg" alt="Trà Tắc" class="w-full h-full object-cover">
+    </div>
+    <div class="p-6">
+      <div class="flex justify-between items-start mb-2">
+        <h3 class="font-bold text-xl">Trà Tắc</h3>
+        <span class="text-primary font-bold">30.000đ</span>
+      </div>
+      <p class="text-gray-600 mb-4">Trà tắc chua ngọt thanh mát, giải khát hiệu quả.</p>
+      <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+        Thêm vào giỏ
+      </button>
+    </div>
+  </div>
+  
                 </div>
             </div>
         </section>
     </main>
-
+   
     <!-- Footer -->
     <footer class="bg-gray-800 text-white pt-12 pb-6">
          <div class="container mx-auto px-4">
              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-                  <div>
+                  <div class="bg-gray-700 p-6 rounded-lg">
                      <h3 class="text-2xl font-cursive mb-4">Phương Nam</h3>
                      <p class="mb-4">Nhà hàng Ẩm thực Phương Nam mang đến trải nghiệm ẩm thực Nam Bộ đích thực với không gian sang trọng và ấm cúng.</p>
                      <div class="flex space-x-4">
@@ -255,7 +391,7 @@
                          <a href="#" class="text-white hover:text-primary transition duration-300"><i class="fab fa-tiktok"></i></a>
                      </div>
                  </div>
-                 <div>
+                 <div class="bg-gray-700 p-6 rounded-lg">
                      <h4 class="text-lg font-bold mb-4">Liên Kết Nhanh</h4>
                      <ul class="space-y-2">
                          <li><a href="index.html" class="hover:text-primary transition duration-300" data-page="index">Trang Chủ</a></li>
@@ -266,7 +402,7 @@
                          <li><a href="#" class="hover:text-primary transition duration-300">Tuyển Dụng</a></li>
                      </ul>
                  </div>
-                  <div>
+                  <div class="bg-gray-700 p-6 rounded-lg">
                      <h4 class="text-lg font-bold mb-4">Thông Tin Liên Hệ</h4>
                      <ul class="space-y-2">
                          <li class="flex items-start"><i class="fas fa-map-marker-alt mr-3 mt-1"></i><span>123 Nguyễn Văn Linh, Quận 7, TP. Hồ Chí Minh</span></li>
@@ -274,7 +410,7 @@
                          <li class="flex items-start"><i class="fas fa-envelope mr-3 mt-1"></i><span><a href="/cdn-cgi/l/email-protection#6a03040c052a1a021f05040d040b0744090507" class="hover:text-primary transition duration-300 __cf_email__">[email protected]</a></span></li>
                      </ul>
                  </div>
-                 <div>
+                 <div class="bg-gray-700 p-6 rounded-lg">
                      <h4 class="text-lg font-bold mb-4">Đăng Ký Nhận Tin</h4>
                      <p class="mb-4">Đăng ký để nhận thông tin về ưu đãi đặc biệt và sự kiện mới nhất.</p>
                      <form>
@@ -292,24 +428,127 @@
          </div>
     </footer>
 
-    <!-- Chatbot -->
-    <div class="chatbot-container">
-         <div class="chatbot-button" id="chatbotButton"><i class="fas fa-comments text-white text-2xl"></i></div>
-         <div class="chatbot-panel" id="chatbotPanel">
-             <div class="chatbot-header flex justify-between items-center">
-                 <div><h3 class="font-bold">Trợ Lý Ảo Phương Nam</h3><p class="text-sm">Hỗ trợ 24/7</p></div>
-                 <button id="closeChatbot" class="text-white hover:text-gray-200"><i class="fas fa-times"></i></button>
-             </div>
-             <div class="chatbot-messages" id="chatbotMessages">
-                 <div class="mb-4"><div class="bg-gray-200 rounded-lg p-3 inline-block max-w-xs"><p>Xin chào! Tôi là trợ lý ảo của Nhà hàng Phương Nam. Tôi có thể giúp gì cho bạn?</p></div></div>
-             </div>
-             <div class="chatbot-input">
-                 <input type="text" id="chatbotInput" placeholder="Nhập tin nhắn..." class="flex-1 border rounded-lg px-4 py-2 mr-2 focus:outline-none focus:ring-2 focus:ring-primary">
-                 <button id="sendMessage" class="bg-primary hover:bg-red-700 text-white px-4 py-2 rounded-lg transition duration-300"><i class="fas fa-paper-plane"></i></button>
-             </div>
-         </div>
-    </div>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    
+    <!-- Script lọc món ăn -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btns = document.querySelectorAll('.menu-category-btn');
+            const items = document.querySelectorAll('.menu-item');
 
+            // Đặt trạng thái active cho nút "Tất Cả" khi trang load
+            const allButton = document.querySelector('[data-category="all"]');
+            if(allButton) {
+                allButton.classList.add('bg-yellow-600', 'text-white');
+                allButton.classList.remove('bg-gray-200', 'text-gray-800');
+            }
+
+            btns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const category = btn.getAttribute('data-category');
+                    
+                    // Cập nhật style cho các nút
+                    btns.forEach(b => {
+                        b.classList.remove('bg-yellow-600', 'text-white');
+                        b.classList.add('bg-gray-200', 'text-gray-800');
+                    });
+                    btn.classList.add('bg-yellow-600', 'text-white');
+                    btn.classList.remove('bg-gray-200', 'text-gray-800');
+
+                    // Lọc các món ăn
+                    items.forEach(item => {
+                        if (category === 'all' || item.getAttribute('data-category') === category) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+    
+    <div class="fixed bottom-6 right-6 z-50">
+        <!-- nút kích hoạt -->
+        <button id="chatbotButton"
+          class="w-16 h-16 bg-gradient-to-br from-green-400 to-blue-500 rounded-full shadow-2xl flex items-center justify-center text-white text-3xl hover:scale-110 transition-transform duration-300">
+          <i class="fas fa-robot animate-bounce"></i>
+        </button>
+        <!-- panel chat -->
+        <div id="chatbotPanel"
+          class="mt-4 w-80 bg-white rounded-2xl shadow-2xl overflow-hidden transform translate-y-8 opacity-0 pointer-events-none transition-all duration-300">
+          <!-- header -->
+          <div class="bg-gradient-to-r from-green-500 to-blue-600 p-4 flex items-center justify-between">
+            <div class="flex items-center">
+              <i class="fas fa-robot text-2xl text-white mr-2"></i>
+              <div>
+                <h3 class="text-white font-bold">Phương Nam Bot</h3>
+                <p class="text-gray-200 text-xs">Trực tuyến 24/7</p>
+              </div>
+            </div>
+            <button id="closeChatbot" class="text-white text-xl hover:text-gray-200 transition-colors">
+              &times;
+            </button>
+          </div>
+          <!-- messages -->
+          <div id="chatbotMessages" class="p-4 space-y-3 max-h-64 overflow-y-auto bg-gray-50">
+            <!-- tin nhắn chào mừng -->
+            <div class="flex">
+              <div class="bg-white p-3 rounded-2xl shadow-md inline-block max-w-[80%]">
+                <p>Xin chào! Tôi là trợ lý ảo Nhà hàng Phương Nam. Mình giúp gì cho bạn?</p>
+              </div>
+            </div>
+            <!-- gợi ý -->
+            <div id="suggestionBox" class="flex justify-start">
+              <div
+                class="bg-yellow-100 text-yellow-800 px-3 py-2 rounded-full cursor-pointer hover:bg-yellow-200 transition-colors">
+                Hôm nay bạn muốn ăn gì?
+              </div>
+            </div>
+          </div>
+          <!-- input -->
+          <div class="p-4 bg-white border-t">
+            <div class="flex items-end space-x-2">
+              <textarea id="chatbotInput"
+                class="flex-1 h-8 resize-none border border-gray-300 rounded-2xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-200"
+                placeholder="Gõ tin nhắn..." rows="1"></textarea>
+              <button id="sendMessage"
+                class="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform duration-200">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 2. JS -->
+      <script>
+        const btnOpen      = document.getElementById('chatbotButton');
+        const btnClose     = document.getElementById('closeChatbot');
+        const panel        = document.getElementById('chatbotPanel');
+        const messages     = document.getElementById('chatbotMessages');
+        const suggestion   = document.getElementById('suggestionBox').firstElementChild;
+        const inputField   = document.getElementById('chatbotInput');
+      
+        function togglePanel() {
+          panel.classList.toggle('translate-y-8');
+          panel.classList.toggle('opacity-0');
+          panel.classList.toggle('pointer-events-none');
+        }
+      
+        // Mở/đóng panel
+        btnOpen.addEventListener('click', togglePanel);
+        btnClose.addEventListener('click', togglePanel);
+      
+        // Khi click gợi ý, auto fill và gửi
+        suggestion.addEventListener('click', () => {
+          const text = suggestion.textContent.trim();
+          inputField.value = text;
+          // Có thể tự call Hàm gửi nếu cần, ví dụ:
+          // sendUserMessage(text);
+        });
+      </script>
+      
     <!-- Login Modal -->
     <div class="modal" id="loginModal">
          <div class="bg-white rounded-lg overflow-hidden shadow-xl w-full max-w-md">
@@ -353,57 +592,419 @@
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script>
-         document.addEventListener('DOMContentLoaded', function() {
-            // --- Common Functionality ---
-            const menuToggle = document.getElementById('menuToggle'); const mobileNav = document.getElementById('mobileNav'); if (menuToggle && mobileNav) { menuToggle.addEventListener('click', () => mobileNav.classList.toggle('hidden')); }
-            const chatbotButton = document.getElementById('chatbotButton'); const chatbotPanel = document.getElementById('chatbotPanel'); const closeChatbot = document.getElementById('closeChatbot'); const chatbotInput = document.getElementById('chatbotInput'); const sendMessage = document.getElementById('sendMessage'); const chatbotMessages = document.getElementById('chatbotMessages'); if (chatbotButton && chatbotPanel && closeChatbot) { chatbotButton.addEventListener('click', () => chatbotPanel.style.display = chatbotPanel.style.display === 'block' ? 'none' : 'block'); closeChatbot.addEventListener('click', () => chatbotPanel.style.display = 'none'); }
-            function sendChatMessage() { if (!chatbotInput || !chatbotMessages) return; const message = chatbotInput.value.trim(); if (message === '') return; const userMessageHTML = `<div class="mb-4 text-right"><div class="bg-primary text-white rounded-lg p-3 inline-block max-w-xs"><p>${message}</p></div></div>`; chatbotMessages.innerHTML += userMessageHTML; chatbotInput.value = ''; setTimeout(() => { const botResponses = ["Cảm ơn bạn đã liên hệ...", "Nhà hàng mở cửa...", "Bạn có thể đặt bàn...", "Món đặc sản...", "Chúng tôi có dịch vụ giao hàng..."]; const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)]; const botMessageHTML = `<div class="mb-4"><div class="bg-gray-200 rounded-lg p-3 inline-block max-w-xs"><p>${randomResponse}</p></div></div>`; chatbotMessages.innerHTML += botMessageHTML; chatbotMessages.scrollTop = chatbotMessages.scrollHeight; }, 1000); chatbotMessages.scrollTop = chatbotMessages.scrollHeight; }
-            if (sendMessage && chatbotInput) { sendMessage.addEventListener('click', sendChatMessage); chatbotInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChatMessage(); }); }
-            const loginBtn = document.getElementById('loginBtn'); const mobileLoginBtn = document.getElementById('mobileLoginBtn'); const loginModal = document.getElementById('loginModal'); const closeLoginModal = document.getElementById('closeLoginModal'); function openLoginModal() { if (loginModal) loginModal.classList.add('active'); } function closeLoginModalFunc() { if (loginModal) loginModal.classList.remove('active'); if (mobileNav && !mobileNav.classList.contains('hidden')) { mobileNav.classList.add('hidden'); } }
-            if(loginBtn) loginBtn.addEventListener('click', openLoginModal); if(mobileLoginBtn) mobileLoginBtn.addEventListener('click', openLoginModal); if(closeLoginModal) closeLoginModal.addEventListener('click', closeLoginModalFunc); if(loginModal) { loginModal.addEventListener('click', (e) => { if (e.target === loginModal) closeLoginModalFunc(); }); }
-            const loginTab = document.getElementById('loginTab'); const registerTab = document.getElementById('registerTab'); const loginForm = document.getElementById('loginForm'); const registerForm = document.getElementById('registerForm'); if (loginTab && registerTab && loginForm && registerForm) { loginTab.addEventListener('click', () => { loginTab.classList.add('text-primary', 'border-primary', 'border-b-2'); registerTab.classList.remove('text-primary', 'border-primary', 'border-b-2'); registerTab.classList.add('text-gray-500'); loginForm.classList.remove('hidden'); registerForm.classList.add('hidden'); }); registerTab.addEventListener('click', () => { registerTab.classList.add('text-primary', 'border-primary', 'border-b-2'); loginTab.classList.remove('text-primary', 'border-primary', 'border-b-2'); loginTab.classList.add('text-gray-500'); registerForm.classList.remove('hidden'); loginForm.classList.add('hidden'); }); }
-            const reservationForm = document.getElementById('reservationForm'); if (reservationForm) { reservationForm.addEventListener('submit', (e) => { e.preventDefault(); alert('Đặt bàn thành công! Chúng tôi sẽ liên hệ để xác nhận trong thời gian sớm nhất.'); reservationForm.reset(); }); }
-            if (loginForm) { loginForm.addEventListener('submit', (e) => { e.preventDefault(); alert('Đăng nhập thành công!'); closeLoginModalFunc(); }); }
-            if (registerForm) { registerForm.addEventListener('submit', (e) => { e.preventDefault(); const password = document.getElementById('registerPassword')?.value; const confirmPassword = document.getElementById('confirmPassword')?.value; if (password !== confirmPassword) { alert('Mật khẩu xác nhận không khớp!'); return; } alert('Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản.'); closeLoginModalFunc(); }); }
-            const addToCartButtons = document.querySelectorAll('.add-to-cart'); const cartCounter = document.querySelector('#cartBtn span'); let cartCount = 0; if (cartCounter) { cartCounter.textContent = cartCount; } addToCartButtons.forEach(button => { button.addEventListener('click', function() { cartCount++; if (cartCounter) { cartCounter.textContent = cartCount; } const menuItem = this.closest('.menu-item'); const itemName = menuItem ? menuItem.querySelector('h3')?.textContent : 'Sản phẩm'; const notification = document.createElement('div'); notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50'; notification.textContent = `Đã thêm ${itemName} vào giỏ hàng!`; document.body.appendChild(notification); setTimeout(() => { notification.remove(); }, 3000); }); });
-            // Active Navigation Link Highlighting
-            const currentPage = window.location.pathname.split('/').pop() || 'index.html'; const pageName = currentPage.replace('.html', ''); const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link'); navLinks.forEach(link => { const linkPage = link.getAttribute('data-page'); if (linkPage === pageName || (pageName === 'index' && linkPage === 'index')) { link.classList.add('active'); if(link.classList.contains('mobile-nav-link')) { link.classList.add('bg-gray-200', 'font-semibold'); } } else { link.classList.remove('active'); if(link.classList.contains('mobile-nav-link')) { link.classList.remove('bg-gray-200', 'font-semibold'); } } });
-            // --- Page-Specific Functionality: Menu Filtering ---
-            if (pageName === 'menu') {
-                const menuCategories = document.querySelectorAll('.menu-category');
-                const menuItems = document.querySelectorAll('.menu-item[data-category]');
-                if (menuCategories.length > 0 && menuItems.length > 0) {
-                     menuCategories.forEach(category => {
-                         category.addEventListener('click', function() {
-                             const targetCategory = this.getAttribute('data-category');
-                             menuCategories.forEach(cat => { cat.classList.remove('bg-primary', 'text-white', 'active'); cat.classList.add('bg-gray-200', 'hover:bg-gray-300'); });
-                             this.classList.remove('bg-gray-200', 'hover:bg-gray-300'); this.classList.add('bg-primary', 'text-white', 'active');
-                             // Filter items visibility
-                             menuItems.forEach(item => {
-                                 const itemCategory = item.getAttribute('data-category');
-                                 if (targetCategory === 'all' || itemCategory === targetCategory) {
-                                     item.style.display = 'block'; // Or 'flex', 'grid' depending on item layout
-                                 } else {
-                                     item.style.display = 'none';
-                                 }
-                             });
-                         });
-                     });
-                     // Initial filter display on page load
-                     const initialCategory = document.querySelector('.menu-category.active')?.getAttribute('data-category') || 'all';
-                     menuItems.forEach(item => {
-                         const itemCategory = item.getAttribute('data-category');
-                          if (initialCategory === 'all' || itemCategory === initialCategory) {
-                              item.style.display = 'block';
-                          } else {
-                              item.style.display = 'none';
-                          }
-                      });
+        
+       
+        const GROQ_API_KEY = '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'; 
+        const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions'; 
+        const GROQ_MODEL_NAME = 'meta-llama/llama-4-maverick-17b-128e-instruct'; 
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('menuToggle');
+            const mobileNav = document.getElementById('mobileNav');
+            if (menuToggle && mobileNav) {
+                menuToggle.addEventListener('click', () => mobileNav.classList.toggle('hidden'));
+            }
+
+            const loginBtn = document.getElementById('loginBtn');
+            const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+            const loginModal = document.getElementById('loginModal');
+            const closeLoginModal = document.getElementById('closeLoginModal');
+            if (loginBtn && mobileLoginBtn && loginModal && closeLoginModal) {
+                loginBtn.addEventListener('click', () => loginModal.classList.add('active'));
+                mobileLoginBtn.addEventListener('click', () => { loginModal.classList.add('active'); if (mobileNav) mobileNav.classList.add('hidden'); });
+                closeLoginModal.addEventListener('click', () => loginModal.classList.remove('active'));
+                loginModal.addEventListener('click', (e) => { if (e.target === loginModal) loginModal.classList.remove('active'); });
+
+                const loginTab = document.getElementById('loginTab');
+                const registerTab = document.getElementById('registerTab');
+                const loginForm = document.getElementById('loginForm');
+                const registerForm = document.getElementById('registerForm');
+                if (loginTab && registerTab && loginForm && registerForm) {
+                    loginTab.addEventListener('click', () => {
+                        loginTab.classList.add('text-primary', 'border-primary', 'border-b-2');
+                        registerTab.classList.remove('text-primary', 'border-primary', 'border-b-2');
+                        registerTab.classList.add('text-gray-500');
+                        loginForm.classList.remove('hidden');
+                        registerForm.classList.add('hidden');
+                    });
+                    registerTab.addEventListener('click', () => {
+                        registerTab.classList.add('text-primary', 'border-primary', 'border-b-2');
+                        loginTab.classList.remove('text-primary', 'border-primary', 'border-b-2');
+                        loginTab.classList.add('text-gray-500');
+                        registerForm.classList.remove('hidden');
+                        loginForm.classList.add('hidden');
+                    });
                 }
+
+                if (loginForm) { loginForm.addEventListener('submit', (e) => { e.preventDefault(); alert('Đăng nhập thành công!'); loginModal.classList.remove('active'); }); }
+                if (registerForm) { registerForm.addEventListener('submit', (e) => { e.preventDefault(); /* Add pw check if needed */ alert('Đăng ký thành công!'); loginModal.classList.remove('active'); }); }
+            }
+
+            const addToCartButtons = document.querySelectorAll('.add-to-cart');
+            const cartCounter = document.querySelector('#cartBtn span');
+            let cartCount = 0; // Consider using localStorage for persistence
+            if (cartCounter) { cartCounter.textContent = cartCount; }
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    cartCount++; if (cartCounter) { cartCounter.textContent = cartCount; } const menuItem = this.closest('.menu-item'); const itemName = menuItem?.querySelector('h3')?.textContent || 'Sản phẩm'; const notification = document.createElement('div'); notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50'; notification.textContent = `Đã thêm ${itemName} vào giỏ hàng!`; document.body.appendChild(notification); setTimeout(() => { notification.remove(); }, 3000);
+                });
+            });
+
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            const pageName = currentPage.replace('.html', '').toLowerCase(); 
+            const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+            navLinks.forEach(link => {
+                const linkHref = link.getAttribute('href');
+                const linkPage = linkHref ? linkHref.split('/').pop().replace('.html', '').toLowerCase() : '';
+                const isIndex = (pageName === 'index' || pageName === ''); 
+                const linkIsIndex = (linkPage === 'index' || linkPage === '');
+
+                if ((isIndex && linkIsIndex) || (pageName !== '' && pageName !== 'index' && pageName === linkPage)) {
+                    link.classList.add('active');
+                     if(link.classList.contains('mobile-nav-link')) {
+                         link.classList.add('bg-gray-200', 'font-semibold');
+                     }
+                } else {
+                    link.classList.remove('active');
+                    if(link.classList.contains('mobile-nav-link')) {
+                         link.classList.remove('bg-gray-200', 'font-semibold');
+                    }
+                }
+            });
+
+            const chatbotInput = document.getElementById('chatbotInput');
+            if (chatbotInput) {
+                 chatbotInput.addEventListener('input', autoResizeTextarea);
+                 // Also resize initially if there's any default text
+                 autoResizeTextarea.call(chatbotInput);
+            }
+
+            function autoResizeTextarea() {
+                this.style.height = 'auto'; 
+                this.style.height = (this.scrollHeight) + 'px';
+            }
+
+
+           
+            const chatbotButton = document.getElementById('chatbotButton');
+            const chatbotPanel = document.getElementById('chatbotPanel');
+            const closeChatbot = document.getElementById('closeChatbot');
+            // chatbotInput is already defined above
+            const sendMessage = document.getElementById('sendMessage');
+            const chatbotMessages = document.getElementById('chatbotMessages');
+
+            // Chat history for API (Groq expects { role: 'user'/'assistant', content: '...' })
+            let chatHistory = [];
+
+            let currentBotMessageElement = null; // To update streaming message
+            let currentBotFullText = ''; // Accumulates text for the current streaming message
+
+
+            if (chatbotButton && chatbotPanel && closeChatbot && chatbotInput && sendMessage && chatbotMessages) {
+                 // Initial bot message handler (already in HTML, just ensure history matches if needed)
+                 // For simplicity, we'll let the first message be hardcoded in HTML and start history after that.
+                 // If you wanted the first message to also come from the bot via API, you'd call handleSendMessage with a greeting prompt on load.
+
+                chatbotButton.addEventListener('click', () => {
+                    chatbotPanel.style.display = chatbotPanel.style.display === 'block' ? 'none' : 'block';
+                    if (chatbotPanel.style.display === 'block') {
+                         chatbotMessages.scrollTop = chatbotMessages.scrollHeight; // Scroll down when opened
+                         chatbotInput.focus(); // Focus input on open
+                    }
+                });
+
+                closeChatbot.addEventListener('click', () => {
+                    chatbotPanel.style.display = 'none';
+                });
+
+                sendMessage.addEventListener('click', handleSendMessage);
+
+                // Allow sending with Enter, but allow Shift+Enter for newline
+                chatbotInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault(); // Prevent default form submission/newline
+                        handleSendMessage();
+                    }
+                });
+
+                // --- Function to add a message bubble to the chat UI ---
+                function addMessageToChat(role, text, isStreaming = false) {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.classList.add('mb-4');
+
+                    const bubbleDiv = document.createElement('div');
+                    bubbleDiv.classList.add('rounded-lg', 'p-3', 'inline-block');
+
+                    if (role === 'user') {
+                        // Styles handled by CSS now based on bubble class
+                        bubbleDiv.classList.add('bg-primary', 'text-white');
+                    } else { // assistant (or model)
+                        bubbleDiv.classList.add('bg-gray-200', 'text-gray-800');
+                        if (isStreaming) {
+                            bubbleDiv.classList.add('streaming'); // Mark for updates
+                            text = 'Đang trả lời...'; // Initial placeholder
+                            currentBotMessageElement = bubbleDiv; // Store reference
+                            currentBotFullText = ''; // Reset accumulator
+                        }
+                    }
+
+                    const p = document.createElement('p');
+                    p.innerHTML = text.replace(/\n/g, '<br>'); // Render newlines correctly
+                    bubbleDiv.appendChild(p);
+                    messageDiv.appendChild(bubbleDiv);
+                    chatbotMessages.appendChild(messageDiv);
+
+                    // Scroll to the bottom
+                    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                }
+
+                // --- Function to update the streaming bot message ---
+                function updateStreamingMessage(chunk) {
+                    if (currentBotMessageElement) {
+                         if (currentBotFullText === '') { 
+                              currentBotMessageElement.querySelector('p').innerHTML = ''; 
+                         }
+                         currentBotFullText += chunk;
+                        
+                         currentBotMessageElement.querySelector('p').innerHTML = currentBotFullText.replace(/\n/g, '<br>');
+                         chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                    }
+                }
+
+                
+                 function finalizeStreamingMessage() {
+                     if (currentBotMessageElement) {
+                         currentBotMessageElement.classList.remove('streaming');
+                         
+                         if (currentBotFullText.trim() !== '') {
+                              chatHistory.push({ role: 'assistant', content: currentBotFullText });
+                         }
+                         currentBotMessageElement = null;
+                         currentBotFullText = ''; // Clear for next message
+                         chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                     }
+                 }
+
+          
+                 async function handleSendMessage() {
+                     if (GROQ_API_KEY === 'YOUR_GROQ_API_KEY') {
+                          addMessageToChat('assistant', '<strong class="text-red-600">Lỗi: Vui lòng thay thế \'YOUR_GROQ_API_KEY\' bằng API Key thật của bạn trong mã nguồn.</strong>');
+                          return;
+                     }
+
+                     const message = chatbotInput.value.trim();
+                     if (message === '') return;
+
+                   
+                     addMessageToChat('user', message);
+
+                     chatHistory.push({ role: 'user', content: message });
+
+                     chatbotInput.value = ''; 
+                     autoResizeTextarea.call(chatbotInput); 
+                     sendMessage.disabled = true; 
+                     chatbotInput.disabled = true;
+
+                    
+                     addMessageToChat('assistant', '', true);
+
+                     try {
+
+                         const response = await fetch(GROQ_API_URL, {
+                             method: 'POST',
+                             headers: {
+                                 'Content-Type': 'application/json',
+                                 'Authorization': `Bearer ${GROQ_API_KEY}` 
+                             },
+                             body: JSON.stringify({
+                                 messages: chatHistory, 
+                                 model: GROQ_MODEL_NAME,
+                                 temperature: 1,
+                                 max_completion_tokens: 1024,
+                                 top_p: 1,
+                                 stream: true, 
+                                 stop: null
+                             })
+                         });
+
+                         if (!response.ok) {
+                           
+                             const errorBody = await response.text().catch(() => `Status: ${response.status}`);
+                             console.error('API Error Response:', errorBody);
+                             throw new Error(`API request failed: ${response.status} ${response.statusText || ''}. Body: ${errorBody.substring(0, 200)}...`); // Limit body log
+                         }
+
+                         if (!response.body) {
+                             throw new Error("Không nhận được nội dung phản hồi từ API.");
+                         }
+
+                       
+                         const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+                         let buffer = '';
+
+                         while (true) {
+                             const { value, done } = await reader.read();
+                             if (done) {
+                                 console.log('Stream finished.');
+                                 break; 
+                             }
+
+                             buffer += value;
+
+                             let boundary = buffer.indexOf('\n\n');
+                             while (boundary !== -1) {
+                                 const line = buffer.substring(0, boundary).trim();
+                                 buffer = buffer.substring(boundary + 2); 
+
+                                 if (line.startsWith('data:')) {
+                                     const jsonData = line.substring(5).trim(); 
+                                     if (jsonData === '[DONE]') {
+                                       
+                                     } else {
+                                         try {
+                                             const data = JSON.parse(jsonData);
+                                           
+                                             const chunkContent = data.choices?.[0]?.delta?.content;
+                                             if (chunkContent) {
+                                                 updateStreamingMessage(chunkContent);
+                                             }
+                                            
+                                         } catch (parseError) {
+                                             console.error('Lỗi phân tích JSON từ stream:', parseError, 'Data:', jsonData);
+                                            
+                                         }
+                                     }
+                                 }
+                                 boundary = buffer.indexOf('\n\n');
+                             }
+                         }
+                         
+                          if (buffer.length > 0) {
+                              console.warn('Remaining buffer after stream end:', buffer);
+                               
+                          }
+
+
+                     } catch (error) {
+                         console.error('Lỗi khi gọi Groq API:', error);
+                         // Display error in the chat
+                         if (currentBotMessageElement) {
+                              currentBotMessageElement.querySelector('p').innerHTML = `<strong class="text-red-600">Xin lỗi, đã có lỗi xảy ra khi kết nối tới trợ lý ảo. Vui lòng thử lại sau. (Chi tiết: ${error.message})</strong>`;
+                              currentBotMessageElement.classList.remove('streaming');
+                         } else {
+                              addMessageToChat('assistant', `<strong class="text-red-600">Xin lỗi, đã có lỗi xảy ra khi kết nối tới trợ lý ảo. Vui lòng thử lại sau. (Chi tiết: ${error.message})</strong>`);
+                         }
+
+                     } finally {
+                       
+                         finalizeStreamingMessage(); 
+                         sendMessage.disabled = false;
+                         chatbotInput.disabled = false;
+                         chatbotInput.focus(); // Focus back on input
+                         console.log("Updated History:", chatHistory);
+                     }
+                 }
+
+             } 
+
+        }); 
+
+        // --- Tìm kiếm động qua API, vẫn giữ món tĩnh ---
+        const API_URL = 'http://localhost:3001/api'; // Sửa lại nếu backend chạy cổng khác
+
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const searchResults = document.getElementById('searchResults');
+        const menuItemsContainer = document.getElementById('menuItemsContainer');
+
+        // Hàm debounce
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        // Render kết quả tìm kiếm từ API
+        function renderSearchResults(items) {
+            if (!items || items.length === 0) {
+                searchResults.innerHTML = '';
+                searchResults.style.display = 'none';
+                menuItemsContainer.style.display = '';
+                return;
+            }
+            const html = items.map(item => `
+                <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="${item.category || ''}">
+                    <div class="h-64 overflow-hidden">
+                        <img src="${item.imageUrl || 'img/no-image.png'}" alt="${item.name}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-xl">${item.name}</h3>
+                            <span class="text-primary font-bold">${item.price ? Number(item.price).toLocaleString() : ''}đ</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">${item.description || ''}</p>
+                        <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+                            Thêm vào giỏ
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            searchResults.innerHTML = html;
+            searchResults.style.display = '';
+            menuItemsContainer.style.display = 'none';
+
+            // Gắn lại sự kiện cho nút thêm vào giỏ nếu cần
+            searchResults.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', function() {
+                    const menuItem = this.closest('.menu-item');
+                    const itemName = menuItem?.querySelector('h3')?.textContent || 'Sản phẩm';
+                    const notification = document.createElement('div');
+                    notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50';
+                    notification.textContent = `Đã thêm ${itemName} vào giỏ hàng!`;
+                    document.body.appendChild(notification);
+                    setTimeout(() => { notification.remove(); }, 3000);
+                });
+            });
+        }
+
+        // Gọi API tìm kiếm
+        async function fetchMenuItems(searchTerm) {
+            try {
+                const response = await fetch(`${API_URL}/menu?search=${encodeURIComponent(searchTerm)}`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching menu items:', error);
+                return [];
+            }
+        }
+
+        // Xử lý tìm kiếm
+        const handleSearch = debounce(async () => {
+            const searchTerm = searchInput.value.trim();
+            if (searchTerm === '') {
+                searchResults.innerHTML = '';
+                searchResults.style.display = 'none';
+                menuItemsContainer.style.display = '';
+                return;
+            }
+            const items = await fetchMenuItems(searchTerm);
+            renderSearchResults(items);
+        }, 300);
+
+        searchInput.addEventListener('input', handleSearch);
+        searchButton.addEventListener('click', handleSearch);
+
+        // Khi xóa tìm kiếm, hiện lại menu tĩnh
+        searchInput.addEventListener('blur', () => {
+            if (searchInput.value.trim() === '') {
+                searchResults.innerHTML = '';
+                searchResults.style.display = 'none';
+                menuItemsContainer.style.display = '';
             }
         });
     </script>
-     <!-- Genspark Badge Scripts (Keep as is) -->
    
 </body>
 </html>
