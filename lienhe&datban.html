@@ -273,87 +273,84 @@
         </div>
     </footer>
 
-    <div class="fixed bottom-6 right-6 z-50">
-        <!-- nút kích hoạt -->
-        <button id="chatbotButton"
-          class="w-16 h-16 bg-gradient-to-br from-green-400 to-blue-500 rounded-full shadow-2xl flex items-center justify-center text-white text-3xl hover:scale-110 transition-transform duration-300">
-          <i class="fas fa-robot animate-bounce"></i>
-        </button>
-        <!-- panel chat -->
-        <div id="chatbotPanel"
-          class="mt-4 w-80 bg-white rounded-2xl shadow-2xl overflow-hidden transform translate-y-8 opacity-0 pointer-events-none transition-all duration-300">
-          <!-- header -->
-          <div class="bg-gradient-to-r from-green-500 to-blue-600 p-4 flex items-center justify-between">
-            <div class="flex items-center">
-              <i class="fas fa-robot text-2xl text-white mr-2"></i>
-              <div>
-                <h3 class="text-white font-bold">Phương Nam Bot</h3>
-                <p class="text-gray-200 text-xs">Trực tuyến 24/7</p>
-              </div>
-            </div>
-            <button id="closeChatbot" class="text-white text-xl hover:text-gray-200 transition-colors">
-              &times;
-            </button>
-          </div>
-          <!-- messages -->
-          <div id="chatbotMessages" class="p-4 space-y-3 max-h-64 overflow-y-auto bg-gray-50">
-            <!-- tin nhắn chào mừng -->
-            <div class="flex">
-              <div class="bg-white p-3 rounded-2xl shadow-md inline-block max-w-[80%]">
-                <p>Xin chào! Tôi là trợ lý ảo Nhà hàng Phương Nam. Mình giúp gì cho bạn?</p>
-              </div>
-            </div>
-            <!-- gợi ý -->
-            <div id="suggestionBox" class="flex justify-start">
-              <div
-                class="bg-yellow-100 text-yellow-800 px-3 py-2 rounded-full cursor-pointer hover:bg-yellow-200 transition-colors">
-                Hôm nay bạn muốn ăn gì?
-              </div>
-            </div>
-          </div>
-          <!-- input -->
-          <div class="p-4 bg-white border-t">
-            <div class="flex items-end space-x-2">
-              <textarea id="chatbotInput"
-                class="flex-1 h-8 resize-none border border-gray-300 rounded-2xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-200"
-                placeholder="Gõ tin nhắn..." rows="1"></textarea>
-              <button id="sendMessage"
-                class="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform duration-200">
-                <i class="fas fa-paper-plane"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- 2. JS -->
-      <script>
-        const btnOpen      = document.getElementById('chatbotButton');
-        const btnClose     = document.getElementById('closeChatbot');
-        const panel        = document.getElementById('chatbotPanel');
-        const messages     = document.getElementById('chatbotMessages');
-        const suggestion   = document.getElementById('suggestionBox').firstElementChild;
-        const inputField   = document.getElementById('chatbotInput');
-      
-        function togglePanel() {
-          panel.classList.toggle('translate-y-8');
-          panel.classList.toggle('opacity-0');
-          panel.classList.toggle('pointer-events-none');
-        }
-      
-        // Mở/đóng panel
-        btnOpen.addEventListener('click', togglePanel);
-        btnClose.addEventListener('click', togglePanel);
-      
-        // Khi click gợi ý, auto fill và gửi
-        suggestion.addEventListener('click', () => {
-          const text = suggestion.textContent.trim();
-          inputField.value = text;
-          // Có thể tự call Hàm gửi nếu cần, ví dụ:
-          // sendUserMessage(text);
-        });
-      </script>
-      
+   <!-- CHATBOT BUTTON -->
+<button id="chatbotButton"
+class="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-br from-green-400 to-blue-500 rounded-full shadow-2xl flex items-center justify-center text-white text-3xl hover:scale-110 transition-transform duration-300">
+<i class="fas fa-robot animate-bounce"></i>
+</button>
+
+<!-- CHAT PANEL -->
+<div id="chatbotPanel"
+class="fixed bottom-24 right-6 z-50 w-80 bg-white rounded-2xl shadow-2xl overflow-hidden 
+       transform opacity-0 scale-90 pointer-events-none transition-all duration-300">
+<!-- Header -->
+<div class="bg-gradient-to-r from-green-500 to-blue-600 p-4 flex items-center justify-between">
+  <div class="flex items-center">
+    <i class="fas fa-robot text-2xl text-white mr-2"></i>
+    <div>
+      <h3 class="text-white font-bold">Phương Nam Bot</h3>
+      <p class="text-gray-200 text-xs">Trực tuyến 24/7</p>
+    </div>
+  </div>
+  <button id="closeChatbot" class="text-white text-xl hover:text-gray-200 transition-colors">&times;</button>
+</div>
+
+<!-- Messages -->
+<div id="chatbotMessages" class="p-4 space-y-3 max-h-64 overflow-y-auto bg-gray-50">
+  <!-- Tin chào -->
+  <div class="flex">
+    <div class="bg-white p-3 rounded-2xl shadow-md inline-block max-w-[80%]">
+      <p>Xin chào! Tôi là trợ lý ảo Nhà hàng Phương Nam. Mình giúp gì cho bạn?</p>
+    </div>
+  </div>
+  <!-- Gợi ý -->
+  <div id="suggestionBox" class="flex justify-start">
+    <div
+      class="bg-yellow-100 text-yellow-800 px-3 py-2 rounded-full opacity-50 hover:opacity-100 transition-opacity duration-200 cursor-pointer">
+      Hôm nay bạn muốn ăn gì?
+    </div>
+  </div>
+</div>
+
+<!-- Input -->
+<div class="p-4 bg-white border-t">
+  <div class="flex items-end space-x-2">
+    <textarea id="chatbotInput"
+      class="flex-1 h-8 resize-none border border-gray-300 rounded-2xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-200"
+      placeholder="Gõ tin nhắn..." rows="1"></textarea>
+    <button id="sendMessage"
+      class="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform duration-200">
+      <i class="fas fa-paper-plane"></i>
+    </button>
+  </div>
+</div>
+</div>
+
+<script>
+const btnOpen    = document.getElementById('chatbotButton');
+const btnClose   = document.getElementById('closeChatbot');
+const panel      = document.getElementById('chatbotPanel');
+const suggestion = document.getElementById('suggestionBox').firstElementChild;
+const inputField = document.getElementById('chatbotInput');
+
+function toggleChat() {
+  panel.classList.toggle('opacity-0');
+  panel.classList.toggle('scale-90');
+  panel.classList.toggle('pointer-events-none');
+  panel.classList.toggle('opacity-100');
+  panel.classList.toggle('scale-100');
+}
+
+btnOpen.addEventListener('click', toggleChat);
+btnClose.addEventListener('click', toggleChat);
+
+suggestion.addEventListener('click', () => {
+  const text = suggestion.textContent.trim();
+  inputField.value = text;
+  inputField.focus();
+});
+</script>
+
     <!-- Login Modal -->
     <div class="modal" id="loginModal">
         <div class="bg-white rounded-lg overflow-hidden shadow-xl w-full max-w-md">
