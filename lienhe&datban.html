@@ -42,6 +42,9 @@
         /* Ensure main content is visible */
         main > section { display: block !important; }
     </style>
+    <!-- Thêm thư viện GSAP và ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 </head>
 <body class="bg-gray-100">
     <!-- Header -->
@@ -116,14 +119,14 @@
     <!-- Main Content -->
     <main>
         <!-- Reservation Section Content -->
-        <section class="py-12 bg-gray-100">
+        <section class="py-12 bg-gray-100" id="reservationSection">
             <div class="container mx-auto px-4">
-                <div class="text-center mb-12">
+                <div class="text-center mb-12" id="reservationTitle">
                     <h2 class="text-3xl font-bold mb-2">Đặt Bàn & Liên Hệ</h2>
                     <p class="text-gray-600">Đặt bàn trước để có trải nghiệm tốt nhất</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="reservationGrid">
                     <!-- Reservation Form -->
                     <div class="bg-white p-8 rounded-lg shadow-md">
                         <h3 class="text-2xl font-bold mb-6">Đặt Bàn</h3>
@@ -349,6 +352,70 @@ suggestion.addEventListener('click', () => {
   inputField.value = text;
   inputField.focus();
 });
+
+// GSAP hiệu ứng động cho các phần chính của trang Đặt bàn & Liên hệ
+document.addEventListener('DOMContentLoaded', function() {
+    // ...existing code...
+
+    if (window.gsap && window.ScrollTrigger) {
+        // Tiêu đề đặt bàn
+        gsap.from("#reservationTitle", {
+            opacity: 0,
+            y: 40,
+            duration: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: "#reservationTitle",
+                start: "top 85%",
+                toggleActions: "play none none reset"
+            }
+        });
+
+        // Lưới đặt bàn & liên hệ
+        gsap.from("#reservationGrid > div", {
+            opacity: 0,
+            y: 60,
+            duration: 1,
+            stagger: 0.2,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: "#reservationGrid",
+                start: "top 90%",
+                toggleActions: "play none none reset"
+            }
+        });
+
+        // Thông tin liên hệ (các khối)
+        gsap.utils.toArray("#reservationGrid > div > .space-y-4 > div").forEach((item, i) => {
+            gsap.from(item, {
+                opacity: 0,
+                x: 60,
+                duration: 0.8,
+                delay: i * 0.1,
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: item,
+                    start: "top 95%",
+                    toggleActions: "play none none reset"
+                }
+            });
+        });
+
+        // Bản đồ
+        gsap.from("#reservationGrid > div > .bg-gradient-to-r.from-blue-100", {
+            opacity: 0,
+            y: 60,
+            duration: 1,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: "#reservationGrid > div > .bg-gradient-to-r.from-blue-100",
+                start: "top 95%",
+                toggleActions: "play none none reset"
+            }
+        });
+    }
+});
+
 </script>
 
     <!-- Login Modal -->
@@ -713,4 +780,6 @@ suggestion.addEventListener('click', () => {
 
 </body>
 </html>
+```
+</copilot-edited-file>
 

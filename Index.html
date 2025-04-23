@@ -213,6 +213,9 @@
          }
 
     </style>
+    <!-- Thêm thư viện GSAP và ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 </head>
 <body class="bg-gray-100">
     <!-- Header -->
@@ -285,7 +288,7 @@
     <!-- Main Content -->
     <main>
         <!-- Hero Banner -->
-        <div class="banner h-96 md:h-[500px] relative bg-cover bg-center" style="background-image: url('img/LOGO2.jpg');">
+        <div class="banner h-96 md:h-[500px] relative bg-cover bg-center bg-gray-900" style="background-image: url('img/LOGO2.jpg');" id="heroBanner">
             <div class="container mx-auto px-4 h-full flex items-center relative z-10">
                 <div class="max-w-2xl text-white bg-black bg-opacity-50 p-6 rounded-lg">
                     <h1 class="text-4xl md:text-5xl lg:text-6xl font-cursive mb-4">Hương Vị Phương Nam</h1>
@@ -299,7 +302,7 @@
         </div>
 
         <!-- Featured Menu -->
-        <div class="container mx-auto px-4 py-12 bg-amber-50">
+        <div class="container mx-auto px-4 py-12 bg-amber-50" id="featuredMenu">
             <div class="text-center mb-12">
                 <h2 class="text-3xl font-bold mb-2">Món Ăn Đặc Sắc</h2>
                 <p class="text-gray-600">Khám phá những món ăn được yêu thích nhất tại Phương Nam</p>
@@ -364,7 +367,7 @@
         </div>
 
         <!-- Testimonials -->
-        <div class="bg-rose-50 py-12">
+        <div class="bg-rose-50 py-12" id="testimonials">
             <div class="container mx-auto px-4">
                 <div class="text-center mb-12">
                     <h2 class="text-3xl font-bold mb-2">Khách Hàng Nói Gì</h2>
@@ -424,7 +427,7 @@
         </div>
 
         <!-- Promotion -->
-        <div class="bg-emerald-50 py-12">
+        <div class="bg-emerald-50 py-12" id="promotion">
             <div class="container mx-auto px-4">
                 <div class="bg-white rounded-lg shadow-lg overflow-hidden">
                     <div class="md:flex">
@@ -959,6 +962,66 @@
 
              } 
 
+            // GSAP + ScrollTrigger hiệu ứng cho từng phần
+            if (window.gsap && window.ScrollTrigger) {
+                // Hero Banner
+                gsap.from("#heroBanner .max-w-2xl", {
+                    opacity: 0,
+                    y: 60,
+                    duration: 1.2,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: "#heroBanner",
+                        start: "top 80%",
+                        toggleActions: "play none none reset"
+                    }
+                });
+
+                // Featured Menu Items
+                gsap.utils.toArray("#featuredMenu .menu-item").forEach((item, i) => {
+                    gsap.from(item, {
+                        opacity: 0,
+                        y: 60,
+                        duration: 1,
+                        delay: i * 0.15,
+                        ease: "power2.out",
+                        scrollTrigger: {
+                            trigger: item,
+                            start: "top 85%",
+                            toggleActions: "play none none reset"
+                        }
+                    });
+                });
+
+                // Testimonials
+                gsap.utils.toArray("#testimonials .bg-white").forEach((item, i) => {
+                    gsap.from(item, {
+                        opacity: 0,
+                        scale: 0.8,
+                        duration: 0.9,
+                        delay: i * 0.12,
+                        ease: "back.out(1.7)",
+                        scrollTrigger: {
+                            trigger: item,
+                            start: "top 90%",
+                            toggleActions: "play none none reset"
+                        }
+                    });
+                });
+
+                // Promotion section
+                gsap.from("#promotion .bg-white", {
+                    opacity: 0,
+                    y: 80,
+                    duration: 1.1,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: "#promotion .bg-white",
+                        start: "top 85%",
+                        toggleActions: "play none none reset"
+                    }
+                });
+            }
         }); 
     </script>
 </body>

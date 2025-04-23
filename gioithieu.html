@@ -35,6 +35,9 @@
         .nav-link:hover::after, .nav-link.active::after { width: 100%; }
         main > section { display: block !important; }
     </style>
+    <!-- Thêm thư viện GSAP và ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 </head>
 <body class="bg-gray-100">
     <!-- Header -->
@@ -107,14 +110,14 @@
     <!-- Main Content -->
     <main>
         <!-- About Section Content -->
-        <section class="py-12 bg-white">
+        <section class="py-12 bg-white" id="aboutSection">
             <div class="container mx-auto px-4">
-                <div class="text-center mb-12">
+                <div class="text-center mb-12" id="aboutTitle">
                     <h2 class="text-3xl font-bold mb-2">Giới Thiệu</h2>
                     <p class="text-gray-600">Câu chuyện về Nhà hàng Ẩm thực Phương Nam</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-16 bg-gray-50 p-8 rounded-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-16 bg-gray-50 p-8 rounded-lg" id="aboutJourney">
                     <div class="bg-gray-300 h-80 md:h-96 rounded-lg flex items-center justify-center overflow-hidden">
                         <img src="img/gioithieu3.jpg" alt="Nhà hàng Phương Nam" class="w-full h-full object-cover">
                     </div>
@@ -127,7 +130,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-16 bg-red-50 p-8 rounded-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-16 bg-red-50 p-8 rounded-lg" id="aboutPhilosophy">
                     
                     <div class="order-2 md:order-1">
                         <h3 class="text-2xl font-bold mb-4">Triết Lý Ẩm Thực</h3>
@@ -140,12 +143,12 @@
                     </div>
                 </div>
 
-                <div class="text-center mb-12 bg-yellow-50 p-8 rounded-lg">
+                <div class="text-center mb-12 bg-yellow-50 p-8 rounded-lg" id="aboutTeamTitle">
                     <h3 class="text-2xl font-bold mb-4">Đội Ngũ Của Chúng Tôi</h3>
                     <p class="text-gray-600 mb-8">Đằng sau mỗi món ăn ngon là những con người tài năng và đam mê</p>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12" id="aboutTeam">
                     <!-- Chef 1 -->
                     <!-- Chef 1 -->
 <div class="bg-white rounded-lg overflow-hidden shadow-md text-center">
@@ -198,12 +201,12 @@
                 </div>
 
                 <!-- Restaurant Photos -->
-                <div class="text-center mb-12 bg-green-50 p-8 rounded-lg">
+                <div class="text-center mb-12 bg-green-50 p-8 rounded-lg" id="aboutSpaceTitle">
                     <h3 class="text-2xl font-bold mb-4">Không Gian Nhà Hàng</h3>
                     <p class="text-gray-600 mb-8">Khung cảnh ấm cúng và sang trọng tại Phương Nam</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-blue-50 p-8 rounded-lg">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-blue-50 p-8 rounded-lg" id="aboutSpace">
                    <!-- Không gian chung -->
 <div class="h-64 rounded-lg overflow-hidden shadow-md">
     <img src="img/Alo.jpg" alt="Không gian nhà hàng" class="w-full h-full object-cover">
@@ -712,7 +715,113 @@ suggestion.addEventListener('click', () => {
              } 
 
         }); 
-    </script>
+
+  // Tích hợp hiệu ứng GSAP cho các phần chính
+  document.addEventListener('DOMContentLoaded', function() {
+    // ...existing code...
+
+    if (window.gsap && window.ScrollTrigger) {
+      // Tiêu đề giới thiệu
+      gsap.from("#aboutTitle", {
+        opacity: 0,
+        y: 40,
+        duration: 1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: "#aboutTitle",
+          start: "top 85%",
+          toggleActions: "play none none reset"
+        }
+      });
+
+      // Hành trình
+      gsap.from("#aboutJourney", {
+        opacity: 0,
+        x: -80,
+        duration: 1.1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: "#aboutJourney",
+          start: "top 85%",
+          toggleActions: "play none none reset"
+        }
+      });
+
+      // Triết lý ẩm thực
+      gsap.from("#aboutPhilosophy", {
+        opacity: 0,
+        x: 80,
+        duration: 1.1,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: "#aboutPhilosophy",
+          start: "top 85%",
+          toggleActions: "play none none reset"
+        }
+      });
+
+      // Đội ngũ tiêu đề
+      gsap.from("#aboutTeamTitle", {
+        opacity: 0,
+        y: 40,
+        duration: 1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: "#aboutTeamTitle",
+          start: "top 90%",
+          toggleActions: "play none none reset"
+        }
+      });
+
+      // Đội ngũ từng thành viên
+      gsap.utils.toArray("#aboutTeam > div").forEach((item, i) => {
+        gsap.from(item, {
+          opacity: 0,
+          scale: 0.8,
+          duration: 0.8,
+          delay: i * 0.12,
+          ease: "back.out(1.7)",
+          scrollTrigger: {
+            trigger: item,
+            start: "top 95%",
+            toggleActions: "play none none reset"
+          }
+        });
+      });
+
+      // Không gian tiêu đề
+      gsap.from("#aboutSpaceTitle", {
+        opacity: 0,
+        y: 40,
+        duration: 1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: "#aboutSpaceTitle",
+          start: "top 90%",
+          toggleActions: "play none none reset"
+        }
+      });
+
+      // Ảnh không gian
+      gsap.utils.toArray("#aboutSpace > div").forEach((item, i) => {
+        gsap.from(item, {
+          opacity: 0,
+          y: 60,
+          duration: 0.9,
+          delay: i * 0.15,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: item,
+            start: "top 95%",
+            toggleActions: "play none none reset"
+          }
+        });
+      });
+    }
+  });
+
+  // ...existing code...
+</script>
 </body>
 </html>
 

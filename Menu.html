@@ -42,6 +42,9 @@
         /* Ensure main content is visible */
         main > section { display: block !important; }
     </style>
+    <!-- Thêm thư viện GSAP và ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 </head>
 <body class="bg-gray-100">
     <!-- Header -->
@@ -114,16 +117,16 @@
     <!-- Main Content -->
     <main>
         <!-- Menu Section Content -->
-        <section class="py-12">
+        <section class="py-12" id="menuSection">
             <div class="container mx-auto px-4">
-                <div class="text-center mb-12">
+                <div class="text-center mb-12" id="menuTitle">
                     <h2 class="text-3xl font-bold mb-2">Thực Đơn</h2>
                     <p class="text-gray-600">Khám phá hương vị Nam Bộ đích thực</p>
                 </div>
 
                 <!-- Menu Categories -->
               <!-- nút lọc -->
-<div class="flex flex-wrap justify-center gap-4 mb-8">
+<div class="flex flex-wrap justify-center gap-4 mb-8" id="menuFilter">
     <button class="menu-category-btn bg-yellow-600 text-white px-4 py-2 rounded-full" data-category="all">Tất Cả</button>
     <button class="menu-category-btn bg-gray-200 text-gray-800 px-4 py-2 rounded-full" data-category="appetizers">Khai Vị</button>
     <button class="menu-category-btn bg-gray-200 text-gray-800 px-4 py-2 rounded-full" data-category="maindishes">Món Chính</button>
@@ -544,6 +547,70 @@ suggestion.addEventListener('click', () => {
   inputField.value = text;
   inputField.focus();
 });
+
+// GSAP hiệu ứng động cho các phần chính của trang Menu
+document.addEventListener('DOMContentLoaded', function() {
+    // ...existing code...
+
+    if (window.gsap && window.ScrollTrigger) {
+        // Tiêu đề thực đơn
+        gsap.from("#menuTitle", {
+            opacity: 0,
+            y: 40,
+            duration: 0.5, // nhanh hơn
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: "#menuTitle",
+                start: "top 85%",
+                toggleActions: "play none none reset"
+            }
+        });
+
+        // Nút lọc
+        gsap.from("#menuFilter", {
+            opacity: 0,
+            y: 40,
+            duration: 0.5, // nhanh hơn
+            delay: 0.1,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: "#menuFilter",
+                start: "top 90%",
+                toggleActions: "play none none reset"
+            }
+        });
+
+        // Hàm chạy lại hiệu ứng cho các món ăn đang hiển thị
+        function animateVisibleMenuItems() {
+            // Xóa các hiệu ứng cũ
+            gsap.killTweensOf(".menu-item");
+            gsap.utils.toArray("#menuItemsContainer .menu-item:not(.hidden)").forEach((item, i) => {
+                gsap.fromTo(item,
+                    { opacity: 0, y: 60 },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.4,
+                        delay: i * 0.06,
+                        ease: "power2.out",
+                        overwrite: "auto"
+                    }
+                );
+            });
+        }
+
+        // Hiệu ứng ban đầu cho tất cả các món ăn
+        animateVisibleMenuItems();
+
+        // Khi lọc món ăn, chạy lại hiệu ứng cho các món đang hiển thị
+        document.querySelectorAll('.menu-category-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                setTimeout(animateVisibleMenuItems, 10); // Đợi DOM cập nhật class hidden
+            });
+        });
+    }
+});
+
 </script>
 
     <!-- Login Modal -->
