@@ -3,433 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kết quả tìm kiếm - Nhà Hàng Ẩm Thực Phương Nam</title> <!-- Specific Title -->
+    <title>Thực Đơn - Nhà Hàng Ẩm Thực Phương Nam</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #e53e3e;
-            --secondary-color: #f6ad55;
-            --accent-color: #718096;
-            --text-color: #2d3748;
-            --light-color: #f7fafc;
-        }
-        body { font-family: 'Roboto', sans-serif; color: var(--text-color); overflow-x: hidden; }
+        :root { --primary-color: #e53e3e; }
+        body { font-family: 'Roboto', sans-serif; }
         .font-cursive { font-family: 'Dancing Script', cursive; }
         .bg-primary { background-color: var(--primary-color); }
         .text-primary { color: var(--primary-color); }
-        .bg-secondary { background-color: var(--secondary-color); }
-        .text-secondary { color: var(--secondary-color); }
-        .menu-item:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
-        .banner { background-image: url('https://cdn.jsdelivr.net/gh/codediodeio/code-snippets/nba-trader/wood.jpg'); background-size: cover; background-position: center; position: relative; }
-        .banner::before { content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); }
-        .chatbot-container { position: fixed; bottom: 20px; right: 20px; z-index: 1000; }
-        .chatbot-button { width: 60px; height: 60px; border-radius: 50%; background-color: var(--primary-color); display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
-        .chatbot-panel { display: none; width: 350px; height: 450px; background-color: white; border-radius: 10px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); overflow: hidden; position: absolute; bottom: 70px; right: 0; }
-        .chatbot-header { padding: 15px; background-color: var(--primary-color); color: white; }
-        .chatbot-messages { height: 330px; padding: 15px; overflow-y: auto; }
-        .chatbot-input { display: flex; padding: 10px; border-top: 1px solid #e2e8f0; }
-        @media (max-width: 768px) { .chatbot-panel { width: 300px; right: -10px; } }
-        .ad-banner { background-color: #feebc8; overflow: hidden; position: relative; }
-        .scroll-container { display: flex; animation: scroll 20s linear infinite; }
-        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 2000; justify-content: center; align-items: center; }
-        .modal.active { display: flex; }
-        .nav-link { position: relative; padding-bottom: 5px; }
-        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: 0; left: 0; background-color: var(--primary-color); transition: width 0.3s ease; }
-        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
-        /* Ensure main content is visible */
-        main > section { display: block !important; }
+        .menu-item:hover { transform: translateY(-5px); }
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
     </style>
-    <!-- Thêm thư viện GSAP và ScrollTrigger -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 </head>
 <body class="bg-gray-100">
     <!-- Header -->
-    <header class="bg-white shadow-md">
-        <div class="container mx-auto px-4 py-2">
-             <div class="flex justify-between items-center">
-                  <div class="flex items-center">
-                       <a href="index.html" class="flex items-center text-decoration-none">
-                          <div class="text-2xl font-bold text-primary mr-2">
-                              <span class="font-cursive">Phương Nam</span>
-                          </div>
-                          <div class="text-sm text-gray-700">
-                              <div>Ẩm Thực</div>
-                          </div>
-                       </a>
-                  </div>
-                <!-- Desktop Navigation -->
-                <nav class="hidden md:flex space-x-8">
-                    <a href="Index.html" class="nav-link active" data-target="home">Trang Chủ</a>
-                    <a href="gioithieu.html" class="nav-link" data-target="about">Giới Thiệu</a>
-                    <a href="Menu.html" class="nav-link" data-target="menu">Thực Đơn</a>
-                    <a href="lienhe&datban.html" class="nav-link" data-target="reservation">Đặt Bàn & Liên Hệ</a>
-                </nav>
-                
-                <div class="flex items-center">
-                    <button id="loginBtn" class="hidden md:block bg-white text-primary px-4 py-2 rounded-lg border border-primary hover:bg-primary hover:text-white transition duration-300 mr-3">
-                        Đăng Nhập
-                    </button>
-                    <button id="cartBtn" class="relative">
-                        <i class="fas fa-shopping-cart text-gray-600 text-xl"></i>
-                        <span class="absolute -top-2 -right-2 bg-primary text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">0</span>
-                    </button>
-                    <button id="menuToggle" class="md:hidden ml-4 focus:outline-none">
-                        <i class="fas fa-bars text-2xl text-gray-600"></i>
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Mobile Navigation -->
-            <nav id="mobileNav" class="md:hidden hidden mt-4 pb-4">
-                <div class="flex flex-col space-y-3">
-                    <a href="Index.htmhtm" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-target="home">Trang Chủ</a>
-                    <a href="gioithieu.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-target="about">Giới Thiệu</a>
-                    <a href="Menu.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-target="menu">Thực Đơn</a>
-                    <a href="lienhe&datban.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-target="reservation">Đặt Bàn & Liên Hệ</a>
-                    <button id="mobileLoginBtn" class="text-left py-2 px-4 rounded hover:bg-gray-100">Đăng Nhập</button>
-                </div>
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-2 flex justify-between items-center">
+            <a href="Index.html" class="flex items-center">
+                <div class="text-2xl font-bold text-primary mr-2"><span class="font-cursive">Phương Nam</span></div>
+                <div class="text-sm text-gray-700">Ẩm Thực</div>
+            </a>
+            <nav class="hidden md:flex space-x-8">
+                <a href="Index.html" class="nav-link">Trang Chủ</a>
+                <a href="gioithieu.html" class="nav-link">Giới Thiệu</a>
+                <a href="Menu.html" class="nav-link active">Thực Đơn</a>
+                <a href="lienhe&datban.html" class="nav-link">Đặt Bàn & Liên Hệ</a>
             </nav>
+            <div class="flex items-center">
+                <button id="cartBtn" class="relative">
+                    <i class="fas fa-shopping-cart text-gray-600 text-xl"></i>
+                    <span class="absolute -top-2 -right-2 bg-primary text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">0</span>
+                </button>
+                <button id="menuToggle" class="md:hidden ml-4">
+                    <i class="fas fa-bars text-2xl text-gray-600"></i>
+                </button>
+            </div>
         </div>
+        <!-- Mobile Navigation -->
+        <nav id="mobileNav" class="md:hidden hidden mt-2 pb-4">
+            <div class="flex flex-col space-y-2 px-4">
+                <a href="Index.html" class="py-2 hover:bg-gray-100 rounded">Trang Chủ</a>
+                <a href="gioithieu.html" class="py-2 hover:bg-gray-100 rounded">Giới Thiệu</a>
+                <a href="Menu.html" class="py-2 bg-gray-100 rounded">Thực Đơn</a>
+                <a href="lienhe&datban.html" class="py-2 hover:bg-gray-100 rounded">Đặt Bàn & Liên Hệ</a>
+            </div>
+        </nav>
     </header>
 
-    <!-- Ad Banner -->
-    <div class="ad-banner py-2">
-        <div class="scroll-container">
-            <div class="flex space-x-8 items-center px-4">
-                 <span class="text-orange-700 font-semibold whitespace-nowrap">⭐ Khuyến mãi đặc biệt: Giảm 20% cho nhóm từ 4 người trở lên vào các ngày thứ 3-5 hàng tuần</span>
-                 <span class="text-orange-700 font-semibold whitespace-nowrap">🔥 Món mới: Cơm cháy sườn rim mật ong - Hương vị độc đáo chỉ có tại Phương Nam</span>
-                 <span class="text-orange-700 font-semibold whitespace-nowrap">🎁 Đặt bàn online - Tặng ngay món khai vị</span>
-                 <span class="text-orange-700 font-semibold whitespace-nowrap">📱 Tải app - Tích điểm thưởng và nhận ưu đãi độc quyền</span>
-            </div>
-            <div class="flex space-x-8 items-center px-4">
-                 <span class="text-orange-700 font-semibold whitespace-nowrap">⭐ Khuyến mãi đặc biệt: Giảm 20% cho nhóm từ 4 người trở lên vào các ngày thứ 3-5 hàng tuần</span>
-                 <span class="text-orange-700 font-semibold whitespace-nowrap">🔥 Món mới: Cơm cháy sườn rim mật ong - Hương vị độc đáo chỉ có tại Phương Nam</span>
-                 <span class="text-orange-700 font-semibold whitespace-nowrap">🎁 Đặt bàn online - Tặng ngay món khai vị</span>
-                 <span class="text-orange-700 font-semibold whitespace-nowrap">📱 Tải app - Tích điểm thưởng và nhận ưu đãi độc quyền</span>
-            </div>
-         </div>
-    </div>
-
-    <!-- Login Modal -->
-    <div class="modal" id="loginModal">
-        <div class="bg-white rounded-lg overflow-hidden shadow-xl w-full max-w-md">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-2xl font-bold">Đăng Nhập / Đăng Ký</h3>
-                    <button id="closeLoginModal" class="text-gray-400 hover:text-gray-500"><i class="fas fa-times"></i></button>
-                </div>
-                <div class="tabs mb-6">
-                    <div class="flex border-b">
-                        <button id="loginTab" class="py-2 px-4 text-primary border-b-2 border-primary focus:outline-none">Đăng Nhập</button>
-                        <button id="registerTab" class="py-2 px-4 text-gray-500 focus:outline-none">Đăng Ký</button>
-                    </div>
-                </div>
-                <form id="loginForm" class="tab-content">
-                    <div class="mb-4">
-                        <label for="loginEmail" class="block text-gray-700 mb-2">Email</label>
-                        <input type="email" id="loginEmail" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="example@email.com" required>
-                    </div>
-                    <div class="mb-6">
-                        <label for="loginPassword" class="block text-gray-700 mb-2">Mật khẩu</label>
-                        <input type="password" id="loginPassword" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
-                    </div>
-                    <div class="flex items-center justify-between mb-6">
-                        <div class="flex items-center">
-                            <input type="checkbox" id="remember" class="mr-2">
-                            <label for="remember" class="text-gray-700">Ghi nhớ đăng nhập</label>
-                        </div>
-                        <a href="#" class="text-primary hover:underline">Quên mật khẩu?</a>
-                    </div>
-                    <button type="submit" class="w-full bg-primary hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300">Đăng Nhập</button>
-                </form>
-                <form id="registerForm" class="tab-content hidden">
-                    <div class="grid grid-cols-1 gap-3">
-                        <div>
-                            <label for="registerName" class="block text-gray-700 mb-1">Họ và tên</label>
-                            <input type="text" id="registerName" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm" required>
-                        </div>
-                        <div>
-                            <label for="registerEmail" class="block text-gray-700 mb-1">Email</label>
-                            <input type="email" id="registerEmail" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm" required>
-                        </div>
-                        <div>
-                            <label for="registerPhone" class="block text-gray-700 mb-1">Số điện thoại</label>
-                            <input type="tel" id="registerPhone" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm" required>
-                        </div>
-                        <div>
-                            <label for="registerPassword" class="block text-gray-700 mb-1">Mật khẩu</label>
-                            <input type="password" id="registerPassword" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm" required>
-                        </div>
-                        <div>
-                            <label for="confirmPassword" class="block text-gray-700 mb-1">Xác nhận mật khẩu</label>
-                            <input type="password" id="confirmPassword" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm" required>
-                        </div>
-                        <div class="flex items-center">
-                            <input type="checkbox" id="terms" class="mr-2" required>
-                            <label for="terms" class="text-gray-700 text-sm">Tôi đồng ý với <a href="#" class="text-primary hover:underline">Điều khoản dịch vụ</a></label>
-                        </div>
-                        <button type="submit" class="w-full bg-primary hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 text-base">Đăng Ký</button>
-                    </div>
-                </form>
-                <div class="mt-6 text-center">
-                    <p class="text-gray-600">Hoặc đăng nhập với</p>
-                    <div class="flex justify-center space-x-4 mt-4">
-                        <button class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition duration-300"><i class="fab fa-facebook-f"></i></button>
-                        <button class="flex items-center justify-center w-12 h-12 rounded-full bg-red-500 text-white hover:bg-red-600 transition duration-300"><i class="fab fa-google"></i></button>
-                        <button class="flex items-center justify-center w-12 h-12 rounded-full bg-sky-500 text-white hover:bg-sky-600 transition duration-300"><i class="fab fa-twitter"></i></button>
-                    </div>
-                </div>
-            </div>
+    <main class="container mx-auto px-4 py-8">
+        <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Thực Đơn Của Chúng Tôi</h2>
+        <!-- Search Bar -->
+        <div class="w-full max-w-2xl mx-auto mb-10 flex items-center gap-4 bg-white p-4 rounded-lg shadow">
+            <input id="searchInput" type="text" placeholder="Tìm kiếm món ăn..." class="flex-grow px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+            <div class="text-gray-600 whitespace-nowrap">Tìm thấy: <span id="resultCount" class="font-semibold">0</span> món</div>
         </div>
-    </div>
-
-    <main class="container mx-auto px-4">
-        <h2 class="text-3xl font-bold mb-6 text-center">Thực Đơn Động (MySQL)</h2>
-        <div class="w-full max-w-2xl mx-auto mb-8 flex items-center gap-4">
-            <input id="searchInput" type="text" placeholder="Tìm kiếm món ăn..." 
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600">
-            <div class="text-gray-600">
-                Tìm thấy: <span id="resultCount">0</span> món
-            </div>
-        </div>
+        <!-- Menu Grid -->
         <div id="menuGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
-        <div id="noResult" class="text-center text-gray-500 mt-8 hidden">Không tìm thấy món ăn phù hợp.</div>
+        <!-- No Results -->
+        <div id="noResult" class="hidden text-center text-gray-500 mt-8">
+            <i class="fas fa-search text-4xl mb-4"></i>
+            <p>Không tìm thấy món ăn phù hợp.</p>
+        </div>
     </main>
+
     <script>
-        const API_URL = 'http://localhost:3001/api/mon_an';
+        const API_BASE = 'http://localhost:3001';
+        const API_URL = `${API_BASE}/api/mon_an`;
+         const PLACEHOLDER = `${API_BASE}/images/placeholder.png`;
 
-        // --- Đăng nhập/Đăng ký Modal Logic ---
-        document.addEventListener('DOMContentLoaded', () => {
-          // ...existing code...
+        // Cart (Assuming this logic is correct for your needs)
+        const cart = {
+            items: JSON.parse(localStorage.getItem('cart') || '[]'),
+            add(item, qty) {
+                // Find the item *as returned by the API* in the cart
+                const exist = this.items.find(i => i.id_mon === item.id_mon);
+                // Get the max quantity *from the API item*
+                const maxQty = item.so_luong;
+                
+                if (exist) {
+                    // Ensure we don't exceed max quantity
+                    exist.qty = Math.min(exist.qty + qty, maxQty);
+                } else {
+                    // Add the item *from the API* plus the desired quantity
+                    // Make sure qty doesn't exceed maxQty on initial add
+                    this.items.push({ ...item, qty: Math.min(qty, maxQty) });
+                }
+                this.save();
+                this.updateUI();
+            },
+            save() { localStorage.setItem('cart', JSON.stringify(this.items)); },
+            updateUI() {
+                const total = this.items.reduce((s, i) => s + i.qty, 0);
+                document.querySelector('#cartBtn span').textContent = total;
+            }
+        };
 
-          // Đăng nhập/Đăng ký modal
-          const loginBtn = document.getElementById('loginBtn');
-          const mobileLoginBtn = document.getElementById('mobileLoginBtn');
-          const loginModal = document.getElementById('loginModal');
-          const closeLoginModal = document.getElementById('closeLoginModal');
-          const loginTab = document.getElementById('loginTab');
-          const registerTab = document.getElementById('registerTab');
-          const loginForm = document.getElementById('loginForm');
-          const registerForm = document.getElementById('registerForm');
-
-          // Hiển thị modal
-          if (loginBtn) loginBtn.onclick = () => loginModal.classList.add('active');
-          if (mobileLoginBtn) mobileLoginBtn.onclick = () => {
-            loginModal.classList.add('active');
-            const mobileNav = document.getElementById('mobileNav');
-            if (mobileNav) mobileNav.classList.add('hidden');
-          };
-          if (closeLoginModal) closeLoginModal.onclick = () => loginModal.classList.remove('active');
-          // Đóng modal khi click ra ngoài
-          if (loginModal) loginModal.onclick = (e) => {
-            if (e.target === loginModal) loginModal.classList.remove('active');
-          };
-
-          // Chuyển tab
-          if (loginTab && registerTab && loginForm && registerForm) {
-            loginTab.onclick = () => {
-              loginTab.classList.add('text-primary', 'border-primary', 'border-b-2');
-              registerTab.classList.remove('text-primary', 'border-primary', 'border-b-2');
-              registerTab.classList.add('text-gray-500');
-              loginForm.classList.remove('hidden');
-              registerForm.classList.add('hidden');
-            };
-            registerTab.onclick = () => {
-              registerTab.classList.add('text-primary', 'border-primary', 'border-b-2');
-              loginTab.classList.remove('text-primary', 'border-primary', 'border-b-2');
-              loginTab.classList.add('text-gray-500');
-              registerForm.classList.remove('hidden');
-              loginForm.classList.add('hidden');
-            };
-          }
-
-          // Xử lý submit đăng nhập
-          if (loginForm) {
-            loginForm.onsubmit = function(e) {
-              e.preventDefault();
-              // Lấy dữ liệu
-              const email = document.getElementById('loginEmail').value.trim();
-              const password = document.getElementById('loginPassword').value;
-              if (!email || !password) {
-                alert('Vui lòng nhập đầy đủ thông tin!');
-                return;
-              }
-              // TODO: Gửi API đăng nhập thực tế ở đây
-              alert('Đăng nhập thành công!');
-              loginModal.classList.remove('active');
-            };
-          }
-
-          // Xử lý submit đăng ký
-          if (registerForm) {
-            registerForm.onsubmit = function(e) {
-              e.preventDefault();
-              const name = document.getElementById('registerName').value.trim();
-              const email = document.getElementById('registerEmail').value.trim();
-              const phone = document.getElementById('registerPhone').value.trim();
-              const pw1 = document.getElementById('registerPassword').value;
-              const pw2 = document.getElementById('confirmPassword').value;
-              const terms = document.getElementById('terms').checked;
-              if (!name || !email || !phone || !pw1 || !pw2) {
-                alert('Vui lòng nhập đầy đủ thông tin!');
-                return;
-              }
-              if (pw1 !== pw2) {
-                alert('Mật khẩu xác nhận không khớp!');
-                return;
-              }
-              if (!terms) {
-                alert('Bạn phải đồng ý với điều khoản dịch vụ!');
-                return;
-              }
-              // TODO: Gửi API đăng ký thực tế ở đây
-              alert('Đăng ký thành công!');
-              loginModal.classList.remove('active');
-            };
-          }
-
-          // ...existing code...
-          // (Cart logic, fetchMenu, renderMenu, loadMenu, ...)
-
-          // Đảm bảo cập nhật số lượng giỏ hàng khi trang load
-          updateCartCount();
-        });
-
-        // --- Cart Logic ---
-        function getCart() {
-          return JSON.parse(localStorage.getItem('cart') || '[]');
-        }
-        function setCart(cart) {
-          localStorage.setItem('cart', JSON.stringify(cart));
-          updateCartCount();
-        }
-        function updateCartCount() {
-          const cart = getCart();
-          const total = cart.reduce((sum, item) => sum + item.qty, 0);
-          const badge = document.querySelector('#cartBtn span');
-          if (badge) badge.textContent = total;
-        }
-        function addToCart(item) {
-          const cart = getCart();
-          const idx = cart.findIndex(i => i.id_mon === item.id_mon);
-          if (idx > -1) {
-            cart[idx].qty += 1;
-          } else {
-            cart.push({ ...item, qty: 1 });
-          }
-          setCart(cart);
-          alert(`Đã thêm "${item.ten_mon}" vào giỏ hàng!`);
-        }
-
+        // Fetch menu
         async function fetchMenu(search = '') {
-          const url = API_URL + (search ? `?search=${encodeURIComponent(search)}` : '');
-          console.log('✨ Fetching:', url);
-          const res = await fetch(url, { mode: 'cors' });
-          if (!res.ok) throw new Error(`Status ${res.status}`);
-          return await res.json();
+    const url = API_URL + (search ? `?search=${encodeURIComponent(search)}` : '');
+    const res = await fetch(url);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(`HTTP ${res.status}: ${res.statusText}. ${err.error||''}`);
+    }
+    return res.json();
+  }
+
+  // Render menu
+  function renderMenu(items = []) {
+    const grid = document.getElementById('menuGrid');
+    const noRes = document.getElementById('noResult');
+    document.getElementById('resultCount').textContent = items.length;
+
+    if (!items.length) {
+      noRes.classList.remove('hidden');
+      grid.innerHTML = '';
+      return;
+    }
+    noRes.classList.add('hidden');
+
+    grid.innerHTML = items.map(it => {
+      const out = !it.so_luong;
+      const stockCls = out ? 'bg-gray-500' : it.so_luong <= 5 ? 'bg-red-500 animate-pulse' : 'bg-green-500';
+
+      // 👉 DÙNG THẲNG URL từ API hoặc placeholder
+      const imgSrc = it.hinh_anh || PLACEHOLDER;
+
+      // Format giá
+      const price = Number(it.gia);
+      const formattedPrice = !isNaN(price) ? price.toLocaleString('vi-VN') + 'đ' : 'N/A';
+
+      // Escape JSON cho onclick (nếu còn dùng)
+      const itemJson = JSON.stringify(it).replace(/"/g, '&quot;');
+
+      return `
+      <div class="menu-item bg-white rounded-lg shadow-lg transition transform hover:-translate-y-1 flex flex-col ${out?'opacity-60':''}">
+        <div class="h-64 relative bg-gray-200">
+          <img src="${imgSrc}" alt="${it.ten_mon}" class="w-full h-full object-cover">
+          <div class="absolute top-2 right-2 ${stockCls} text-white px-2 py-1 rounded-full text-xs">
+            ${out ? 'Hết hàng' : `Còn ${it.so_luong} phần`}
+          </div>
+        </div>
+        <div class="p-5 flex flex-col flex-grow">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="font-bold text-xl">${it.ten_mon || 'Chưa đặt tên'}</h3>
+            <span class="text-primary font-bold text-lg">${formattedPrice}</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4 flex-grow">${it.mo_ta || 'Chưa có mô tả'}</p>
+          ${!out ? `
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <span class="text-sm text-gray-500">Số lượng:</span>
+            <div class="flex border rounded">
+              <button onclick="changeQty(${it.id_mon}, -1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-l">-</button>
+              <input id="qty-${it.id_mon}" type="number" min="1" max="${it.so_luong}" value="1" class="w-12 text-center border-y">
+              <button onclick="changeQty(${it.id_mon}, 1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-r">+</button>
+            </div>
+          </div>
+          <button onclick='cart.add(${itemJson}, parseInt(document.getElementById("qty-${it.id_mon}").value))' class="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-red-700 flex items-center justify-center gap-2">
+            <i class="fas fa-cart-plus"></i> Thêm vào giỏ
+          </button>
+          ` : '<p class="text-center text-gray-500 text-sm mt-auto pt-4">Món này đã hết hàng</p>'}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+        function changeQty(id, delta) {
+            const inp = document.getElementById(`qty-${id}`);
+            if (!inp) return;
+            const currentVal = parseInt(inp.value, 10);
+            const maxVal = parseInt(inp.max, 10);
+            let newVal = currentVal + delta;
+            // Clamp value between 1 and max
+            newVal = Math.max(1, Math.min(newVal, maxVal));
+            inp.value = newVal;
         }
 
-        function renderMenu(items) {
-          console.log('🖼️ Rendering', items.length, 'items');
-          document.getElementById('resultCount').textContent = items.length;
-          const grid = document.getElementById('menuGrid');
-          if (!items.length) {
-            document.getElementById('noResult').classList.remove('hidden');
-            grid.innerHTML = '';
-            return;
-          }
-          document.getElementById('noResult').classList.add('hidden');
-          grid.innerHTML = items.map(item => `
-            <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition">
-              <div class="h-64 relative bg-gray-100">
-                <img src="${item.hinh_anh || 'img/no-image.png'}"
-                     alt="${item.ten_mon}"
-                     class="w-full h-full object-cover opacity-0 transition-opacity duration-300"
-                     onload="this.classList.remove('opacity-0')"
-                     onerror="this.src='img/no-image.png'">
-                <div class="absolute top-2 right-2 ${
-                  item.so_luong <= 5 ? 'bg-red-500' : 'bg-green-500'
-                } text-white px-2 py-1 rounded-full text-xs font-semibold">
-                  Còn ${item.so_luong} phần
-                </div>
-              </div>
-              <div class="p-6">
-                <div class="flex justify-between items-start mb-2">
-                  <h3 class="font-bold text-xl">${item.ten_mon}</h3>
-                  <span class="text-red-600 font-bold">${Number(item.gia).toLocaleString()}đ</span>
-                </div>
-                <p class="text-gray-600 mb-4">${item.mo_ta}</p>
-                <div class="flex items-center gap-2 mb-2">
-                  <button type="button" onclick="changeQty(${item.id_mon}, -1, ${item.so_luong})" class="px-2 py-1 border rounded hover:bg-gray-100">-</button>
-                  <input id="qty-${item.id_mon}" type="number" min="1" max="${item.so_luong}" value="1" class="w-14 text-center border rounded" style="appearance: textfield;">
-                  <button type="button" onclick="changeQty(${item.id_mon}, 1, ${item.so_luong})" class="px-2 py-1 border rounded hover:bg-gray-100">+</button>
-                </div>
-                <button onclick='addToCartWithQty(${JSON.stringify(item)})'
-                  class="mt-2 w-full bg-primary text-white py-2 rounded-lg hover:bg-red-700 flex items-center justify-center gap-2">
-                  <i class="fas fa-cart-plus"></i> Thêm vào giỏ hàng
-                </button>
-              </div>
-            </div>
-          `).join('');
-        }
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mobile Menu Toggle
+            const menuToggle = document.getElementById('menuToggle');
+            const mobileNav = document.getElementById('mobileNav');
+            if(menuToggle && mobileNav) {
+                menuToggle.addEventListener('click', () => mobileNav.classList.toggle('hidden'));
+            } else {
+                console.error("Could not find menu toggle or mobile nav elements.");
+            }
+
+            // Search Input Handling
+            const searchInput = document.getElementById('searchInput');
+            if(searchInput) {
+                searchInput.value = new URLSearchParams(location.search).get('search') || '';
+                let searchTimeoutId;
+                searchInput.addEventListener('input', e => {
+                    clearTimeout(searchTimeoutId);
+                    const searchTerm = e.target.value.trim();
+                    searchTimeoutId = setTimeout(() => {
+                        loadMenu(searchTerm);
+                        // Update URL without reloading page
+                        const newUrl = searchTerm ? `${location.pathname}?search=${encodeURIComponent(searchTerm)}` : location.pathname;
+                        history.pushState({ search: searchTerm }, '', newUrl);
+                    }, 300); // Debounce search input
+                });
+            } else {
+                 console.error("Could not find search input element.");
+            }
+
+            // Initial Load
+            loadMenu(searchInput ? searchInput.value : '');
+            cart.updateUI(); // Update cart counter on load
+
+            // Handle browser back/forward navigation for search state
+             window.addEventListener('popstate', (event) => {
+                const searchTerm = event.state?.search || '';
+                if (searchInput) {
+                    searchInput.value = searchTerm;
+                }
+                loadMenu(searchTerm);
+            });
+        });
 
         async function loadMenu(search = '') {
-          document.getElementById('menuGrid').innerHTML = '<div class="col-span-3 text-center">Đang tải...</div>';
-          try {
-            const items = await fetchMenu(search);
-            renderMenu(items);
-          } catch (e) {
-            console.error('🚨 Fetch error:', e);
-            document.getElementById('menuGrid').innerHTML = `
-              <div class="col-span-3 text-center text-red-600">
-                <p>Không thể tải dữ liệu.</p>
-              </div>`;
-          }
+            const menuGrid = document.getElementById('menuGrid');
+            const noResultDiv = document.getElementById('noResult');
+            if (!menuGrid || !noResultDiv) {
+                console.error("Menu grid or no-result element not found!");
+                return;
+            }
+
+            // Show loading indicator
+            menuGrid.innerHTML = `
+                <div class="col-span-full text-center text-gray-500 py-10">
+                    <i class="fas fa-spinner fa-spin text-4xl mb-4"></i>
+                    <p>Đang tải thực đơn...</p>
+                </div>
+            `;
+            noResultDiv.classList.add('hidden'); // Hide no results during load
+
+            try {
+                const data = await fetchMenu(search);
+                renderMenu(data);
+            } catch (e) {
+                console.error("Error loading menu:", e);
+                document.getElementById('menuGrid').innerHTML = `
+                    <div class="col-span-full text-center text-gray-500 py-10">
+                        <i class="fas fa-exclamation-triangle text-4xl mb-4 text-red-500"></i>
+                        <p>Có lỗi khi tải thực đơn. ${e.message || e}</p>
+                        <button onclick="loadMenu('${search}')" class="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-red-700">
+                            <i class="fas fa-redo"></i> Thử lại
+                        </button>
+                    </div>
+                `;
+            }
         }
-
-        // Thay vì addToCart, dùng addToCartWithQty để lấy số lượng từ input
-        function addToCartWithQty(item) {
-          const qtyInput = document.getElementById(`qty-${item.id_mon}`);
-          let qty = parseInt(qtyInput.value, 10);
-          if (isNaN(qty) || qty < 1) qty = 1;
-          if (qty > item.so_luong) qty = item.so_luong;
-          const cart = getCart();
-          const idx = cart.findIndex(i => i.id_mon === item.id_mon);
-          if (idx > -1) {
-            cart[idx].qty += qty;
-            if (cart[idx].qty > item.so_luong) cart[idx].qty = item.so_luong;
-          } else {
-            cart.push({ ...item, qty });
-          }
-          setCart(cart);
-          alert(`Đã thêm ${qty} "${item.ten_mon}" vào giỏ hàng!`);
-        }
-
-        // Hàm tăng/giảm số lượng
-        function changeQty(id, delta, max) {
-          const input = document.getElementById(`qty-${id}`);
-          let val = parseInt(input.value, 10) || 1;
-          val = Math.max(1, Math.min(max, val + delta));
-          input.value = val;
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-          const term = new URLSearchParams(window.location.search).get('search') || '';
-          document.getElementById('searchInput').value = term;
-          loadMenu(term);
-          document.getElementById('searchInput')
-            .addEventListener('input', e => loadMenu(e.target.value.trim()));
-          updateCartCount();
-        });
-
-
-
-        
     </script>
-
-    </body>
-    </html>
+</body>
+</html>
