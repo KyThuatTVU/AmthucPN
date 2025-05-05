@@ -48,56 +48,57 @@
 </head>
 <body class="bg-gray-100">
     <!-- Header -->
-    <header class="bg-white shadow-md">
-        <div class="container mx-auto px-4 py-2">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center">
-                     <a href="index.html" class="flex items-center text-decoration-none">
-                        <div class="text-2xl font-bold text-primary mr-2">
-                            <span class="font-cursive">Phương Nam</span>
-                        </div>
-                        <div class="text-sm text-gray-700">
-                            <div>Ẩm Thực</div>
-                        </div>
-                     </a>
-                </div>
-
-                <!-- Desktop Navigation -->
-             <!-- Desktop Navigation -->
-             <nav class="hidden md:flex space-x-8">
-                <a href="Index.html" class="nav-link active" data-target="home">Trang Chủ</a>
-                <a href="gioithieu.html" class="nav-link" data-target="about">Giới Thiệu</a>
-                <a href="Menu.html" class="nav-link" data-target="menu">Thực Đơn</a>
-                <a href="lienhe&datban.html" class="nav-link" data-target="reservation">Đặt Bàn & Liên Hệ</a>
-            </nav>
-            
+   <!-- Header -->
+   <header class="bg-white shadow-md">
+    <div class="container mx-auto px-4 py-2">
+        <div class="flex justify-between items-center">
             <div class="flex items-center">
-                <button id="loginBtn" class="hidden md:block bg-white text-primary px-4 py-2 rounded-lg border border-primary hover:bg-primary hover:text-white transition duration-300 mr-3">
+                <div class="text-2xl font-bold text-primary mr-2">
+                    <span class="font-cursive">Phương Nam</span>
+                </div>
+                <div class="text-sm">
+                    <div>Ẩm Thực</div>
+                </div>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex space-x-8">
+                <a href="Index.html" class="nav-link active" data-page="Index">Trang Chủ</a>
+                <a href="gioithieu.html" class="nav-link" data-page="gioithieu">Giới Thiệu</a>
+                <a href="Menu.html" class="nav-link" data-page="Menu">Thực Đơn</a>
+                <a href="lienhe&datban.html" class="nav-link" data-page="lienhe&datban">Đặt Bàn & Liên Hệ</a>
+            </nav>
+
+            <div class="flex items-center">
+                <div id="userDisplay" class="hidden mr-4">
+                    <span class="text-gray-700 mr-2">Xin chào,</span>
+                    <span id="userName" class="font-semibold text-primary"></span>
+                </div>
+                <button id="loginBtn" class="md:block bg-white text-primary px-4 py-2 rounded-lg border border-primary hover:bg-primary hover:text-white transition duration-300 mr-3">
                     Đăng Nhập
                 </button>
-                <button id="cartBtn" class="relative">
-                    <i class="fas fa-shopping-cart text-gray-600 text-xl"></i>
-                    <span class="absolute -top-2 -right-2 bg-primary text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">0</span>
+                <button id="logoutBtn" class="hidden bg-white text-primary px-4 py-2 rounded-lg border border-primary hover:bg-primary hover:text-white transition duration-300 mr-3">
+                    Đăng Xuất
                 </button>
+                
                 <button id="menuToggle" class="md:hidden ml-4 focus:outline-none">
                     <i class="fas fa-bars text-2xl text-gray-600"></i>
                 </button>
             </div>
         </div>
-        
+
         <!-- Mobile Navigation -->
         <nav id="mobileNav" class="md:hidden hidden mt-4 pb-4">
             <div class="flex flex-col space-y-3">
-                <a href="Index.htmhtm" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-target="home">Trang Chủ</a>
-                <a href="gioithieu.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-target="about">Giới Thiệu</a>
-                <a href="Menu.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-target="menu">Thực Đơn</a>
-                <a href="lienhe&datban.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-target="reservation">Đặt Bàn & Liên Hệ</a>
+                <a href="Index.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-page="Index">Trang Chủ</a>
+                <a href="gioithieu.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-page="gioithieu">Giới Thiệu</a>
+                <a href="Menu.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-page="Menu">Thực Đơn</a>
+                <a href="lienhe&datban.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-page="lienhe&datban">Đặt Bàn & Liên Hệ</a>
                 <button id="mobileLoginBtn" class="text-left py-2 px-4 rounded hover:bg-gray-100">Đăng Nhập</button>
             </div>
         </nav>
-        </div>
-    </header>
-
+    </div>
+</header>
     <!-- Ad Banner -->
     <div class="ad-banner py-2">
         <div class="scroll-container">
@@ -330,96 +331,76 @@ class="fixed bottom-24 right-6 z-50 w-80 bg-white rounded-2xl shadow-2xl overflo
 </div>
 
 <script>
-const btnOpen    = document.getElementById('chatbotButton');
-const btnClose   = document.getElementById('closeChatbot');
-const panel      = document.getElementById('chatbotPanel');
-const suggestion = document.getElementById('suggestionBox').firstElementChild;
-const inputField = document.getElementById('chatbotInput');
-
-function toggleChat() {
-  panel.classList.toggle('opacity-0');
-  panel.classList.toggle('scale-90');
-  panel.classList.toggle('pointer-events-none');
-  panel.classList.toggle('opacity-100');
-  panel.classList.toggle('scale-100');
-}
-
-btnOpen.addEventListener('click', toggleChat);
-btnClose.addEventListener('click', toggleChat);
-
-suggestion.addEventListener('click', () => {
-  const text = suggestion.textContent.trim();
-  inputField.value = text;
-  inputField.focus();
-});
-
-// GSAP hiệu ứng động cho các phần chính của trang Đặt bàn & Liên hệ
 document.addEventListener('DOMContentLoaded', function() {
     // ...existing code...
 
-    if (window.gsap && window.ScrollTrigger) {
-        // Tiêu đề đặt bàn
-        gsap.from("#reservationTitle", {
-            opacity: 0,
-            y: 40,
-            duration: 1,
-            ease: "power2.out",
-            scrollTrigger: {
-                trigger: "#reservationTitle",
-                start: "top 85%",
-                toggleActions: "play none none reset"
-            }
-        });
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            console.log('Login data:', { email, password }); // Log data
 
-        // Lưới đặt bàn & liên hệ
-        gsap.from("#reservationGrid > div", {
-            opacity: 0,
-            y: 60,
-            duration: 1,
-            stagger: 0.2,
-            ease: "power2.out",
-            scrollTrigger: {
-                trigger: "#reservationGrid",
-                start: "top 90%",
-                toggleActions: "play none none reset"
-            }
-        });
-
-        // Thông tin liên hệ (các khối)
-        gsap.utils.toArray("#reservationGrid > div > .space-y-4 > div").forEach((item, i) => {
-            gsap.from(item, {
-                opacity: 0,
-                x: 60,
-                duration: 0.8,
-                delay: i * 0.1,
-                ease: "power2.out",
-                scrollTrigger: {
-                    trigger: item,
-                    start: "top 95%",
-                    toggleActions: "play none none reset"
+            try {
+                const res = await fetch('http://localhost:3001/api/khachhang/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert('Đăng nhập thành công!');
+                    loginModal.classList.remove('active');
+                    // Lưu thông tin nếu cần: localStorage.setItem('khach_hang', JSON.stringify(data.khach_hang));
+                } else {
+                    // Hiển thị lỗi chi tiết từ server
+                    console.error('Login error:', data); // Log error
+                    alert(data.error || 'Đăng nhập thất bại!');
                 }
-            });
-        });
-
-        // Bản đồ
-        gsap.from("#reservationGrid > div > .bg-gradient-to-r.from-blue-100", {
-            opacity: 0,
-            y: 60,
-            duration: 1,
-            ease: "power2.out",
-            scrollTrigger: {
-                trigger: "#reservationGrid > div > .bg-gradient-to-r.from-blue-100",
-                start: "top 95%",
-                toggleActions: "play none none reset"
+            } catch (err) {
+                alert('Lỗi kết nối máy chủ!');
             }
         });
     }
-});
+    if (registerForm) {
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const full_name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const phone = document.getElementById('registerPhone').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            if (password !== confirmPassword) {
+                alert('Mật khẩu xác nhận không khớp!');
+                return;
+            }
+            console.log('Register data:', { full_name, email, phone, password }); // Log data
+            try {
+                const res = await fetch('http://localhost:3001/api/khachhang/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ full_name, email, phone, password })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert('Đăng ký thành công!');
+                    loginModal.classList.remove('active');
+                } else {
+                    console.error('Register error:', data); // Log error
+                    alert(data.error || 'Đăng ký thất bại!');
+                }
+            } catch (err) {
+                alert('Lỗi kết nối máy chủ!');
+            }
+        });
+    }
 
+    // ...existing code...
+});
 </script>
 
    <!-- Login Modal -->
-   <div class="modal" id="loginModal">
+  <div class="modal" id="loginModal">
     <div class="bg-white rounded-lg overflow-hidden shadow-xl w-full max-w-md">
         <div class="p-6">
             <div class="flex justify-between items-center mb-6">
@@ -490,10 +471,9 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 </div>
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+
+
     <script>
-        
-       
         const GROQ_API_KEY = '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'; 
         const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions'; 
         const GROQ_MODEL_NAME = 'meta-llama/llama-4-maverick-17b-128e-instruct'; 
@@ -535,8 +515,68 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                 }
 
-                if (loginForm) { loginForm.addEventListener('submit', (e) => { e.preventDefault(); alert('Đăng nhập thành công!'); loginModal.classList.remove('active'); }); }
-                if (registerForm) { registerForm.addEventListener('submit', (e) => { e.preventDefault(); /* Add pw check if needed */ alert('Đăng ký thành công!'); loginModal.classList.remove('active'); }); }
+                if (loginForm) {
+                    // Check login status on page load
+                    const checkLoginStatus = () => {
+                        const user = JSON.parse(localStorage.getItem('user'));
+                        if (user) {
+                            document.getElementById('userName').textContent = user.full_name;
+                            document.getElementById('userDisplay').classList.remove('hidden');
+                            document.getElementById('loginBtn').style.display = 'none'; // Changed to display none
+                            document.getElementById('logoutBtn').style.display = 'block'; // Show logout button
+                            document.getElementById('mobileLoginBtn').style.display = 'none'; // Hide mobile login
+                        } else {
+                            document.getElementById('userDisplay').classList.add('hidden');
+                            document.getElementById('loginBtn').style.display = 'block'; // Show login button
+                            document.getElementById('logoutBtn').style.display = 'none'; // Hide logout button
+                            document.getElementById('mobileLoginBtn').style.display = 'block'; // Show mobile login
+                        }
+                    };
+
+                    // Check on page load
+                    window.addEventListener('DOMContentLoaded', checkLoginStatus);
+
+                    loginForm.addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        const email = document.getElementById('loginEmail').value.trim();
+                        const password = document.getElementById('loginPassword').value;
+
+                        try {
+                            const res = await fetch('http://localhost:3001/api/khachhang/login', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ email, password })
+                            });
+                            const data = await res.json();
+                            if (res.ok) {
+                                localStorage.setItem('user', JSON.stringify(data.khach_hang));
+                                
+
+                                // Update UI immediately after successful login
+                                document.getElementById('loginBtn').style.display = 'none';
+                                document.getElementById('mobileLoginBtn').style.display = 'none';
+                                document.getElementById('logoutBtn').style.display = 'block';
+                                document.getElementById('userDisplay').classList.remove('hidden');
+                                document.getElementById('userName').textContent = data.khach_hang.full_name;
+                                
+                                loginModal.classList.remove('active');
+                                alert('Đăng nhập thành công!');
+                            } else {
+                                console.error('Login error:', data);
+                                alert(data.error || 'Đăng nhập thất bại!');
+                            }
+                        } catch (err) {
+                            alert('Lỗi kết nối máy chủ!');
+                        }
+                    });
+
+                    // Logout handler
+                    document.getElementById('logoutBtn').addEventListener('click', () => {
+                        localStorage.removeItem('user');
+                        checkLoginStatus(); // Update UI after logout
+                        alert('Đã đăng xuất thành công!');
+                    });
+                }
             }
 
             const addToCartButtons = document.querySelectorAll('.add-to-cart');
@@ -550,12 +590,12 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-            const pageName = currentPage.replace('.html', '').toLowerCase(); 
+            const pageName = currentPage.replace('.html', '').toLowerCase();
             const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
             navLinks.forEach(link => {
                 const linkHref = link.getAttribute('href');
                 const linkPage = linkHref ? linkHref.split('/').pop().replace('.html', '').toLowerCase() : '';
-                const isIndex = (pageName === 'index' || pageName === ''); 
+                const isIndex = (pageName === 'index' || pageName === '');
                 const linkIsIndex = (linkPage === 'index' || linkPage === '');
 
                 if ((isIndex && linkIsIndex) || (pageName !== '' && pageName !== 'index' && pageName === linkPage)) {
@@ -579,7 +619,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             function autoResizeTextarea() {
-                this.style.height = 'auto'; 
+                this.style.height = 'auto';
                 this.style.height = (this.scrollHeight) + 'px';
             }
 
@@ -592,23 +632,22 @@ document.addEventListener('DOMContentLoaded', function() {
             const sendMessage = document.getElementById('sendMessage');
             const chatbotMessages = document.getElementById('chatbotMessages');
 
-            // Chat history for API (Groq expects { role: 'user'/'assistant', content: '...' })
+            
             let chatHistory = [];
 
-            let currentBotMessageElement = null; // To update streaming message
-            let currentBotFullText = ''; // Accumulates text for the current streaming message
+            let currentBotMessageElement = null;
+            let currentBotFullText = '';
 
 
             if (chatbotButton && chatbotPanel && closeChatbot && chatbotInput && sendMessage && chatbotMessages) {
-                 // Initial bot message handler (already in HTML, just ensure history matches if needed)
-                 // For simplicity, we'll let the first message be hardcoded in HTML and start history after that.
-                 // If you wanted the first message to also come from the bot via API, you'd call handleSendMessage with a greeting prompt on load.
+                 
+
 
                 chatbotButton.addEventListener('click', () => {
                     chatbotPanel.style.display = chatbotPanel.style.display === 'block' ? 'none' : 'block';
                     if (chatbotPanel.style.display === 'block') {
-                         chatbotMessages.scrollTop = chatbotMessages.scrollHeight; // Scroll down when opened
-                         chatbotInput.focus(); // Focus input on open
+                         chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                         chatbotInput.focus();
                     }
                 });
 
@@ -618,15 +657,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 sendMessage.addEventListener('click', handleSendMessage);
 
-                // Allow sending with Enter, but allow Shift+Enter for newline
+
                 chatbotInput.addEventListener('keypress', (e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault(); // Prevent default form submission/newline
+                        e.preventDefault();
                         handleSendMessage();
                     }
                 });
 
-                // --- Function to add a message bubble to the chat UI ---
+              
+
                 function addMessageToChat(role, text, isStreaming = false) {
                     const messageDiv = document.createElement('div');
                     messageDiv.classList.add('mb-4');
@@ -660,8 +700,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // --- Function to update the streaming bot message ---
                 function updateStreamingMessage(chunk) {
                     if (currentBotMessageElement) {
-                         if (currentBotFullText === '') { 
-                              currentBotMessageElement.querySelector('p').innerHTML = ''; 
+                         if (currentBotFullText === '') {
+                              currentBotMessageElement.querySelector('p').innerHTML = '';
                          }
                          currentBotFullText += chunk;
                         
@@ -675,6 +715,7 @@ document.addEventListener('DOMContentLoaded', function() {
                      if (currentBotMessageElement) {
                          currentBotMessageElement.classList.remove('streaming');
                          
+
                          if (currentBotFullText.trim() !== '') {
                               chatHistory.push({ role: 'assistant', content: currentBotFullText });
                          }
@@ -695,13 +736,14 @@ document.addEventListener('DOMContentLoaded', function() {
                      if (message === '') return;
 
                    
+
                      addMessageToChat('user', message);
 
                      chatHistory.push({ role: 'user', content: message });
 
-                     chatbotInput.value = ''; 
-                     autoResizeTextarea.call(chatbotInput); 
-                     sendMessage.disabled = true; 
+                     chatbotInput.value = '';
+                     autoResizeTextarea.call(chatbotInput);
+                     sendMessage.disabled = true;
                      chatbotInput.disabled = true;
 
                     
@@ -716,18 +758,19 @@ document.addEventListener('DOMContentLoaded', function() {
                                  'Authorization': `Bearer ${GROQ_API_KEY}` 
                              },
                              body: JSON.stringify({
-                                 messages: chatHistory, 
+                                 messages: chatHistory,
                                  model: GROQ_MODEL_NAME,
                                  temperature: 1,
                                  max_completion_tokens: 1024,
                                  top_p: 1,
-                                 stream: true, 
+                                 stream: true,
                                  stop: null
                              })
                          });
 
                          if (!response.ok) {
                            
+
                              const errorBody = await response.text().catch(() => `Status: ${response.status}`);
                              console.error('API Error Response:', errorBody);
                              throw new Error(`API request failed: ${response.status} ${response.statusText || ''}. Body: ${errorBody.substring(0, 200)}...`); // Limit body log
@@ -738,6 +781,7 @@ document.addEventListener('DOMContentLoaded', function() {
                          }
 
                        
+
                          const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
                          let buffer = '';
 
@@ -745,7 +789,7 @@ document.addEventListener('DOMContentLoaded', function() {
                              const { value, done } = await reader.read();
                              if (done) {
                                  console.log('Stream finished.');
-                                 break; 
+                                 break;
                              }
 
                              buffer += value;
@@ -756,7 +800,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                  buffer = buffer.substring(boundary + 2); 
 
                                  if (line.startsWith('data:')) {
-                                     const jsonData = line.substring(5).trim(); 
+                                     const jsonData = line.substring(5).trim();
                                      if (jsonData === '[DONE]') {
                                        
                                      } else {
@@ -768,9 +812,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                                  updateStreamingMessage(chunkContent);
                                              }
                                             
+
                                          } catch (parseError) {
                                              console.error('Lỗi phân tích JSON từ stream:', parseError, 'Data:', jsonData);
                                             
+
                                          }
                                      }
                                  }
@@ -778,6 +824,7 @@ document.addEventListener('DOMContentLoaded', function() {
                              }
                          }
                          
+
                           if (buffer.length > 0) {
                               console.warn('Remaining buffer after stream end:', buffer);
                                
@@ -796,7 +843,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
                      } finally {
                        
-                         finalizeStreamingMessage(); 
+
+                         finalizeStreamingMessage();
                          sendMessage.disabled = false;
                          chatbotInput.disabled = false;
                          chatbotInput.focus(); // Focus back on input
@@ -804,13 +852,12 @@ document.addEventListener('DOMContentLoaded', function() {
                      }
                  }
 
-             } 
-
-        }); 
-    </script>
+             }
+            });
+        
+    
+             </script>
 
 </body>
 </html>
-```
-</copilot-edited-file>
 

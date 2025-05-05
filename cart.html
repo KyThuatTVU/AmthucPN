@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ Hàng - Nhà Hàng Ẩm Thực Phương Nam</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #e53e3e;
+            --secondary-color: #f6ad55;
+            --accent-color: #718096;
+            --text-color: #2d3748;
+            --light-color: #f7fafc;
+        }
+        body { font-family: 'Roboto', sans-serif; color: var(--text-color); }
+        .font-cursive { font-family: 'Dancing Script', cursive; }
+        .bg-primary { background-color: var(--primary-color); }
+        .text-primary { color: var(--primary-color); }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Reuse header from Menu.html -->
+    <header class="bg-white shadow-md">
+        <!-- ...existing header code... -->
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-3xl font-bold mb-8">Giỏ Hàng</h1>
+
+            <!-- Cart Items Container -->
+            <div id="cartItemsContainer" class="space-y-4 mb-8">
+                <!-- Cart items will be dynamically added here -->
+            </div>
+
+            <!-- Cart Summary -->
+            <div id="cartSummary" class="bg-white rounded-lg shadow-md p-6 mt-6">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-lg font-semibold">Tổng cộng:</span>
+                    <span id="cartTotal" class="text-2xl font-bold text-primary">0đ</span>
+                </div>
+                <div class="flex justify-between items-center space-x-4">
+                    <button onclick="clearCart()" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-300">
+                        Xóa giỏ hàng
+                    </button>
+                    <button onclick="proceedToCheckout()" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-red-700 transition duration-300">
+                        Thanh toán
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Reuse footer from Menu.html -->
+    <footer class="bg-gray-800 text-white mt-12">
+        <!-- ...existing footer code... -->
+    </footer>
+
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication
+            if (!checkAuth()) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            loadCartItems();
+        });
+
+        function loadCartItems() {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const userId = getCurrentUser().id;
+            const userItems = cartItems.filter(item => item.userId === userId);
+            
+            const container = document.getElementById('cartItemsContainer');
+            container.innerHTML = '';
+
+            if (userItems.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                        <p class="text-gray-500 mb-4">Giỏ hàng của bạn đang trống</p>
+                        <a href="Menu.html" class="text-primary hover:underline">Tiếp tục mua sắm</a>
+                    </div>
+                `;
+                updateCartSummary();
+                return;
+            }
+
+            userItems.forEach(item => {
+                const itemElement = createCartItemElement(item);
+                container.appendChild(itemElement);
+            });
+
+            updateCartSummary();
+        }
+
+        function createCartItemElement(item) {
+            const div = document.createElement('div');
+            div.className = 'bg-white rounded-lg shadow-md p-4';
+            div.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <img src="${item.image}" alt="${item.name}" class="w-24 h-24 object-cover rounded">
+                        <div>
+                            <h3 class="font-semibold text-lg">${item.name}</h3>
+                            <p class="text-gray-600">${item.price.toLocaleString()}đ</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center border rounded">
+                            <button onclick="updateQuantity('${item.id}', -1)" class="px-3 py-1 hover:bg-gray-100">-</button>
+                            <span class="px-3">${item.quantity}</span>
+                            <button onclick="updateQuantity('${item.id}', 1)" class="px-3 py-1 hover:bg-gray-100">+</button>
+                        </div>
+                        <button onclick="removeItem('${item.id}')" class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+
+        function updateQuantity(itemId, change) {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const userId = getCurrentUser().id;
+            const itemIndex = cartItems.findIndex(item => item.id === itemId && item.userId === userId);
+
+            if (itemIndex !== -1) {
+                const newQuantity = cartItems[itemIndex].quantity + change;
+                if (newQuantity > 0) {
+                    cartItems[itemIndex].quantity = newQuantity;
+                    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+                    loadCartItems();
+                }
+            }
+        }
+
+        function removeItem(itemId) {
+            if (!confirm('Bạn có chắc muốn xóa món này?')) return;
+
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const userId = getCurrentUser().id;
+            const updatedItems = cartItems.filter(item => !(item.id === itemId && item.userId === userId));
+            localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+            loadCartItems();
+            updateHeaderCartCount();
+        }
+
+        function clearCart() {
+            if (!confirm('Bạn có chắc muốn xóa tất cả món trong giỏ hàng?')) return;
+
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const userId = getCurrentUser().id;
+            const updatedItems = cartItems.filter(item => item.userId !== userId);
+            localStorage.setItem('cartItems', JSON.stringify(updatedItems));
+            loadCartItems();
+            updateHeaderCartCount();
+        }
+
+        function updateCartSummary() {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const userId = getCurrentUser().id;
+            const total = cartItems
+                .filter(item => item.userId === userId)
+                .reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            document.getElementById('cartTotal').textContent = `${total.toLocaleString()}đ`;
+        }
+
+        function updateHeaderCartCount() {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const userId = getCurrentUser().id;
+            const count = cartItems.filter(item => item.userId === userId).length;
+            const cartCounter = document.querySelector('#cartBtn span');
+            if (cartCounter) {
+                cartCounter.textContent = count;
+            }
+        }
+
+        function proceedToCheckout() {
+            // You can implement checkout functionality here
+            alert('Chức năng thanh toán đang được phát triển!');
+        }
+    </script>
+</body>
+</html>
