@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh Toán - Nhà Hàng Ẩm Thực Phương Nam</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #e53e3e;
+        }
+        .bg-primary { background-color: var(--primary-color); }
+        .text-primary { color: var(--primary-color); }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+            <div class="text-center mb-6">
+                <a href="Menu.html" class="text-primary hover:underline"><i class="fas fa-arrow-left"></i> Quay lại Thực đơn</a>
+                <h1 class="text-3xl font-bold text-gray-800 mt-2">Thanh Toán Đơn Hàng</h1>
+            </div>
+            
+            <div id="userInfo" class="mb-6 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                <h2 class="text-xl font-semibold text-indigo-700 mb-2">Thông Tin Khách Hàng</h2>
+                <p><strong>Tên:</strong> <span id="customerName">Đang tải...</span></p>
+                <p><strong>Email:</strong> <span id="customerEmail">Đang tải...</span></p>
+                <p><strong>SĐT:</strong> <span id="customerPhone">Đang tải...</span></p>
+            </div>
+
+            <form id="paymentForm" class="space-y-6">
+                
+                 <!-- Thông tin đơn hàng -->
+                 <div class="border-b pb-4">
+                    <h2 class="text-xl font-semibold mb-4 text-gray-700">Chi Tiết Đơn Hàng</h2>
+                    <div id="orderItemsContainer" class="space-y-3 max-h-60 overflow-y-auto pr-2">
+                        <p id="emptyCartMsg" class="text-gray-500">Giỏ hàng của bạn đang trống.</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t">
+                        <p class="text-xl font-bold text-right">Tổng cộng: <span id="totalAmount" class="text-primary">0đ</span></p>
+                    </div>
+                </div>
+
+                <!-- Loại đơn hàng -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-2 text-gray-700">Phương Thức Nhận Hàng</h2>
+                    <div class="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0">
+                        <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer has-[:checked]:bg-red-50 has-[:checked]:border-primary">
+                            <input type="radio" name="orderType" value="tai_cho" checked class="form-radio h-5 w-5 text-primary focus:ring-primary">
+                            <span class="ml-3 text-gray-700"> <i class="fas fa-store mr-2"></i>Ăn tại nhà hàng</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer has-[:checked]:bg-red-50 has-[:checked]:border-primary">
+                            <input type="radio" name="orderType" value="giao_hang" class="form-radio h-5 w-5 text-primary focus:ring-primary">
+                            <span class="ml-3 text-gray-700"><i class="fas fa-shipping-fast mr-2"></i>Giao hàng tận nơi</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Địa chỉ giao hàng (ẩn mặc định) -->
+                <div id="deliveryAddressSection" class="hidden transition-all duration-300 ease-in-out">
+                    <h2 class="text-xl font-semibold mb-2 text-gray-700">Địa Chỉ Giao Hàng</h2>
+                    <textarea name="address" id="deliveryAddressInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" rows="3" placeholder="Nhập số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố..."></textarea>
+                    <p id="addressError" class="text-red-500 text-sm mt-1 hidden">Vui lòng nhập địa chỉ giao hàng.</p>
+                </div>
+                
+                <!-- Ghi chú -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-2 text-gray-700">Ghi Chú Đơn Hàng (nếu có)</h2>
+                    <textarea name="notes" id="orderNotesInput" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" rows="2" placeholder="Ví dụ: không cay, thêm rau,..."></textarea>
+                </div>
+
+
+                <!-- Nút thanh toán -->
+                <button type="submit" id="submitOrderBtn" class="w-full bg-primary text-white font-semibold py-3 px-4 rounded-lg hover:bg-red-700 transition duration-300 flex items-center justify-center text-lg">
+                    <i class="fas fa-check-circle mr-2"></i> Xác Nhận và Đặt Hàng
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Khai báo biến ở phạm vi rộng hơn để processOrder có thể truy cập
+        let user;
+        let userCartItems = [];
+        let currentTotal = 0;
+        let deliveryAddressInput; // Thêm biến này
+        let orderNotesInput; // Thêm biến này
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            user = JSON.parse(localStorage.getItem('user')); // Gán vào biến toàn cục
+            if (!user || !user.id) {
+                alert('Vui lòng đăng nhập để tiếp tục thanh toán.');
+                window.location.href = 'Menu.html';
+                return;
+            }
+
+            console.log('THÔNG TIN USER TỪ LOCALSTORAGE KHI LOAD TRANG:', JSON.stringify(user, null, 2));
+
+
+            document.getElementById('customerName').textContent = user.full_name || 'N/A';
+            document.getElementById('customerEmail').textContent = user.email || 'N/A';
+            document.getElementById('customerPhone').textContent = user.phone || 'N/A';
+
+            const cartItemsRaw = JSON.parse(localStorage.getItem('cartItems')) || [];
+            userCartItems = cartItemsRaw.filter(item => item.userId === user.id && item.id_mon != null); // Gán vào biến toàn cục
+            
+            const orderItemsContainer = document.getElementById('orderItemsContainer');
+            const totalAmountEl = document.getElementById('totalAmount');
+            const emptyCartMsgEl = document.getElementById('emptyCartMsg');
+            // currentTotal đã được khai báo ở phạm vi rộng hơn
+
+            deliveryAddressInput = document.getElementById('deliveryAddressInput'); // Gán vào biến toàn cục
+            orderNotesInput = document.getElementById('orderNotesInput'); // Gán vào biến toàn cục
+
+
+            if (userCartItems.length === 0) {
+                emptyCartMsgEl.classList.remove('hidden');
+                orderItemsContainer.innerHTML = '';
+                document.getElementById('submitOrderBtn').disabled = true;
+                document.getElementById('submitOrderBtn').classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                emptyCartMsgEl.classList.add('hidden');
+                orderItemsContainer.innerHTML = '';
+                currentTotal = 0; // Reset currentTotal trước khi tính lại
+                userCartItems.forEach(item => {
+                    const itemSubtotal = item.price * item.quantity;
+                    currentTotal += itemSubtotal;
+                    
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0';
+                    itemDiv.innerHTML = `
+                        <div class="flex items-center">
+                            <img src="${item.image || 'img/no-image.png'}" alt="${item.name}" class="w-12 h-12 object-cover rounded mr-3" onerror="this.src='img/no-image.png'">
+                            <div>
+                                <p class="font-semibold text-gray-800">${item.name}</p>
+                                <p class="text-sm text-gray-600">SL: ${item.quantity} x ${item.price.toLocaleString('vi-VN')}đ</p>
+                            </div>
+                        </div>
+                        <div class="font-semibold text-gray-700">${itemSubtotal.toLocaleString('vi-VN')}đ</div>
+                    `;
+                    orderItemsContainer.appendChild(itemDiv);
+                });
+            }
+
+            totalAmountEl.textContent = `${currentTotal.toLocaleString('vi-VN')}đ`;
+
+            const orderTypeRadios = document.querySelectorAll('input[name="orderType"]');
+            const deliveryAddressSection = document.getElementById('deliveryAddressSection');
+            // const deliveryAddressInput đã được khai báo và gán
+            const addressError = document.getElementById('addressError');
+
+            orderTypeRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'giao_hang') {
+                        deliveryAddressSection.classList.remove('hidden');
+                        if(deliveryAddressInput) deliveryAddressInput.required = true;
+                    } else {
+                        deliveryAddressSection.classList.add('hidden');
+                        if(deliveryAddressInput) deliveryAddressInput.required = false;
+                        if(addressError) addressError.classList.add('hidden');
+                    }
+                });
+            });
+
+            const paymentForm = document.getElementById('paymentForm');
+            if(paymentForm) {
+                paymentForm.addEventListener('submit', function(e) { // Không cần async ở đây
+                    e.preventDefault();
+                    const submitButton = document.getElementById('submitOrderBtn');
+                    
+                    // Logic validation địa chỉ nếu là giao hàng
+                    const orderType = document.querySelector('input[name="orderType"]:checked').value;
+                    if (orderType === 'giao_hang') {
+                        const dia_chi_value = deliveryAddressInput ? deliveryAddressInput.value.trim() : '';
+                        if (!dia_chi_value) {
+                            if(addressError) addressError.classList.remove('hidden');
+                            if(deliveryAddressInput) deliveryAddressInput.focus();
+                            return; // Dừng lại nếu địa chỉ rỗng
+                        }
+                        if(addressError) addressError.classList.add('hidden');
+                    }
+
+                    // Hiện payment modal
+                    const paymentModal = document.getElementById('paymentModal');
+                    if (paymentModal) {
+                        paymentModal.classList.remove('hidden');
+                    } else {
+                        console.error("Payment modal not found!");
+                        // Nếu không có payment modal, có thể gọi processOrder trực tiếp
+                        // processOrder(); 
+                    }
+                    // Không disable nút submit chính ở đây nữa, vì việc submit chính sẽ qua payment modal
+                });
+            }
+
+            const paymentModalForm = document.getElementById('paymentModalForm');
+            if(paymentModalForm){
+                paymentModalForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    document.getElementById('paymentModal').classList.add('hidden'); // Ẩn modal ngay
+                    
+                    const submitButton = document.getElementById('submitOrderBtn'); // Nút submit chính của form lớn
+                    if(submitButton){
+                        submitButton.disabled = true;
+                        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Đang xử lý...';
+                    }
+
+                    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+                    
+                    if (paymentMethod === 'momo' || paymentMethod === 'vnpay') {
+                        alert(`Chức năng thanh toán với ${paymentMethod.toUpperCase()} đang được phát triển. Vui lòng chọn Tiền mặt.`);
+                        // Hiện lại payment modal hoặc cho phép người dùng chọn lại
+                        const paymentModal = document.getElementById('paymentModal');
+                        if (paymentModal) paymentModal.classList.remove('hidden');
+                         if(submitButton){ // Reset nút submit chính
+                            submitButton.disabled = false;
+                            submitButton.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Xác Nhận và Đặt Hàng';
+                        }
+                        return; 
+                    } else { // Tiền mặt
+                        await processOrder(); // Gọi processOrder cho trường hợp tiền mặt
+                    }
+                });
+            }
+        });
+
+        async function processOrder() {
+            // user, userCartItems, currentTotal, deliveryAddressInput, orderNotesInput đã là biến toàn cục/phạm vi rộng hơn
+            if (!user || !user.id) {
+                alert('Lỗi: Thông tin người dùng không hợp lệ. Vui lòng đăng nhập lại.');
+                // Có thể cần reset nút submit ở đây nếu có
+                const submitButton = document.getElementById('submitOrderBtn');
+                if(submitButton){
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Xác Nhận và Đặt Hàng';
+                }
+                return;
+            }
+
+            const orderType = document.querySelector('input[name="orderType"]:checked').value;
+            const notes = orderNotesInput ? orderNotesInput.value.trim() : '';
+            let dia_chi_giao_hang = null;
+
+            if (orderType === 'giao_hang') {
+                dia_chi_giao_hang = deliveryAddressInput ? deliveryAddressInput.value.trim() : '';
+                if (!dia_chi_giao_hang) { // Double check, dù đã check ở paymentForm submit
+                    alert('Lỗi: Địa chỉ giao hàng là bắt buộc cho đơn giao hàng.');
+                    // Reset nút submit chính
+                    const submitButton = document.getElementById('submitOrderBtn');
+                    if(submitButton){
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Xác Nhận và Đặt Hàng';
+                    }
+                    return;
+                }
+            }
+
+            const orderData = {
+                id_khach: user.id, // **ĐẢM BẢO user.id là ID số nguyên từ CSDL**
+                loai_don: orderType,
+                tong_tien: currentTotal,
+                items: userCartItems.map(item => ({
+                    id_mon: item.id_mon,
+                    so_luong: item.quantity,
+                    gia_luc_dat: item.price // Giá tại thời điểm thêm vào giỏ/thanh toán
+                })),
+                // Chỉ gửi dia_chi_giao_hang và ghi_chu nếu DDL server của bạn có các cột này
+                // Nếu DDL server `hoa_don` không có 2 cột này, hãy bỏ chúng đi khỏi đây
+                // Hoặc server sẽ bỏ qua chúng nếu không có cột tương ứng
+                dia_chi_giao_hang: dia_chi_giao_hang, // Gửi nếu có
+                ghi_chu: notes || null // Gửi nếu có
+            };
+
+            console.log('CLIENT: Dữ liệu gửi đi để tạo đơn hàng:', JSON.stringify(orderData, null, 2));
+
+            try {
+                const response = await fetch('http://localhost:3001/api/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) { // Hoặc response.status === 201
+                    alert('Đặt hàng thành công! Mã đơn hàng của bạn là: ' + result.id_hoa_don);
+                    const allCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+                    const remainingCartItems = allCartItems.filter(item => item.userId !== user.id);
+                    localStorage.setItem('cartItems', JSON.stringify(remainingCartItems));
+                    window.location.href = `order-success.html?orderId=${result.id_hoa_don}`; // Chuyển hướng đến trang thành công
+                } else {
+                    alert(`Đặt hàng thất bại: ${result.error || 'Lỗi không xác định từ máy chủ.'}`);
+                }
+            } catch (error) {
+                console.error('Lỗi khi gọi API đặt hàng:', error);
+                alert('Không thể kết nối đến máy chủ hoặc có lỗi xảy ra khi đặt hàng. Vui lòng thử lại.');
+            } finally {
+                // Reset nút submit chính sau khi hoàn tất (thành công hoặc thất bại)
+                const submitButton = document.getElementById('submitOrderBtn');
+                if(submitButton){
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Xác Nhận và Đặt Hàng';
+                }
+            }
+        }
+    </script>
+
+    <!-- Payment Modal (giữ nguyên) -->
+    <div id="paymentModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Chọn Phương Thức Thanh Toán</h3>
+                <form id="paymentModalForm" class="mt-4">
+                    <div class="space-y-4">
+                        <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer has-[:checked]:bg-blue-50">
+                            <input type="radio" name="paymentMethod" value="cash" checked class="form-radio h-5 w-5">
+                            <span class="ml-3">Tiền mặt</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer has-[:checked]:bg-blue-50">
+                            <input type="radio" name="paymentMethod" value="momo" class="form-radio h-5 w-5">
+                            <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="MoMo" class="h-8 ml-3">
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer has-[:checked]:bg-blue-50">
+                            <input type="radio" name="paymentMethod" value="vnpay" class="form-radio h-5 w-5">
+                            <img src="https://vnpay.vn/s1/statics.vnpay.vn/2023/6/0oxhzjmxbksr1686814746087.png" alt="VNPay" class="h-8 ml-3">
+                        </label>
+                    </div>
+                    <div class="flex justify-end mt-4 space-x-3">
+                        <button type="button" onclick="document.getElementById('paymentModal').classList.add('hidden')" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md">Hủy</button>
+                        <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md">Tiếp tục</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

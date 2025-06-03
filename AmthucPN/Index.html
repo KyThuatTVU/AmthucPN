@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhà Hàng Ẩm Thực Phương Nam - Hương Vị Đặc Trưng</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #e53e3e;
+            --secondary-color: #f6ad55;
+            --accent-color: #718096;
+            --text-color: #2d3748;
+            --light-color: #f7fafc;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        .font-cursive {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .bg-primary {
+            background-color: var(--primary-color);
+        }
+
+        .text-primary {
+            color: var(--primary-color);
+        }
+
+        .bg-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .text-secondary {
+            color: var(--secondary-color);
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .banner {
+            background-image: url('https://cdn.jsdelivr.net/gh/codediodeio/code-snippets/nba-trader/wood.jpg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .banner::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .chatbot-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .chatbot-panel {
+            display: none;
+            width: 350px;
+            height: 450px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+        }
+
+        .chatbot-header {
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .chatbot-messages {
+            height: 330px; /* Adjusted height */
+            padding: 15px;
+            overflow-y: auto;
+            display: flex; /* Use flexbox for message layout */
+            flex-direction: column; /* Stack messages vertically */
+        }
+
+        .chatbot-messages .mb-4 {
+            margin-bottom: 1rem;
+            /* Removed text-right/left from messageDiv, handle in bubble */
+        }
+
+         /* Styles for chat bubbles */
+         .chatbot-messages .bg-primary {
+             background-color: var(--primary-color);
+             color: white;
+             align-self: flex-end; /* Align user messages to the right */
+         }
+
+         .chatbot-messages .bg-gray-200 {
+             background-color: #e2e8f0; /* Tailwind gray-200 */
+             color: #2d3748; /* Tailwind text-color */
+             align-self: flex-start; /* Align bot messages to the left */
+         }
+
+        .chatbot-messages .inline-block {
+             /* Keep inline-block or change to display: inline-flex if needed for flexbox alignment */
+             display: inline-block;
+             max-width: 80%; /* Limit bubble width */
+             word-break: break-word; /* Prevent long words from overflowing */
+        }
+
+
+        .chatbot-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 768px) {
+            .chatbot-panel {
+                width: 300px;
+                right: -10px;
+            }
+        }
+
+        .ad-banner {
+            background-color: #feebc8;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .scroll-container {
+            display: flex;
+            animation: scroll 20s linear infinite;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .nav-link {
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link.active::after,
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .chatbot-messages .streaming p {
+            font-style: italic;
+            color: #718096;
+        }
+    </style>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="js/auth.js"></script>
+</head>
+<body class="bg-gray-100">
+    <!-- Header -->
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-2">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <div class="text-2xl font-bold text-primary mr-2">
+                        <span class="font-cursive">Phương Nam</span>
+                    </div>
+                    <div class="text-sm">
+                        <div>Ẩm Thực</div>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="Index.html" class="nav-link active" data-page="Index">Trang Chủ</a>
+                    <a href="gioithieu.html" class="nav-link" data-page="gioithieu">Giới Thiệu</a>
+                    <a href="Menu.html" class="nav-link" data-page="Menu">Thực Đơn</a>
+                    <a href="lienhe&datban.html" class="nav-link" data-page="lienhe&datban">Đặt Bàn & Liên Hệ</a>
+                </nav>
+
+                <div class="flex items-center">
+                    <div id="userDisplay" class="hidden mr-4">
+                        <span class="text-gray-700 mr-2">Xin chào,</span>
+                        <span id="userName" class="font-semibold text-primary"></span>
+                    </div>
+                    <button id="loginBtn" class="md:block bg-white text-primary px-4 py-2 rounded-lg border border-primary hover:bg-primary hover:text-white transition duration-300 mr-3">
+                        Đăng Nhập
+                    </button>
+                    <button id="logoutBtn" class="hidden bg-white text-primary px-4 py-2 rounded-lg border border-primary hover:bg-primary hover:text-white transition duration-300 mr-3">
+                        Đăng Xuất
+                    </button>
+                    
+                    <button id="menuToggle" class="md:hidden ml-4 focus:outline-none">
+                        <i class="fas fa-bars text-2xl text-gray-600"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <nav id="mobileNav" class="md:hidden hidden mt-4 pb-4">
+                <div class="flex flex-col space-y-3">
+                    <a href="Index.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-page="Index">Trang Chủ</a>
+                    <a href="gioithieu.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-page="gioithieu">Giới Thiệu</a>
+                    <a href="Menu.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-page="Menu">Thực Đơn</a>
+                    <a href="lienhe&datban.html" class="mobile-nav-link py-2 px-4 rounded hover:bg-gray-100" data-page="lienhe&datban">Đặt Bàn & Liên Hệ</a>
+                    <button id="mobileLoginBtn" class="text-left py-2 px-4 rounded hover:bg-gray-100">Đăng Nhập</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Ad Banner -->
+    <div class="ad-banner py-2">
+        <div class="scroll-container">
+            <div class="flex space-x-8 items-center px-4">
+                <span class="text-orange-700 font-semibold whitespace-nowrap">⭐ Khuyến mãi đặc biệt: Giảm 20% cho nhóm từ 4 người trở lên vào các ngày thứ 3-5 hàng tuần</span>
+                <span class="text-orange-700 font-semibold whitespace-nowrap">🔥 Món mới: Cơm cháy sườn rim mật ong - Hương vị độc đáo chỉ có tại Phương Nam</span>
+                <span class="text-orange-700 font-semibold whitespace-nowrap">🎁 Đặt bàn online - Tặng ngay món khai vị</span>
+                <span class="text-orange-700 font-semibold whitespace-nowrap">📱 Tải app - Tích điểm thưởng và nhận ưu đãi độc quyền</span>
+            </div>
+             <!-- Duplicate for continuous scroll effect -->
+            <div class="flex space-x-8 items-center px-4" aria-hidden="true">
+                <span class="text-orange-700 font-semibold whitespace-nowrap">⭐ Khuyến mãi đặc biệt: Giảm 20% cho nhóm từ 4 người trở lên vào các ngày thứ 3-5 hàng tuần</span>
+                <span class="text-orange-700 font-semibold whitespace-nowrap">🔥 Món mới: Cơm cháy sườn rim mật ong - Hương vị độc đáo chỉ có tại Phương Nam</span>
+                <span class="text-orange-700 font-semibold whitespace-nowrap">🎁 Đặt bàn online - Tặng ngay món khai vị</span>
+                <span class="text-orange-700 font-semibold whitespace-nowrap">📱 Tải app - Tích điểm thưởng và nhận ưu đãi độc quyền</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Banner -->
+        <div class="banner h-96 md:h-[500px] relative bg-cover bg-center bg-gray-900" style="background-image: url('img/LOGO2.jpg');" id="heroBanner">
+            <div class="container mx-auto px-4 h-full flex items-center relative z-10">
+                <div class="max-w-2xl text-white bg-black bg-opacity-50 p-6 rounded-lg">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-cursive mb-4">Hương Vị Phương Nam</h1>
+                    <p class="text-lg md:text-xl mb-8">Đắm chìm trong không gian ẩm thực truyền thống Nam Bộ với những món ăn độc đáo, hương vị đậm đà không thể nào quên.</p>
+                    <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                        <a href="lienhe&datban.html" class="bg-primary hover:bg-red-700 text-white py-3 px-6 rounded-lg text-center transition duration-300 flex-1 sm:flex-none">Đặt Bàn Ngay</a>
+                        <a href="Menu.html" class="bg-white hover:bg-gray-100 text-primary py-3 px-6 rounded-lg text-center transition duration-300 flex-1 sm:flex-none">Xem Thực Đơn</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Featured Menu -->
+        <div class="container mx-auto px-4 py-12 bg-amber-50" id="featuredMenu">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-2">Món Ăn Đặc Sắc</h2>
+                <p class="text-gray-600">Khám phá những món ăn được yêu thích nhất tại Phương Nam</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Featured Item 1 -->
+                <div class="menu-item bg-white rounded-lg overflow-hidden shadow-lg transition duration-300">
+                    <div class="h-64 bg-cover bg-center relative" style="background-image: url('calocnuongtrui.jpg');">
+                        <div class="absolute inset-0 bg-black bg-opacity-20 hover:bg-opacity-10 transition duration-300"></div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-xl">Cá Lóc Nướng Trui</h3>
+                            <span class="text-primary font-bold">185.000đ</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Cá lóc tươi nướng trui trên than hoa, phết mỡ hành và ăn kèm với các loại rau thơm đặc trưng miền Nam.</p>
+                        <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+                            Thêm vào giỏ
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Featured Item 2 -->
+                <div class="menu-item bg-white rounded-lg overflow-hidden shadow-lg transition duration-300">
+                    <div class="h-64 bg-cover bg-center relative" style="background-image: url('img/laumam.webp');">
+                        <div class="absolute inset-0 bg-black bg-opacity-20 hover:bg-opacity-10 transition duration-300"></div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-xl">Lẩu Mắm</h3>
+                            <span class="text-primary font-bold">250.000đ</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Nước lẩu được nấu từ mắm cá linh, thêm các loại rau đồng và hải sản tươi ngon, tạo nên hương vị đậm đà khó quên.</p>
+                        <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+                            Thêm vào giỏ
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Featured Item 3 -->
+                <div class="menu-item bg-white rounded-lg overflow-hidden shadow-lg transition duration-300">
+                    <div class="h-64 bg-cover bg-center relative" style="background-image: url('img/banhxeo.jpg');">
+                        <div class="absolute inset-0 bg-black bg-opacity-20 hover:bg-opacity-10 transition duration-300"></div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-xl">Bánh Xèo Miền Tây</h3>
+                            <span class="text-primary font-bold">95.000đ</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Bánh xèo giòn tan với nhân tôm, thịt, giá và đậu xanh, ăn kèm với rau sống và nước mắm chua ngọt.</p>
+                        <button class="add-to-cart bg-primary hover:bg-red-700 text-white py-2 px-4 rounded-md transition duration-300 w-full">
+                            Thêm vào giỏ
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-8">
+                <a href="Menu.html" class="inline-block border-2 border-primary text-primary hover:bg-primary hover:text-white py-2 px-6 rounded-lg transition duration-300">Xem Toàn Bộ Thực Đơn</a>
+            </div>
+        </div>
+
+        <!-- Testimonials -->
+        <div class="bg-rose-50 py-12" id="testimonials">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold mb-2">Khách Hàng Nói Gì</h2>
+                    <p class="text-gray-600">Những đánh giá chân thực từ thực khách</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                   <!-- Testimonial 1 -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
+                                <img src="img/thuat.jpg" alt="Nguyễn Văn An" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Nguyễn Huỳnh Kỹ Thuật</h4>
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">"Tôi đã thử nhiều nhà hàng miền Nam, nhưng Phương Nam thực sự mang đến hương vị đúng điệu và chuẩn mực nhất. Đặc biệt là món cá lóc nướng trui, tuyệt vời!"</p>
+                    </div>
+
+                    <!-- Testimonial 2 -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
+                                <img src="img/vy.jpg" alt="Trần Thị Mỹ Linh" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Hứa Thị Thảo Vy</h4>
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">"Không gian nhà hàng rất ấm cúng và sang trọng. Nhân viên phục vụ nhiệt tình, chu đáo. Các món ăn đều rất ngon và được trình bày đẹp mắt."</p>
+                    </div>
+
+                    <!-- Testimonial 3 -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-full overflow-hidden mr-4">
+                                <img src="img/truong.jpg" alt="Lê Minh Tuấn" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Nguyễn Nhật Trường</h4>
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">"Ẩm thực đậm chất miền Tây, mỗi món ăn như kể lại một câu chuyện. Rất hài lòng!" "Lẩu mắm ở đây là số một! Hương vị đậm đà, nước lẩu đặc trưng và thơm ngon. Mỗi lần về Sài Gòn, tôi đều ghé Phương Nam để thưởng thức.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Promotion -->
+        <div class="bg-emerald-50 py-12" id="promotion">
+            <div class="container mx-auto px-4">
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="md:flex">
+                        <div class="md:w-1/2 bg-gray-300 h-64 md:h-auto flex items-center justify-center">
+                            <img src="img/ẩm thực phương nam.png" alt="Khuyến mãi đặc biệt" class="max-h-full object-cover" />
+                        </div>
+
+                        <div class="md:w-1/2 p-8">
+                            <div class="flex items-center mb-4">
+                                <div class="text-primary text-4xl mr-3">
+                                    <i class="fas fa-gift"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold">Ưu Đãi Đặc Biệt</h3>
+                            </div>
+                            <p class="text-gray-600 mb-6">Đặt bàn online thông qua website và nhận ngay <span class="font-bold text-primary">giảm 10%</span> tổng hóa đơn cho lần đầu tiên.</p>
+                            <p class="text-gray-600 mb-6">Đặc biệt, đăng ký thành viên để tích điểm và nhận nhiều ưu đãi hấp dẫn khác!</p>
+                            <a href="lienhe&datban.html" class="inline-block bg-primary hover:bg-red-700 text-white py-2 px-6 rounded-lg transition duration-300">Đặt Bàn Ngay</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white pt-12 pb-6">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="text-2xl font-cursive mb-4">Phương Nam</h3>
+                    <p class="mb-4">Nhà hàng Ẩm thực Phương Nam mang đến trải nghiệm ẩm thực Nam Bộ đích thực với không gian sang trọng và ấm cúng.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-white hover:text-primary transition duration-300">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-white hover:text-primary transition duration-300">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-white hover:text-primary transition duration-300">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="#" class="text-white hover:text-primary transition duration-300">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Liên Kết Nhanh</h4>
+                    <ul class="space-y-2">
+                        <li><a href="Index.html" class="hover:text-primary transition duration-300">Trang Chủ</a></li>
+                        <li><a href="gioithieu.html" class="hover:text-primary transition duration-300">Giới Thiệu</a></li>
+                        <li><a href="Menu.html" class="hover:text-primary transition duration-300">Thực Đơn</a></li>
+                        <li><a href="lienhe&datban.html" class="hover:text-primary transition duration-300">Đặt Bàn</a></li>
+                        <li><a href="#" class="hover:text-primary transition duration-300">Blog</a></li>
+                        <li><a href="#" class="hover:text-primary transition duration-300">Tuyển Dụng</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Thông Tin Liên Hệ</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mr-3 mt-1"></i>
+                            <span>123 Nguyễn Văn Linh, Quận 7, TP. Hồ Chí Minh</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-phone-alt mr-3 mt-1"></i>
+                            <span>028 1234 5678</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-envelope mr-3 mt-1"></i>
+                            <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="cba2a5ada48bbba3bea4a5aca5aaa6e5a8a4a6">[email protected]</a></span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Đăng Ký Nhận Tin</h4>
+                    <p class="mb-4">Đăng ký để nhận thông tin về ưu đãi đặc biệt và sự kiện mới nhất.</p>
+                    <form>
+                        <div class="flex">
+                            <input type="email" placeholder="Email của bạn" class="px-4 py-2 rounded-l-lg w-full focus:outline-none text-gray-800">
+                            <button type="submit" class="bg-primary hover:bg-red-700 px-4 py-2 rounded-r-lg transition duration-300">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <hr class="border-gray-700 mb-6">
+
+            <div class="text-center text-gray-400">
+                <p> 2023 Nhà Hàng Ẩm Thực Phương Nam. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chatbot -->
+   <!-- 1. HTML -->
+<!-- CHATBOT BUTTON -->
+<button id="chatbotButton"
+  class="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-br from-green-400 to-blue-500 rounded-full shadow-2xl flex items-center justify-center text-white text-3xl hover:scale-110 transition-transform duration-300">
+  <i class="fas fa-robot animate-bounce"></i>
+</button>
+
+<!-- CHAT PANEL -->
+<div id="chatbotPanel"
+  class="fixed bottom-24 right-6 z-50 w-80 bg-white rounded-2xl shadow-2xl overflow-hidden 
+         transform opacity-0 scale-90 pointer-events-none transition-all duration-300">
+  <!-- Header -->
+  <div class="bg-gradient-to-r from-green-500 to-blue-600 p-4 flex items-center justify-between">
+    <div class="flex items-center">
+      <i class="fas fa-robot text-2xl text-white mr-2"></i>
+      <div>
+        <h3 class="text-white font-bold">Phương Nam Bot</h3>
+        <p class="text-gray-200 text-xs">Trực tuyến 24/7</p>
+      </div>
+    </div>
+    <button id="closeChatbot" class="text-white text-xl hover:text-gray-200 transition-colors">&times;</button>
+  </div>
+
+  <!-- Messages -->
+  <div id="chatbotMessages" class="p-4 space-y-3 max-h-64 overflow-y-auto bg-gray-50">
+    <!-- Tin chào -->
+    <div class="flex">
+      <div class="bg-white p-3 rounded-2xl shadow-md inline-block max-w-[80%]">
+        <p>Xin chào! Tôi là trợ lý ảo Nhà hàng Phương Nam. Mình giúp gì cho bạn?</p>
+      </div>
+    </div>
+    <!-- Gợi ý -->
+    <div id="suggestionBox" class="flex justify-start">
+      <div
+        class="bg-yellow-100 text-yellow-800 px-3 py-2 rounded-full opacity-50 hover:opacity-100 transition-opacity duration-200 cursor-pointer">
+        Hôm nay bạn muốn ăn gì?
+      </div>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="p-4 bg-white border-t">
+    <div class="flex items-end space-x-2">
+      <textarea id="chatbotInput"
+        class="flex-1 h-8 resize-none border border-gray-300 rounded-2xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-200"
+        placeholder="Gõ tin nhắn..." rows="1"></textarea>
+      <button id="sendMessage"
+        class="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform duration-200">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const btnOpen    = document.getElementById('chatbotButton');
+  const btnClose   = document.getElementById('closeChatbot');
+  const panel      = document.getElementById('chatbotPanel');
+  const suggestion = document.getElementById('suggestionBox').firstElementChild;
+  const inputField = document.getElementById('chatbotInput');
+
+  function toggleChat() {
+    panel.classList.toggle('opacity-0');
+    panel.classList.toggle('scale-90');
+    panel.classList.toggle('pointer-events-none');
+    panel.classList.toggle('opacity-100');
+    panel.classList.toggle('scale-100');
+  }
+
+  btnOpen.addEventListener('click', toggleChat);
+  btnClose.addEventListener('click', toggleChat);
+
+  suggestion.addEventListener('click', () => {
+    const text = suggestion.textContent.trim();
+    inputField.value = text;
+    inputField.focus();
+  });
+
+  async function sendMessageToAPI(message, history) {
+    try {
+      const response = await fetch('http://localhost:3000/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          messages: [
+            ...history.map(msg => ({ role: msg.role, content: msg.content })),
+            { role: 'user', content: message }
+          ]
+        })
+      });
+      return await response.json();
+    } catch (error) {
+      console.error('Lỗi kết nối API:', error);
+      return { message: 'Xin lỗi, đã có lỗi xảy ra khi kết nối với trợ lý ảo.' };
+    }
+  }
+
+  const chatHistory = [];
+
+  function addMessageToChat(role, content) {
+    const chatMessages = document.getElementById('chatbotMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `flex ${role === 'assistant' ? 'justify-start' : 'justify-end'}`;
+    const messageBubble = document.createElement('div');
+    messageBubble.className = `bg-white p-3 rounded-2xl shadow-md inline-block max-w-[80%] ${role === 'assistant' ? 'bg-gray-200' : 'bg-primary'}`;
+    messageBubble.innerHTML = `<p>${content}</p>`;
+    messageDiv.appendChild(messageBubble);
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  document.getElementById('sendMessage').addEventListener('click', async () => {
+    const message = inputField.value.trim();
+    if (!message) return;
+
+    addMessageToChat('user', message);
+    chatHistory.push({ role: 'user', content: message });
+  
+    const data = await sendMessageToAPI(message, chatHistory);
+  
+    addMessageToChat('assistant', data.message);
+    chatHistory.push({ role: 'assistant', content: data.message });
+
+    inputField.value = '';
+  });
+</script>
+
+  <!-- Login Modal -->
+  <div class="modal" id="loginModal">
+    <div class="bg-white rounded-lg overflow-hidden shadow-xl w-full max-w-md">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Đăng Nhập / Đăng Ký</h3>
+                <button id="closeLoginModal" class="text-gray-400 hover:text-gray-500"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="tabs mb-6">
+                <div class="flex border-b">
+                    <button id="loginTab" class="py-2 px-4 text-primary border-b-2 border-primary focus:outline-none">Đăng Nhập</button>
+                    <button id="registerTab" class="py-2 px-4 text-gray-500 focus:outline-none">Đăng Ký</button>
+                </div>
+            </div>
+            <form id="loginForm" class="tab-content">
+                <div class="mb-4">
+                    <label for="loginEmail" class="block text-gray-700 mb-2">Email</label>
+                    <input type="email" id="loginEmail" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="example@email.com" required>
+                </div>
+                <div class="mb-6">
+                    <label for="loginPassword" class="block text-gray-700 mb-2">Mật khẩu</label>
+                    <input type="password" id="loginPassword" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                </div>
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="remember" class="mr-2">
+                        <label for="remember" class="text-gray-700">Ghi nhớ đăng nhập</label>
+                    </div>
+                    <a href="#" class="text-primary hover:underline">Quên mật khẩu?</a>
+                </div>
+                <button type="submit" class="w-full bg-primary hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300">Đăng Nhập</button>
+            </form>
+            <form id="registerForm" class="tab-content hidden">
+                <div class="grid grid-cols-1 gap-3">
+                    <div>
+                        <label for="registerName" class="block text-gray-700 mb-1">Họ và tên</label>
+                        <input type="text" id="registerName" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm" required>
+                    </div>
+                    <div>
+                        <label for="registerEmail" class="block text-gray-700 mb-1">Email</label>
+                        <input type="email" id="registerEmail" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm" required>
+                    </div>
+                    <div>
+                        <label for="registerPhone" class="block text-gray-700 mb-1">Số điện thoại</label>
+                        <input type="tel" id="registerPhone" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm" required>
+                    </div>
+                    <div>
+                        <label for="registerPassword" class="block text-gray-700 mb-1">Mật khẩu</label>
+                        <input type="password" id="registerPassword" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm" required>
+                    </div>
+                    <div>
+                        <label for="confirmPassword" class="block text-gray-700 mb-1">Xác nhận mật khẩu</label>
+                        <input type="password" id="confirmPassword" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm" required>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="terms" class="mr-2" required>
+                        <label for="terms" class="text-gray-700 text-sm">Tôi đồng ý với <a href="#" class="text-primary hover:underline">Điều khoản dịch vụ</a></label>
+                    </div>
+                    <button type="submit" class="w-full bg-primary hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 text-base">Đăng Ký</button>
+                </div>
+            </form>
+            <div class="mt-6 text-center">
+                <p class="text-gray-600">Hoặc đăng nhập với</p>
+                <div class="flex justify-center space-x-4 mt-4">
+                    <button class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition duration-300"><i class="fab fa-facebook-f"></i></button>
+                    <button class="flex items-center justify-center w-12 h-12 rounded-full bg-red-500 text-white hover:bg-red-600 transition duration-300"><i class="fab fa-google"></i></button>
+                    <button class="flex items-center justify-center w-12 h-12 rounded-full bg-sky-500 text-white hover:bg-sky-600 transition duration-300"><i class="fab fa-twitter"></i></button>
+                </div>
+            </div>
+<script>
+        // Đăng nhập xử lý
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+          e.preventDefault();
+          const submitBtn = document.querySelector('#loginForm button[type="submit"]');
+          submitBtn.disabled = true;
+          
+          try {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            const data = await auth.login(email, password);
+            
+            // Update UI
+            document.getElementById('loginBtn').style.display = 'none';
+            document.getElementById('mobileLoginBtn').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'block';
+            document.getElementById('userDisplay').classList.remove('hidden');
+            document.getElementById('userName').textContent = data.khach_hang.full_name;
+            
+            loginModal.classList.remove('active');
+            alert('Đăng nhập thành công!');
+
+          } catch (error) {
+            alert(error.message);
+          } finally {
+            submitBtn.disabled = false;
+          }
+        });
+
+        // Logout handler
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+          localStorage.removeItem('user');
+          checkLoginStatus(); // Update UI after logout
+          alert('Đã đăng xuất thành công!');
+        });
+
+    const addToCartButtons = document.querySelectorAll('.add-to-cart');
+    const cartCounter = document.querySelector('#cartBtn span');
+    let cartCount = 0; // Consider using localStorage for persistence
+    if (cartCounter) { cartCounter.textContent = cartCount; }
+    addToCartButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        cartCount++; if (cartCounter) { cartCounter.textContent = cartCount; } const menuItem = this.closest('.menu-item'); const itemName = menuItem?.querySelector('h3')?.textContent || 'Sản phẩm'; const notification = document.createElement('div'); notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50'; notification.textContent = `Đã thêm ${itemName} vào giỏ hàng!`; document.body.appendChild(notification); setTimeout(() => { notification.remove(); }, 3000);
+      });
+    });
+
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const pageName = currentPage.replace('.html', '').toLowerCase();
+    const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+    navLinks.forEach(link => {
+      const linkHref = link.getAttribute('href');
+      const linkPage = linkHref ? linkHref.split('/').pop().replace('.html', '').toLowerCase() : '';
+      const isIndex = (pageName === 'index' || pageName === '');
+      const linkIsIndex = (linkPage === 'index' || linkPage === '');
+
+      if ((isIndex && linkIsIndex) || (pageName !== '' && pageName !== 'index' && pageName === linkPage)) {
+        link.classList.add('active');
+         if(link.classList.contains('mobile-nav-link')) {
+             link.classList.add('bg-gray-200', 'font-semibold');
+         }
+      } else {
+        link.classList.remove('active');
+        if(link.classList.contains('mobile-nav-link')) {
+             link.classList.remove('bg-gray-200', 'font-semibold');
+        }
+      }
+    });
+
+    const chatbotInput = document.getElementById('chatbotInput');
+    if (chatbotInput) {
+         chatbotInput.addEventListener('input', autoResizeTextarea);
+         // Also resize initially if there's any default text
+         autoResizeTextarea.call(chatbotInput);
+    }
+
+    function autoResizeTextarea() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    }
+
+
+   
+    // GSAP + ScrollTrigger hiệu ứng cho từng phần
+    if (window.gsap && window.ScrollTrigger) {
+        // Hero Banner
+        gsap.from("#heroBanner .max-w-2xl", {
+            opacity: 0,
+            y: 60,
+            duration: 1.2,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: "#heroBanner",
+                start: "top 80%",
+                toggleActions: "play none none reset"
+            }
+        });
+
+        // Featured Menu Items
+        gsap.utils.toArray("#featuredMenu .menu-item").forEach((item, i) => {
+            gsap.from(item, {
+                opacity: 0,
+                y: 60,
+                duration: 1,
+                delay: i * 0.15,
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: item,
+                    start: "top 85%",
+                    toggleActions: "play none none reset"
+                }
+            });
+        });
+
+        // Testimonials
+        gsap.utils.toArray("#testimonials .bg-white").forEach((item, i) => {
+            gsap.from(item, {
+                opacity: 0,
+                scale: 0.8,
+                duration: 0.9,
+                delay: i * 0.12,
+                ease: "back.out(1.7)",
+                scrollTrigger: {
+                    trigger: item,
+                    start: "top 90%",
+                    toggleActions: "play none none reset"
+                }
+            });
+        });
+
+        // Promotion section
+        gsap.from("#promotion .bg-white", {
+            opacity: 0,
+            y: 80,
+            duration: 1.1,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: "#promotion .bg-white",
+                start: "top 85%",
+                toggleActions: "play none none reset"
+            }
+        });
+    }
+</script>
+</body>
+</html>

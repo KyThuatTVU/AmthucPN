@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ Hàng - Nhà Hàng Ẩm Thực Phương Nam</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #e53e3e;
+            --secondary-color: #f6ad55;
+            --accent-color: #718096;
+            --text-color: #2d3748;
+            --light-color: #f7fafc;
+        }
+        body { font-family: 'Roboto', sans-serif; color: var(--text-color); }
+        .font-cursive { font-family: 'Dancing Script', cursive; }
+        .bg-primary { background-color: var(--primary-color); }
+        .text-primary { color: var(--primary-color); }
+        
+        .cart-item {
+            transition: all 0.3s ease;
+        }
+        .cart-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .quantity-btn {
+            transition: all 0.2s ease;
+        }
+        .quantity-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+    </style>
+    <script src="js/auth.js"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- User Info Bar -->
+    <div class="bg-primary text-white py-2">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-user-circle text-xl"></i>
+                    <span id="userWelcome">Chào mừng quý khách</span>
+                </div>
+                <a href="Menu.html" class="hover:text-gray-200 transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i>Tiếp tục mua sắm
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <main class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-3xl font-bold">Giỏ Hàng</h1>
+                <div class="text-gray-600">
+                    <span id="cartItemCount">0</span> món
+                </div>
+            </div>
+
+            <!-- Cart Items Container -->
+            <div id="cartItemsContainer" class="space-y-4 mb-8">
+                <!-- Cart items will be dynamically added here -->
+            </div>
+
+            <!-- Cart Summary -->
+            <div id="cartSummary" class="bg-white rounded-lg shadow-md p-6 mt-6">
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center pb-4 border-b">
+                        <span class="text-gray-600">Tạm tính:</span>
+                        <span id="subtotal" class="font-semibold">0đ</span>
+                    </div>
+                    <div class="flex justify-between items-center pb-4 border-b">
+                        <span class="text-gray-600">Phí vận chuyển:</span>
+                        <span class="font-semibold">Miễn phí</span>
+                    </div>
+                    <div class="flex justify-between items-center text-lg">
+                        <span class="font-semibold">Tổng cộng:</span>
+                        <span id="cartTotal" class="text-2xl font-bold text-primary">0đ</span>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-center space-x-4 mt-6">
+                    <button onclick="clearCart()" class="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-300 flex items-center">
+                        <i class="fas fa-trash-alt mr-2"></i>
+                        Xóa giỏ hàng
+                    </button>
+                    <button onclick="proceedToCheckout()" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-red-700 transition duration-300 flex items-center">
+                        <i class="fas fa-shopping-cart mr-2"></i>
+                        Thanh toán
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Reuse footer from Menu.html -->
+    <footer class="bg-gray-800 text-white mt-12">
+        <!-- ...existing footer code... -->
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Update user welcome message
+            document.getElementById('userWelcome').textContent = `Chào mừng, ${user.full_name}`;
+            
+            displayCartItems();
+            updateCartTotal();
+        });
+
+        function displayCartItems() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const userCartItems = cartItems.filter(item => item.userId === user.id);
+            const container = document.getElementById('cartItemsContainer');
+            
+            // Update cart item count
+            document.getElementById('cartItemCount').textContent = userCartItems.length;
+
+            if (userCartItems.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 bg-white rounded-lg shadow-md">
+                        <i class="fas fa-shopping-cart text-gray-300 text-5xl mb-4"></i>
+                        <p class="text-gray-500 text-lg mb-4">Giỏ hàng của bạn đang trống</p>
+                        <a href="Menu.html" class="inline-flex items-center justify-center px-6 py-3 bg-primary text-white rounded-lg hover:bg-red-700 transition duration-300">
+                            <i class="fas fa-utensils mr-2"></i>
+                            Xem thực đơn
+                        </a>
+                    </div>`;
+                return;
+            }
+
+            const itemsHTML = userCartItems.map(item => `
+                <div class="bg-white rounded-lg shadow-md p-4 flex items-center gap-4 cart-item">
+                    <img src="${item.image}" alt="${item.name}" class="w-24 h-24 object-cover rounded-lg">
+                    <div class="flex-1">
+                        <h3 class="font-semibold text-lg">${item.name}</h3>
+                        <p class="text-primary font-bold">${item.price.toLocaleString()}đ</p>
+                        <div class="flex items-center gap-4 mt-2">
+                            <div class="flex items-center gap-2">
+                                <button onclick="updateQuantity('${item.id}', ${item.quantity - 1})" 
+                                    class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center quantity-btn">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <span class="w-8 text-center">${item.quantity}</span>
+                                <button onclick="updateQuantity('${item.id}', ${item.quantity + 1})"
+                                    class="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center quantity-btn">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <button onclick="removeFromCart('${item.id}')" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold">${(item.price * item.quantity).toLocaleString()}đ</p>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = itemsHTML;
+        }
+
+        function updateQuantity(itemId, newQuantity) {
+            if (newQuantity < 1) return;
+
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const itemIndex = cartItems.findIndex(item => item.id === itemId);
+            
+            if (itemIndex > -1) {
+                cartItems[itemIndex].quantity = newQuantity;
+                localStorage.setItem('cartItems', JSON.stringify(cartItems));
+                displayCartItems();
+                updateCartTotal();
+            }
+        }
+
+        function removeFromCart(itemId) {
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const updatedCart = cartItems.filter(item => item.id !== itemId);
+            localStorage.setItem('cartItems', JSON.stringify(updatedCart));
+            displayCartItems();
+            updateCartTotal();
+            updateCartCounter();
+        }
+
+        function clearCart() {
+            if (!confirm('Bạn có chắc muốn xóa tất cả sản phẩm trong giỏ hàng?')) return;
+            
+            const user = JSON.parse(localStorage.getItem('user'));
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const updatedCart = cartItems.filter(item => item.userId !== user.id);
+            localStorage.setItem('cartItems', JSON.stringify(updatedCart));
+            displayCartItems();
+            updateCartTotal();
+            updateCartCounter();
+        }
+
+        function updateCartTotal() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const userCartItems = cartItems.filter(item => item.userId === user.id);
+            const total = userCartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('cartTotal').textContent = `${total.toLocaleString()}đ`;
+        }
+
+        function updateCartCounter() {
+            const cartCounter = document.querySelector('#cartBtn span');
+            if (cartCounter) {
+                const user = JSON.parse(localStorage.getItem('user'));
+                const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+                const userCartItems = cartItems.filter(item => item.userId === user.id);
+                cartCounter.textContent = userCartItems.length;
+            }
+        }
+
+        function proceedToCheckout() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const userCartItems = cartItems.filter(item => item.userId === user.id);
+            
+            if (userCartItems.length === 0) {
+                alert('Giỏ hàng trống. Vui lòng thêm sản phẩm vào giỏ hàng!');
+                return;
+            }
+
+            // Save checkout data
+            localStorage.setItem('checkoutData', JSON.stringify({
+                items: userCartItems,
+                total: userCartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+            }));
+
+            // Redirect to checkout page
+            window.location.href = 'ThanhToan.html';
+        }
+    </script>
+</body>
+</html>

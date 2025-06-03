@@ -1,0 +1,20 @@
+# Bỏ qua thư mục node_modules
+apiGemini/node_modules/
+
+# Bỏ qua file môi trường
+.env
+.env*
+
+# Bỏ qua file hệ thống
+.DS_Store
+Thumbs.db
+
+# Bỏ qua thư mục build/dist
+build/
+dist/
+
+# Bỏ qua file log
+*.log
+
+# Bỏ qua cache
+.cache/
