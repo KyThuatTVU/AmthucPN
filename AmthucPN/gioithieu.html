@@ -337,131 +337,134 @@
          </div>
     </footer>
 
- <!-- CHATBOT BUTTON -->
+<!-- Chatbot -->
+   <!-- 1. HTML -->
+<!-- CHATBOT BUTTON -->
 <button id="chatbotButton"
-class="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-br from-green-400 to-blue-500 rounded-full shadow-2xl flex items-center justify-center text-white text-3xl hover:scale-110 transition-transform duration-300">
-<i class="fas fa-robot animate-bounce"></i>
+  class="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-br from-green-400 to-blue-500 rounded-full shadow-2xl flex items-center justify-center text-white text-3xl hover:scale-110 transition-transform duration-300">
+  <i class="fas fa-robot animate-bounce"></i>
 </button>
 
 <!-- CHAT PANEL -->
 <div id="chatbotPanel"
-class="fixed bottom-24 right-6 z-50 w-80 bg-white rounded-2xl shadow-2xl overflow-hidden 
-       transform opacity-0 scale-90 pointer-events-none transition-all duration-300">
-<!-- Header -->
-<div class="bg-gradient-to-r from-green-500 to-blue-600 p-4 flex items-center justify-between">
-  <div class="flex items-center">
-    <i class="fas fa-robot text-2xl text-white mr-2"></i>
-    <div>
-      <h3 class="text-white font-bold">Phương Nam Bot</h3>
-      <p class="text-gray-200 text-xs">Trực tuyến 24/7</p>
+  class="fixed bottom-24 right-6 z-50 w-80 bg-white rounded-2xl shadow-2xl overflow-hidden 
+         transform opacity-0 scale-90 pointer-events-none transition-all duration-300">
+  <!-- Header -->
+  <div class="bg-gradient-to-r from-green-500 to-blue-600 p-4 flex items-center justify-between">
+    <div class="flex items-center">
+      <i class="fas fa-robot text-2xl text-white mr-2"></i>
+      <div>
+        <h3 class="text-white font-bold">Phương Nam Bot</h3>
+        <p class="text-gray-200 text-xs">Trực tuyến 24/7</p>
+      </div>
+    </div>
+    <button id="closeChatbot" class="text-white text-xl hover:text-gray-200 transition-colors">&times;</button>
+  </div>
+
+  <!-- Messages -->
+  <div id="chatbotMessages" class="p-4 space-y-3 max-h-64 overflow-y-auto bg-gray-50">
+    <!-- Tin chào -->
+    <div class="flex">
+      <div class="bg-white p-3 rounded-2xl shadow-md inline-block max-w-[80%]">
+        <p>Xin chào! Tôi là trợ lý ảo Nhà hàng Phương Nam. Mình giúp gì cho bạn?</p>
+      </div>
+    </div>
+    <!-- Gợi ý -->
+    <div id="suggestionBox" class="flex justify-start">
+      <div
+        class="bg-yellow-100 text-yellow-800 px-3 py-2 rounded-full opacity-50 hover:opacity-100 transition-opacity duration-200 cursor-pointer">
+        Hôm nay bạn muốn ăn gì?
+      </div>
     </div>
   </div>
-  <button id="closeChatbot" class="text-white text-xl hover:text-gray-200 transition-colors">&times;</button>
+
+  <!-- Input -->
+  <div class="p-4 bg-white border-t">
+    <div class="flex items-end space-x-2">
+      <textarea id="chatbotInput"
+        class="flex-1 h-8 resize-none border border-gray-300 rounded-2xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-200"
+        placeholder="Gõ tin nhắn..." rows="1"></textarea>
+      <button id="sendMessage"
+        class="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform duration-200">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
 </div>
 
-<!-- Messages -->
-<div id="chatbotMessages" class="p-4 space-y-3 max-h-64 overflow-y-auto bg-gray-50
-  <!-- Tin chào -->
-  <div class="flex">
-    <div class="bg-white p-3 rounded-2xl shadow-md inline-block max-w-[80%]">
-      <p>Xin chào! Tôi là trợ lý ảo Nhà hàng Phương Nam. Mình giúp gì cho bạn?</p>
-    </div>
-  </div>
-  <!-- Gợi ý -->
-  <div id="suggestionBox" class="flex justify-start">
-    <div
-      class="bg-yellow-100 text-yellow-800 px-3 py-2 rounded-full opacity-50 hover:opacity-100 transition-opacity duration-200 cursor-pointer">
-      Hôm nay bạn muốn ăn gì?
-    </div>
-  </div>
-</div>
+<script>
+  const btnOpen    = document.getElementById('chatbotButton');
+  const btnClose   = document.getElementById('closeChatbot');
+  const panel      = document.getElementById('chatbotPanel');
+  const suggestion = document.getElementById('suggestionBox').firstElementChild;
+  const inputField = document.getElementById('chatbotInput');
 
-<!-- Input -->
-<div class="p-4 bg-white border-t">
-  <div class="flex items-end space-x-2">
-    <textarea id="chatbotInput"
-      class="flex-1 h-8 resize-none border border-gray-300 rounded-2xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-200"
-      placeholder="Gõ tin nhắn..." rows="1"></textarea>
-    <button id="sendMessage"
-      class="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform duration-200">
-      <i class="fas fa-paper-plane"></i>
-    </button>
-  </div>
-</div>
-</div>
+  function toggleChat() {
+    panel.classList.toggle('opacity-0');
+    panel.classList.toggle('scale-90');
+    panel.classList.toggle('pointer-events-none');
+    panel.classList.toggle('opacity-100');
+    panel.classList.toggle('scale-100');
+  }
 
-   <!-- Login Modal -->
-  <div class="modal" id="loginModal">
-    <div class="bg-white rounded-lg overflow-hidden shadow-xl w-full max-w-md">
-        <div class="p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold">Đăng Nhập / Đăng Ký</h3>
-                <button id="closeLoginModal" class="text-gray-400 hover:text-gray-500"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="tabs mb-6">
-                <div class="flex border-b">
-                    <button id="loginTab" class="py-2 px-4 text-primary border-b-2 border-primary focus:outline-none">Đăng Nhập</button>
-                    <button id="registerTab" class="py-2 px-4 text-gray-500 focus:outline-none">Đăng Ký</button>
-                </div>
-            </div>
-            <form id="loginForm" class="tab-content">
-                <div class="mb-4">
-                    <label for="loginEmail" class="block text-gray-700 mb-2">Email</label>
-                    <input type="email" id="loginEmail" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="example@email.com" required>
-                </div>
-                <div class="mb-6">
-                    <label for="loginPassword" class="block text-gray-700 mb-2">Mật khẩu</label>
-                    <input type="password" id="loginPassword" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
-                </div>
-                <div class="flex items-center justify-between mb-6">
-                    <div class="flex items-center">
-                        <input type="checkbox" id="remember" class="mr-2">
-                        <label for="remember" class="text-gray-700">Ghi nhớ đăng nhập</label>
-                    </div>
-                    <a href="#" class="text-primary hover:underline">Quên mật khẩu?</a>
-                </div>
-                <button type="submit" class="w-full bg-primary hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300">Đăng Nhập</button>
-            </form>
-            <form id="registerForm" class="tab-content hidden">
-                <div class="grid grid-cols-1 gap-3">
-                    <div>
-                        <label for="registerName" class="block text-gray-700 mb-1">Họ và tên</label>
-                        <input type="text" id="registerName" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm" required>
-                    </div>
-                    <div>
-                        <label for="registerEmail" class="block text-gray-700 mb-1">Email</label>
-                        <input type="email" id="registerEmail" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm" required>
-                    </div>
-                    <div>
-                        <label for="registerPhone" class="block text-gray-700 mb-1">Số điện thoại</label>
-                        <input type="tel" id="registerPhone" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm" required>
-                    </div>
-                    <div>
-                        <label for="registerPassword" class="block text-gray-700 mb-1">Mật khẩu</label>
-                        <input type="password" id="registerPassword" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm" required>
-                    </div>
-                    <div>
-                        <label for="confirmPassword" class="block text-gray-700 mb-1">Xác nhận mật khẩu</label>
-                        <input type="password" id="confirmPassword" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm" required>
-                    </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="terms" class="mr-2" required>
-                        <label for="terms" class="text-gray-700 text-sm">Tôi đồng ý với <a href="#" class="text-primary hover:underline">Điều khoản dịch vụ</a></label>
-                    </div>
-                    <button type="submit" class="w-full bg-primary hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 text-base">Đăng Ký</button>
-                </div>
-            </form>
-            <div class="mt-6 text-center">
-                <p class="text-gray-600">Hoặc đăng nhập với</p>
-                <div class="flex justify-center space-x-4 mt-4">
-                    <button class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition duration-300"><i class="fab fa-facebook-f"></i></button>
-                    <button class="flex items-center justify-center w-12 h-12 rounded-full bg-red-500 text-white hover:bg-red-600 transition duration-300"><i class="fab fa-google"></i></button>
-                    <button class="flex items-center justify-center w-12 h-12 rounded-full bg-sky-500 text-white hover:bg-sky-600 transition duration-300"><i class="fab fa-twitter"></i></button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+  btnOpen.addEventListener('click', toggleChat);
+  btnClose.addEventListener('click', toggleChat);
+
+  suggestion.addEventListener('click', () => {
+    const text = suggestion.textContent.trim();
+    inputField.value = text;
+    inputField.focus();
+  });
+
+  async function sendMessageToAPI(message, history) {
+    try {
+      const response = await fetch('http://localhost:3000/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          messages: [
+            ...history.map(msg => ({ role: msg.role, content: msg.content })),
+            { role: 'user', content: message }
+          ]
+        })
+      });
+      return await response.json();
+    } catch (error) {
+      console.error('Lỗi kết nối API:', error);
+      return { message: 'Xin lỗi, đã có lỗi xảy ra khi kết nối với trợ lý ảo.' };
+    }
+  }
+
+  const chatHistory = [];
+
+  function addMessageToChat(role, content) {
+    const chatMessages = document.getElementById('chatbotMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `flex ${role === 'assistant' ? 'justify-start' : 'justify-end'}`;
+    const messageBubble = document.createElement('div');
+    messageBubble.className = `bg-white p-3 rounded-2xl shadow-md inline-block max-w-[80%] ${role === 'assistant' ? 'bg-gray-200' : 'bg-primary'}`;
+    messageBubble.innerHTML = `<p>${content}</p>`;
+    messageDiv.appendChild(messageBubble);
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  document.getElementById('sendMessage').addEventListener('click', async () => {
+    const message = inputField.value.trim();
+    if (!message) return;
+
+    addMessageToChat('user', message);
+    chatHistory.push({ role: 'user', content: message });
+  
+    const data = await sendMessageToAPI(message, chatHistory);
+  
+    addMessageToChat('assistant', data.message);
+    chatHistory.push({ role: 'assistant', content: data.message });
+
+    inputField.value = '';
+  });
+</script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const menuToggle = document.getElementById('menuToggle');

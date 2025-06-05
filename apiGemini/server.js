@@ -1,58 +1,101 @@
 require('dotenv').config();
-
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
 const mysql = require('mysql2/promise');
 const path = require('path');
-const fs = require('fs');
 const bcrypt = require('bcryptjs');
-const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:5500', 'http://127.0.0.1:5500', 'http://127.0.0.1:5501', 'http://localhost:5501'], // Add other client ports if needed
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'], // Added Authorization header
+  origin: ['http://localhost:5500', 'http://127.0.0.1:5500', 'http://127.0.0.1:5501', 'http://localhost:5501'],
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization'],
   credentials: true
 }));
 app.use(express.json());
-
-app.use((req, res, next) => {
+app.use((req,res,next) => {
   console.log(`${req.method} ${req.url}`, req.body);
   next();
 });
 
-// —————————————————————————————————————————————
-// 2. Phục vụ ảnh tĩnh từ thư mục 'images'
-// —————————————————————————————————————————————
-const imagesPath = path.join(__dirname, 'images');
-// Chỉ dùng express.static để phục vụ file, không fallback
+// — Ảnh tĩnh —
+const imagesPath = path.join(__dirname,'images');
 app.use('/images', express.static(imagesPath, {
-  setHeaders: (res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  setHeaders: res => {
+    res.setHeader('Access-Control-Allow-Origin','*');
+    res.setHeader('Cross-Origin-Resource-Policy','cross-origin');
   }
 }));
 
-// —————————————————————————————————————————————
-// 3. Upload ảnh: Multer + DiskStorage
-// —————————————————————————————————————————————
+// — Upload ảnh —
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, imagesPath),
-  filename: (req, file, cb) => cb(null, `${Date.now()}${path.extname(file.originalname)}`)
+  destination: (req,file,cb) => cb(null,imagesPath),
+  filename: (req,file,cb) => cb(null,`${Date.now()}${path.extname(file.originalname)}`)
 });
 const upload = multer({ storage });
-
-app.post('/api/upload-image', upload.single('image'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: 'Chưa có file được gửi lên' });
-  }
-  // Trả về tên file, frontend sẽ dùng /images/:filename
+app.post('/api/upload-image', upload.single('image'), (req,res) => {
+  if(!req.file) return res.status(400).json({ error: 'Chưa có file được gửi lên' });
   res.json({ filename: req.file.filename });
+});
+
+// — Khởi tạo pool 1 lần duy nhất —
+const pool = mysql.createPool({
+  host: process.env.DB_HOST || '127.0.0.1',
+  port: process.env.DB_PORT || 3306,
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || 'TVU@842004',
+  database: process.env.DB_NAME || 'QuanLyNhaHang',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
+
+(async () => {
+  try {
+    const conn = await pool.getConnection();
+    await conn.query('SELECT 1');
+    conn.release();
+    console.log('✅ Kết nối database thành công ngay lần đầu');
+  } catch (err) {
+    console.error('❌ Lỗi kết nối database:', err);
+    process.exit(1);
+  }
+})();
+
+// — Các route sử dụng pool —
+function buildImageUrl(req, filename) {
+  return filename
+    ? `${req.protocol}://${req.get('host')}/images/${filename}`
+    : null;
+}
+
+app.get('/api/mon_an', async (req,res) => {
+  const search = req.query.search || '';
+  let connection;
+  try {
+    connection = await pool.getConnection();
+    const query = `
+      SELECT id_mon, id_loai, ten_mon, mo_ta, gia, hinh_anh, so_luong 
+      FROM mon_an 
+      WHERE ten_mon LIKE ? OR mo_ta LIKE ?
+    `;
+    const params = [`%${search}%`, `%${search}%`];
+    const [rows] = await connection.execute(query, params);
+    connection.release();
+    const result = rows.map(item => ({
+      ...item,
+      hinh_anh: buildImageUrl(req, item.hinh_anh)
+    }));
+    res.json(result);
+  } catch(err) {
+    if(connection) connection.release();
+    console.error('API /api/mon_an Error:', err);
+    res.status(500).json({ error: 'Lỗi server', message: err.message });
+  }
 });
 
 // —————————————————————————————————————————————
@@ -68,13 +111,43 @@ const dbConfig = {
 // Hàm kết nối và trả về pool MySQL
 async function connectDB() {
   const pool = mysql.createPool({
-    ...dbConfig,
+    host: process.env.DB_HOST || '127.0.0.1',
+    port: process.env.DB_PORT || 3306,
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || 'TVU@842004',
+    database: process.env.DB_NAME || 'QuanLyNhaHang',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
   });
+
+  // Test connection immediately
+  try {
+    const testConn = await pool.getConnection();
+    await testConn.query('SELECT 1');
+    testConn.release();
+    console.log('✅ Kết nối database thành công');
+  } catch (err) {
+    console.error('❌ Lỗi kết nối database:', err);
+    throw err; // Throw error to prevent server start
+  }
+
   return pool;
 }
+
+// Hàm test kết nối database
+async function testDBConnection() {
+  try {
+    const pool = await connectDB();
+    const connection = await pool.getConnection();
+    console.log('✅ Kết nối database thành công!');
+    connection.release();
+  } catch (err) {
+    console.error('❌ Lỗi kết nối database:', err);
+  }
+}
+
+testDBConnection();
 
 // —————————————————————————————————————————————
 // 5. API Món ăn
@@ -89,38 +162,61 @@ function buildImageUrl(req, filename) {
 
 // GET /api/mon_an?search=
 app.get('/api/mon_an', async (req, res) => {
-  let pool;
+  const search = req.query.search || '';
+  console.log(`[API] Tìm kiếm món ăn: ${search}`);
+  
+  let connection;
   try {
-    pool = await connectDB();
-    const { search } = req.query;
-    let sql = `SELECT id_mon, id_loai, ten_mon, mo_ta, gia, hinh_anh, so_luong FROM mon_an WHERE 1=1`;
-    const params = [];
-    if (search) {
-      sql += ` AND (ten_mon LIKE ? OR mo_ta LIKE ?)`;
-      params.push(`%${search}%`, `%${search}%`);
-    }
-
-    const [rows] = await pool.execute(sql, params);
-    const data = rows.map(item => ({
+    const pool = await connectDB();
+    connection = await pool.getConnection();
+    
+    // Test kết nối đơn giản
+    await connection.query("SELECT 1");
+    
+    const query = `
+      SELECT id_mon, id_loai, ten_mon, mo_ta, gia, hinh_anh, so_luong 
+      FROM mon_an 
+      WHERE ten_mon LIKE ? OR mo_ta LIKE ?
+    `;
+    const params = [`%${search}%`, `%${search}%`];
+    
+    console.log("Executing query:", query);
+    console.log("With params:", params);
+    
+    const [rows] = await connection.execute(query, params);
+    
+    console.log(`[API] Tìm thấy ${rows.length} món`);
+    connection.release();
+    
+    const result = rows.map(item => ({
       ...item,
       hinh_anh: buildImageUrl(req, item.hinh_anh)
     }));
-    res.json(data);
+    
+    res.json(result);
   } catch (err) {
+    if (connection) connection.release();
     console.error('API /api/mon_an Error:', err);
-    res.status(500).json({ error: 'Lỗi khi tải danh sách món ăn' });
+    
+    res.status(500).json({ 
+      error: 'Lỗi server', 
+      message: err.message,
+      stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
   }
 });
 
 // GET /api/mon_an/:id
 app.get('/api/mon_an/:id', async (req, res) => {
-  let pool;
+  let connection;
   try {
-    pool = await connectDB();
-    const [rows] = await pool.execute(
+    const pool = await connectDB();
+    connection = await pool.getConnection();
+    const [rows] = await connection.execute(
       `SELECT id_mon, id_loai, ten_mon, mo_ta, gia, hinh_anh, so_luong FROM mon_an WHERE id_mon = ?`,
       [req.params.id]
     );
+    connection.release();
     if (!rows.length) {
       return res.status(404).json({ error: 'Không tìm thấy món' });
     }
@@ -130,6 +226,7 @@ app.get('/api/mon_an/:id', async (req, res) => {
       hinh_anh: buildImageUrl(req, item.hinh_anh)
     });
   } catch (err) {
+    if (connection) connection.release();
     console.error('API /api/mon_an/:id Error:', err);
     res.status(500).json({ error: 'Lỗi khi tải chi tiết món ăn' });
   }
@@ -238,134 +335,6 @@ app.post(['/api/khach_hang/login', '/api/khachhang/login'], async (req, res) => 
         console.error('Error releasing connection:', releaseErr);
       }
     }
-  }
-});
-
-// —————————————————————————————————————————————
-// 7. API Đặt Hàng (Hóa Đơn)
-// —————————————————————————————————————————————
-app.post('/api/orders', async (req, res) => {
-  const { id_khach, loai_don, tong_tien, items, dia_chi_giao_hang, ghi_chu } = req.body;
-
-  if (!id_khach || !loai_don || tong_tien == null || !items || !Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({ error: 'Dữ liệu đơn hàng không hợp lệ.' });
-  }
-  if (loai_don === 'giao_hang' && !dia_chi_giao_hang) {
-    return res.status(400).json({ error: 'Vui lòng cung cấp địa chỉ giao hàng.' });
-  }
-
-  let connection;
-  try {
-    const pool = await connectDB();
-    connection = await pool.getConnection();
-    await connection.beginTransaction();
-
-    // Bước 1: Kiểm tra tồn kho và tính tổng tiền lại từ server-side để đảm bảo
-    let calculated_tong_tien = 0;
-    for (const item of items) {
-      if (!item.id_mon || !item.so_luong || item.so_luong <= 0 || item.gia_luc_dat == null) {
-        throw new Error('Dữ liệu món ăn trong đơn hàng không hợp lệ.');
-      }
-      const [monAnRows] = await connection.execute('SELECT ten_mon, gia, so_luong FROM mon_an WHERE id_mon = ? FOR UPDATE', [item.id_mon]);
-      if (monAnRows.length === 0) {
-        throw new Error(`Món ăn với ID ${item.id_mon} không tồn tại.`);
-      }
-      const monAn = monAnRows[0];
-      if (monAn.so_luong < item.so_luong) {
-        throw new Error(`Món "${monAn.ten_mon}" không đủ số lượng tồn kho (còn ${monAn.so_luong}, cần ${item.so_luong}).`);
-      }
-      // Dùng giá từ DB nếu muốn an toàn hơn, hoặc tin tưởng giá_luc_dat từ client
-      // calculated_tong_tien += monAn.gia * item.so_luong; // Hoặc dùng item.gia_luc_dat
-      calculated_tong_tien += item.gia_luc_dat * item.so_luong;
-    }
-    
-    // So sánh tổng tiền client gửi và server tính, có thể cho phép sai số nhỏ
-    if (Math.abs(calculated_tong_tien - tong_tien) > 0.01) { // 0.01 là sai số cho phép (ví dụ)
-        console.warn(`Tổng tiền client (${tong_tien}) khác tổng tiền server (${calculated_tong_tien}). Sử dụng tổng tiền server.`);
-        // Có thể quyết định throw error hoặc dùng giá server
-        // throw new Error('Tổng tiền không khớp. Vui lòng thử lại.');
-    }
-
-
-    // Bước 2: Insert vào bảng hoa_don
-    // Cần đảm bảo cột dia_chi_giao_hang và ghi_chu tồn tại trong bảng hoa_don
-    const hoaDonSql = `
-      INSERT INTO hoa_don (id_khach, loai_don, tong_tien, trang_thai, dia_chi_giao_hang, ghi_chu) 
-      VALUES (?, ?, ?, ?, ?, ?)
-    `;
-    const [hoaDonResult] = await connection.execute(hoaDonSql, [
-      id_khach,
-      loai_don,
-      calculated_tong_tien, // Sử dụng tổng tiền đã tính lại/xác minh
-      'cho_xac_nhan', // trạng thái mặc định
-      loai_don === 'giao_hang' ? dia_chi_giao_hang : null,
-      ghi_chu || null
-    ]);
-    const id_hoa_don = hoaDonResult.insertId;
-
-    // Bước 3: Insert vào bảng chi_tiet_hoa_don và cập nhật số lượng mon_an
-    const chiTietSql = `
-      INSERT INTO chi_tiet_hoa_don (id_hoa_don, id_mon, so_luong, gia_luc_dat, thanh_tien) 
-      VALUES (?, ?, ?, ?, ?)
-    `;
-    const updateMonAnSql = `UPDATE mon_an SET so_luong = so_luong - ? WHERE id_mon = ?`;
-
-    for (const item of items) {
-      const thanh_tien_item = item.gia_luc_dat * item.so_luong;
-      await connection.execute(chiTietSql, [
-        id_hoa_don,
-        item.id_mon,
-        item.so_luong,
-        item.gia_luc_dat,
-        thanh_tien_item
-      ]);
-      await connection.execute(updateMonAnSql, [item.so_luong, item.id_mon]);
-    }
-
-    await connection.commit();
-    res.status(201).json({ message: 'Đặt hàng thành công!', id_hoa_don: id_hoa_don });
-
-  } catch (error) {
-    if (connection) await connection.rollback();
-    console.error('Lỗi khi đặt hàng:', error);
-    res.status(500).json({ error: error.message || 'Lỗi máy chủ khi xử lý đơn hàng.' });
-  } finally {
-    if (connection) connection.release();
-  }
-});
-
-// Khởi tạo Google Generative AI
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-app.post('/chat', async (req, res) => {
-  try {
-    const { messages } = req.body;
-    
-    // Chuyển đổi lịch sử chat sang định dạng Gemini
-    const history = messages.map(msg => ({
-      role: msg.role === 'user' ? 'user' : 'model',
-      parts: [{ text: msg.content }]
-    }));
-
-    // Khởi tạo model
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.0-flash",
-      systemInstruction: "Bạn là trợ lý ảo cho nhà hàng ẩm thực Phú Nhuận, trả lời ngắn gọn, thân thiện."
-    });
-
-    // Bắt đầu chat
-    const chat = model.startChat({ history });
-    const result = await chat.sendMessage(messages[messages.length - 1].content);
-    const response = await result.response;
-    const text = response.text();
-
-    res.json({
-      message: text
-    });
-
-  } catch (error) {
-    console.error('Lỗi API:', error);
-    res.status(500).json({ error: 'Lỗi xử lý yêu cầu' });
   }
 });
 

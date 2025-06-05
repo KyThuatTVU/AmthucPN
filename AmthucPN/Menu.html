@@ -433,7 +433,7 @@
              </div>
              <hr class="border-gray-700 mb-6">
              <div class="text-center text-gray-400">
-                 <p>© 2023 Nhà Hàng Ẩm Thực Phương Nam. All rights reserved.</p>
+                 <p> 2023 Nhà Hàng Ẩm Thực Phương Nam. All rights reserved.</p>
              </div>
          </div>
     </footer>
@@ -476,7 +476,9 @@
         });
     </script>
     
-   <!-- CHATBOT BUTTON -->
+  <!-- Chatbot -->
+   <!-- 1. HTML -->
+<!-- CHATBOT BUTTON -->
 <button id="chatbotButton"
 class="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-br from-green-400 to-blue-500 rounded-full shadow-2xl flex items-center justify-center text-white text-3xl hover:scale-110 transition-transform duration-300">
 <i class="fas fa-robot animate-bounce"></i>
@@ -553,69 +555,64 @@ suggestion.addEventListener('click', () => {
   inputField.focus();
 });
 
-// GSAP hiệu ứng động cho các phần chính của trang Menu
-document.addEventListener('DOMContentLoaded', function() {
-    // Tiêu đề thực đơn
-    gsap.from("#menuTitle", {
-        opacity: 0,
-        y: 40,
-        duration: 0.5, // nhanh hơn
-        ease: "power2.out",
-        scrollTrigger: {
-            trigger: "#menuTitle",
-            start: "top 85%",
-            toggleActions: "play none none reset"
-        }
+async function sendMessageToAPI(message, history) {
+  try {
+    const response = await fetch('http://localhost:3000/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        messages: [
+          ...history.map(msg => ({ role: msg.role, content: msg.content })),
+          { role: 'user', content: message }
+        ]
+      })
     });
+    return await response.json();
+  } catch (error) {
+    console.error('Lỗi kết nối API:', error);
+    return { message: 'Xin lỗi, đã có lỗi xảy ra khi kết nối với trợ lý ảo.' };
+  }
+}
 
-    // Nút lọc
-    gsap.from("#menuFilter", {
-        opacity: 0,
-        y: 40,
-        duration: 0.5, // nhanh hơn
-        delay: 0.1,
-        ease: "power2.out",
-        scrollTrigger: {
-            trigger: "#menuFilter",
-            start: "top 90%",
-            toggleActions: "play none none reset"
-        }
-    });
+const chatHistory = [];
 
-    // Hàm chạy lại hiệu ứng cho các món ăn đang hiển thị
-    function animateVisibleMenuItems() {
-        // Xóa các hiệu ứng cũ
-        gsap.killTweensOf(".menu-item");
-        gsap.utils.toArray("#menuItemsContainer .menu-item:not(.hidden)").forEach((item, i) => {
-            gsap.fromTo(item,
-                { opacity: 0, y: 60 },
-                {
-                    opacity: 1,
-                    y: 0,
-                    duration: 0.4,
-                    delay: i * 0.06,
-                    ease: "power2.out",
-                    overwrite: "auto"
-                }
-            );
-        });
-    }
+function addMessageToChat(role, content) {
+  const chatMessages = document.getElementById('chatbotMessages');
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `flex ${role === 'assistant' ? 'justify-start' : 'justify-end'}`;
+  const messageBubble = document.createElement('div');
+  messageBubble.className = `bg-white p-3 rounded-2xl shadow-md inline-block max-w-[80%] ${role === 'assistant' ? 'bg-gray-200' : 'bg-primary'}`;
+  messageBubble.innerHTML = `<p>${content}</p>`;
+  messageDiv.appendChild(messageBubble);
+  chatMessages.appendChild(messageDiv);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
 
-    // Hiệu ứng ban đầu cho tất cả các món ăn
-    animateVisibleMenuItems();
+document.getElementById('sendMessage').addEventListener('click', async () => {
+  const message = inputField.value.trim();
+  if (!message) return;
 
-    // Khi lọc món ăn, chạy lại hiệu ứng cho các món đang hiển thị
-    document.querySelectorAll('.menu-category-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            setTimeout(animateVisibleMenuItems, 10); // Đợi DOM cập nhật class hidden
-        });
-    });
+  try {
+    addMessageToChat('user', message);
+    chatHistory.push({ role: 'user', content: message });
+
+    const data = await sendMessageToAPI(message, chatHistory);
+
+    addMessageToChat('assistant', data.message);
+    chatHistory.push({ role: 'assistant', content: data.message });
+
+    inputField.value = '';
+  } catch (error) {
+    console.error('Chatbot error:', error);
+    addMessageToChat('assistant', 'Xin lỗi, đã có lỗi xảy ra khi kết nối với trợ lý ảo.');
+  }
 });
 
+// Remove duplicate script tags
 </script>
 
- <!-- Login Modal -->
- <div class="modal" id="loginModal">
+<!-- Login Modal -->
+<div class="modal" id="loginModal">
     <div class="bg-white rounded-lg overflow-hidden shadow-xl w-full max-w-md">
         <div class="p-6">
             <div class="flex justify-between items-center mb-6">
@@ -951,7 +948,7 @@ document.addEventListener('DOMContentLoaded', function() {
                          chatbotInput.value = '';
                          addMessageToChat('assistant', 'Đang nhập...', true);
 
-                         const response = await fetch('http://localhost:3001/api/chatbot', {
+                         const response = await fetch('http://localhost:3000/chat', {
                              method: 'POST',
                              headers: {
                                  'Content-Type': 'application/json'
@@ -972,7 +969,7 @@ document.addEventListener('DOMContentLoaded', function() {
                      } catch (error) {
                          console.error('Chatbot error:', error);
                          removeTypingIndicator();
-                         addMessageToChat('assistant', 'Xin lỗi, có lỗi xảy ra. Vui lòng thử lại sau.');
+                         addMessageToChat('assistant', 'Xin lỗi, đã có lỗi xảy ra khi kết nối với trợ lý ảo.');
                      }
                  }
 
@@ -1030,7 +1027,7 @@ document.addEventListener('DOMContentLoaded', function() {
             searchResults.querySelectorAll('.add-to-cart').forEach(button => {
                 button.addEventListener('click', function() {
                     const menuItem = this.closest('.menu-item');
-                    const itemName = menuItem?.querySelector('h3')?.textContent || 'Sản phẩm';
+                    const itemName = menuItem.querySelector('h3').textContent;
                     const notification = document.createElement('div');
                     notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50';
                     notification.textContent = `Đã thêm ${itemName} vào giỏ hàng!`;
@@ -1121,31 +1118,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 const itemName = menuItem.querySelector('h3').textContent;
                 const itemPrice = parseInt(menuItem.querySelector('.text-primary').textContent.replace(/\D/g, ''));
                 const itemImage = menuItem.querySelector('img').src;
-                const itemId = `${itemName.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}`;
-                const userId = user.id; // Get user ID
-
-                // Get existing cart items
-                const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
                 
-                // Add new item
-                cartItems.push({
-                    id: itemId,
-                    userId: userId,
-                    name: itemName,
-                    price: itemPrice,
-                    image: itemImage,
-                    quantity: 1
-                });
+                // Get existing cart items
+                let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+                
+                // Check if item already exists for this user
+                const existingItemIndex = cartItems.findIndex(
+                    item => item.userId === user.id && item.name === itemName
+                );
 
-                // Save back to localStorage
+                if (existingItemIndex > -1) {
+                    // Update quantity if item exists
+                    cartItems[existingItemIndex].quantity += 1;
+                } else {
+                    // Add new item if it doesn't exist
+                    cartItems.push({
+                        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                        userId: user.id,
+                        name: itemName,
+                        price: itemPrice,
+                        image: itemImage,
+                        quantity: 1
+                    });
+                }
+
+                // Save updated cart
                 localStorage.setItem('cartItems', JSON.stringify(cartItems));
 
                 // Update cart counter
+                const userCartItems = cartItems.filter(item => item.userId === user.id);
                 const cartCounter = document.querySelector('#cartBtn span');
-                const userCartItems = cartItems.filter(item => item.userId === userId);
                 cartCounter.textContent = userCartItems.length;
 
-                // Show notification
+                // Show success notification
                 const notification = document.createElement('div');
                 notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50';
                 notification.textContent = `Đã thêm ${itemName} vào giỏ hàng!`;
@@ -1159,107 +1164,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
             const user = JSON.parse(localStorage.getItem('user'));
             const userId = user ? user.id : null;
-            const userCartItems = cartItems.filter(item => item.userId === userId);
+            const userCartItems = userId ? cartItems.filter(item => item.userId === userId) : [];
             const cartCounter = document.querySelector('#cartBtn span');
             cartCounter.textContent = userCartItems.length;
         });
 
         // Update cart counter on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize cart functionality
-            function initializeCart() {
-                const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-                const user = JSON.parse(localStorage.getItem('user'));
-                const userId = user ? user.id : null;
-                const userCartItems = userId ? cartItems.filter(item => item.userId === userId) : [];
-                const cartCounter = document.querySelector('#cartBtn span');
-                if (cartCounter) {
-                    cartCounter.textContent = userCartItems.length;
-                }
-
-                // Add click handlers to all add-to-cart buttons
-                document.querySelectorAll('.add-to-cart').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const user = JSON.parse(localStorage.getItem('user'));
-                        if (!user) {
-                            alert('Vui lòng đăng nhập để thêm món vào giỏ hàng');
-                            document.getElementById('loginModal').classList.add('active');
-                            return;
-                        }
-
-                        const menuItem = this.closest('.menu-item');
-                        const itemName = menuItem.querySelector('h3').textContent;
-                        const priceText = menuItem.querySelector('.text-primary').textContent;
-                        const itemPrice = parseInt(priceText.replace(/\D/g, '')); 
-                        const itemImage = menuItem.querySelector('img').src;
-                        
-                        // Create cart item
-                        const cartItem = {
-                            id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-                            userId: user.id,
-                            name: itemName,
-                            price: itemPrice,
-                            image: itemImage,
-                            quantity: 1
-                        };
-
-                        // Get current cart
-                        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-                        
-                        // Check if item already exists for this user
-                        const existingItemIndex = cartItems.findIndex(
-                            item => item.userId === user.id && item.name === itemName
-                        );
-
-                        if (existingItemIndex > -1) {
-                            // Update quantity if item exists
-                            cartItems[existingItemIndex].quantity += 1;
-                        } else {
-                            // Add new item if it doesn't exist
-                            cartItems.push(cartItem);
-                        }
-
-                        // Save updated cart
-                        localStorage.setItem('cartItems', JSON.stringify(cartItems));
-
-                        // Update cart counter
-                        const userCartItems = cartItems.filter(item => item.userId === user.id);
-                        const cartCounter = document.querySelector('#cartBtn span');
-                        if (cartCounter) {
-                            cartCounter.textContent = userCartItems.length;
-                        }
-
-                        // Show success notification
-                        const notification = document.createElement('div');
-                        notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50';
-                        notification.textContent = `Đã thêm ${itemName} vào giỏ hàng!`;
-                        document.body.appendChild(notification);
-                        setTimeout(() => notification.remove(), 3000);
-                    });
-                });
-            }
-
-            // Initialize cart when DOM loads
-            initializeCart();
-
-            // Also initialize cart after search results are rendered
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.target.id === 'searchResults' && mutation.type === 'childList') {
-                        initializeCart();
-                    }
-                });
-            });
-
-            const searchResults = document.getElementById('searchResults');
-            if (searchResults) {
-                observer.observe(searchResults, { childList: true });
-            }
-        });
-    </script>
-    
-    <script>
-        // Remove the duplicate cart initialization code and merge into one
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize cart functionality
             function initializeCart() {

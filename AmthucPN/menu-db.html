@@ -72,8 +72,7 @@
 
     <script>
         const API_BASE = 'http://localhost:3001';
-        const API_URL = `${API_BASE}/api/mon_an`;
-         const PLACEHOLDER = `${API_BASE}/images/placeholder.png`;
+        const PLACEHOLDER = `${API_BASE}/images/placeholder.png`;
 
         // Cart (Assuming this logic is correct for your needs)
         const cart = {
@@ -103,74 +102,79 @@
         };
 
         // Fetch menu
-        async function fetchMenu(search = '') {
-    const url = API_URL + (search ? `?search=${encodeURIComponent(search)}` : '');
-    const res = await fetch(url);
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(`HTTP ${res.status}: ${res.statusText}. ${err.error||''}`);
-    }
-    return res.json();
-  }
+        async function fetchMenu(searchTerm = '') {
+          try {
+            const response = await fetch(`http://localhost:3000/api/mon_an?search=${encodeURIComponent(searchTerm)}`);
+            
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            return await response.json();
+          } catch (error) {
+            console.error('Error fetching menu:', error);
+            throw error;
+          }
+        }
 
-  // Render menu
-  function renderMenu(items = []) {
-    const grid = document.getElementById('menuGrid');
-    const noRes = document.getElementById('noResult');
-    document.getElementById('resultCount').textContent = items.length;
+        // Render menu
+        function renderMenu(items = []) {
+            const grid = document.getElementById('menuGrid');
+            const noRes = document.getElementById('noResult');
+            document.getElementById('resultCount').textContent = items.length;
 
-    if (!items.length) {
-      noRes.classList.remove('hidden');
-      grid.innerHTML = '';
-      return;
-    }
-    noRes.classList.add('hidden');
+            if (!items.length) {
+                noRes.classList.remove('hidden');
+                grid.innerHTML = '';
+                return;
+            }
+            noRes.classList.add('hidden');
 
-    grid.innerHTML = items.map(it => {
-      const out = !it.so_luong;
-      const stockCls = out ? 'bg-gray-500' : it.so_luong <= 5 ? 'bg-red-500 animate-pulse' : 'bg-green-500';
+            grid.innerHTML = items.map(it => {
+                const out = !it.so_luong;
+                const stockCls = out ? 'bg-gray-500' : it.so_luong <= 5 ? 'bg-red-500 animate-pulse' : 'bg-green-500';
 
-      // 👉 DÙNG THẲNG URL từ API hoặc placeholder
-      const imgSrc = it.hinh_anh || PLACEHOLDER;
+                // 👉 DÙNG THẲNG URL từ API hoặc placeholder
+                const imgSrc = it.hinh_anh || PLACEHOLDER;
 
-      // Format giá
-      const price = Number(it.gia);
-      const formattedPrice = !isNaN(price) ? price.toLocaleString('vi-VN') + 'đ' : 'N/A';
+                // Format giá
+                const price = Number(it.gia);
+                const formattedPrice = !isNaN(price) ? price.toLocaleString('vi-VN') + 'đ' : 'N/A';
 
-      // Escape JSON cho onclick (nếu còn dùng)
-      const itemJson = JSON.stringify(it).replace(/"/g, '&quot;');
+                // Escape JSON cho onclick (nếu còn dùng)
+                const itemJson = JSON.stringify(it).replace(/"/g, '&quot;');
 
-      return `
-      <div class="menu-item bg-white rounded-lg shadow-lg transition transform hover:-translate-y-1 flex flex-col ${out?'opacity-60':''}">
-        <div class="h-64 relative bg-gray-200">
-          <img src="${imgSrc}" alt="${it.ten_mon}" class="w-full h-full object-cover">
-          <div class="absolute top-2 right-2 ${stockCls} text-white px-2 py-1 rounded-full text-xs">
-            ${out ? 'Hết hàng' : `Còn ${it.so_luong} phần`}
-          </div>
-        </div>
-        <div class="p-5 flex flex-col flex-grow">
-          <div class="flex justify-between items-start mb-2">
-            <h3 class="font-bold text-xl">${it.ten_mon || 'Chưa đặt tên'}</h3>
-            <span class="text-primary font-bold text-lg">${formattedPrice}</span>
-          </div>
-          <p class="text-gray-600 text-sm mb-4 flex-grow">${it.mo_ta || 'Chưa có mô tả'}</p>
-          ${!out ? `
-          <div class="flex items-center justify-between gap-2 mb-3">
-            <span class="text-sm text-gray-500">Số lượng:</span>
-            <div class="flex border rounded">
-              <button onclick="changeQty(${it.id_mon}, -1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-l">-</button>
-              <input id="qty-${it.id_mon}" type="number" min="1" max="${it.so_luong}" value="1" class="w-12 text-center border-y">
-              <button onclick="changeQty(${it.id_mon}, 1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-r">+</button>
-            </div>
-          </div>
-          <button onclick='cart.add(${itemJson}, parseInt(document.getElementById("qty-${it.id_mon}").value))' class="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-red-700 flex items-center justify-center gap-2">
-            <i class="fas fa-cart-plus"></i> Thêm vào giỏ
-          </button>
-          ` : '<p class="text-center text-gray-500 text-sm mt-auto pt-4">Món này đã hết hàng</p>'}
-        </div>
-      </div>`;
-    }).join('');
-  }
+                return `
+                <div class="menu-item bg-white rounded-lg shadow-lg transition transform hover:-translate-y-1 flex flex-col ${out?'opacity-60':''}">
+                    <div class="h-64 relative bg-gray-200">
+                        <img src="${imgSrc}" alt="${it.ten_mon}" class="w-full h-full object-cover">
+                        <div class="absolute top-2 right-2 ${stockCls} text-white px-2 py-1 rounded-full text-xs">
+                            ${out ? 'Hết hàng' : `Còn ${it.so_luong} phần`}
+                        </div>
+                    </div>
+                    <div class="p-5 flex flex-col flex-grow">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-xl">${it.ten_mon || 'Chưa đặt tên'}</h3>
+                            <span class="text-primary font-bold text-lg">${formattedPrice}</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4 flex-grow">${it.mo_ta || 'Chưa có mô tả'}</p>
+                        ${!out ? `
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="text-sm text-gray-500">Số lượng:</span>
+                            <div class="flex border rounded">
+                                <button onclick="changeQty(${it.id_mon}, -1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-l">-</button>
+                                <input id="qty-${it.id_mon}" type="number" min="1" max="${it.so_luong}" value="1" class="w-12 text-center border-y">
+                                <button onclick="changeQty(${it.id_mon}, 1)" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-r">+</button>
+                            </div>
+                        </div>
+                        <button onclick='cart.add(${itemJson}, parseInt(document.getElementById("qty-${it.id_mon}").value))' class="w-full bg-primary text-white py-2.5 rounded-lg hover:bg-red-700 flex items-center justify-center gap-2">
+                            <i class="fas fa-cart-plus"></i> Thêm vào giỏ
+                        </button>
+                        ` : '<p class="text-center text-gray-500 text-sm mt-auto pt-4">Món này đã hết hàng</p>'}
+                    </div>
+                </div>`;
+            }).join('');
+        }
 
         function changeQty(id, delta) {
             const inp = document.getElementById(`qty-${id}`);
@@ -210,7 +214,7 @@
                     }, 300); // Debounce search input
                 });
             } else {
-                 console.error("Could not find search input element.");
+                console.error("Could not find search input element.");
             }
 
             // Initial Load
@@ -218,7 +222,7 @@
             cart.updateUI(); // Update cart counter on load
 
             // Handle browser back/forward navigation for search state
-             window.addEventListener('popstate', (event) => {
+            window.addEventListener('popstate', (event) => {
                 const searchTerm = event.state?.search || '';
                 if (searchInput) {
                     searchInput.value = searchTerm;
@@ -228,37 +232,32 @@
         });
 
         async function loadMenu(search = '') {
-            const menuGrid = document.getElementById('menuGrid');
-            const noResultDiv = document.getElementById('noResult');
-            if (!menuGrid || !noResultDiv) {
-                console.error("Menu grid or no-result element not found!");
-                return;
-            }
+          const menuGrid = document.getElementById('menuGrid');
+          const noResultDiv = document.getElementById('noResult');
+          
+          menuGrid.innerHTML = `
+            <div class="col-span-full text-center py-10">
+              <i class="fas fa-spinner fa-spin text-4xl mb-4"></i>
+              <p>Đang tải thực đơn...</p>
+            </div>
+          `;
+          noResultDiv.classList.add('hidden'); // Hide no results during load
 
-            // Show loading indicator
+          try {
+            const data = await fetchMenu(search);
+            renderMenu(data);
+          } catch (e) {
+            console.error("Error loading menu:", e);
             menuGrid.innerHTML = `
-                <div class="col-span-full text-center text-gray-500 py-10">
-                    <i class="fas fa-spinner fa-spin text-4xl mb-4"></i>
-                    <p>Đang tải thực đơn...</p>
-                </div>
+              <div class="col-span-full text-center text-gray-500 py-10">
+                <i class="fas fa-exclamation-triangle text-4xl mb-4 text-red-500"></i>
+                <p>Có lỗi khi tải thực đơn. ${e.message || e}</p>
+                <button onclick="loadMenu('${search}')" class="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-red-700">
+                  <i class="fas fa-redo"></i> Thử lại
+                </button>
+              </div>
             `;
-            noResultDiv.classList.add('hidden'); // Hide no results during load
-
-            try {
-                const data = await fetchMenu(search);
-                renderMenu(data);
-            } catch (e) {
-                console.error("Error loading menu:", e);
-                document.getElementById('menuGrid').innerHTML = `
-                    <div class="col-span-full text-center text-gray-500 py-10">
-                        <i class="fas fa-exclamation-triangle text-4xl mb-4 text-red-500"></i>
-                        <p>Có lỗi khi tải thực đơn. ${e.message || e}</p>
-                        <button onclick="loadMenu('${search}')" class="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-red-700">
-                            <i class="fas fa-redo"></i> Thử lại
-                        </button>
-                    </div>
-                `;
-            }
+          }
         }
     </script>
 </body>

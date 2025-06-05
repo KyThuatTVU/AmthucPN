@@ -41,6 +41,11 @@
         .nav-link:hover::after, .nav-link.active::after { width: 100%; }
         /* Ensure main content is visible */
         main > section { display: block !important; }
+        #chatbotPanel.active {
+          opacity: 1 !important;
+          transform: scale(1) !important;
+          pointer-events: auto !important;
+        }
     </style>
     <!-- Thêm thư viện GSAP và ScrollTrigger -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -273,7 +278,7 @@
             </div>
             <hr class="border-gray-700 mb-6">
             <div class="text-center text-gray-400">
-                <p>© 2023 Nhà Hàng Ẩm Thực Phương Nam. All rights reserved.</p>
+                <p> 2023 Nhà Hàng Ẩm Thực Phương Nam. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -332,70 +337,13 @@ class="fixed bottom-24 right-6 z-50 w-80 bg-white rounded-2xl shadow-2xl overflo
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitBtn = loginForm.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
+function toggleChat() {
+  const panel = document.getElementById('chatbotPanel');
+  panel.classList.toggle('active');
+}
 
-            try {
-                const email = document.getElementById('loginEmail').value.trim();
-                const password = document.getElementById('loginPassword').value;
-
-                const data = await auth.login(email, password);
-
-                // Update UI after successful login
-                document.getElementById('loginBtn').style.display = 'none';
-                document.getElementById('mobileLoginBtn').style.display = 'none';
-                document.getElementById('logoutBtn').style.display = 'block';
-                document.getElementById('userDisplay').classList.remove('hidden');
-                document.getElementById('userName').textContent = data.khach_hang.full_name;
-                
-                loginModal.classList.remove('active');
-                alert('Đăng nhập thành công!');
-
-            } catch (error) {
-                alert(error.message);
-            } finally {
-                submitBtn.disabled = false;
-            }
-        });
-    }
-    if (registerForm) {
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const submitBtn = registerForm.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
-
-            try {
-                const formData = {
-                    full_name: document.getElementById('registerName').value.trim(),
-                    email: document.getElementById('registerEmail').value.trim(),
-                    phone: document.getElementById('registerPhone').value.trim(),
-                    password: document.getElementById('registerPassword').value
-                };
-
-                const confirmPassword = document.getElementById('confirmPassword').value;
-                if (formData.password !== confirmPassword) {
-                    throw new Error('Mật khẩu xác nhận không khớp!');
-                }
-
-                await auth.register(formData);
-                alert('Đăng ký thành công!');
-                registerForm.reset();
-                document.getElementById('loginTab').click();
-
-            } catch (error) {
-                alert(error.message);
-            } finally {
-                submitBtn.disabled = false;
-            }
-        });
-    }
-
-    // ...existing code...
-});
+document.getElementById('chatbotButton').addEventListener('click', toggleChat);
+document.getElementById('closeChatbot').addEventListener('click', toggleChat);
 </script>
 
    <!-- Login Modal -->
@@ -472,394 +420,618 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 
-    <script>
-        const GROQ_API_KEY = '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'; 
-        const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions'; 
-        const GROQ_MODEL_NAME = 'meta-llama/llama-4-maverick-17b-128e-instruct'; 
-        document.addEventListener('DOMContentLoaded', function() {
-            const menuToggle = document.getElementById('menuToggle');
-            const mobileNav = document.getElementById('mobileNav');
-            if (menuToggle && mobileNav) {
-                menuToggle.addEventListener('click', () => mobileNav.classList.toggle('hidden'));
-            }
+ <!-- Chatbot -->
+   <!-- 1. HTML -->
+<!-- CHATBOT BUTTON -->
+<button id="chatbotButton"
+class="fixed bottom-6 right-6 z-50 w-16 h-16 bg-gradient-to-br from-green-400 to-blue-500 rounded-full shadow-2xl flex items-center justify-center text-white text-3xl hover:scale-110 transition-transform duration-300">
+<i class="fas fa-robot animate-bounce"></i>
+</button>
 
-            const loginBtn = document.getElementById('loginBtn');
-            const mobileLoginBtn = document.getElementById('mobileLoginBtn');
-            const loginModal = document.getElementById('loginModal');
-            const closeLoginModal = document.getElementById('closeLoginModal');
-            if (loginBtn && mobileLoginBtn && loginModal && closeLoginModal) {
-                loginBtn.addEventListener('click', () => loginModal.classList.add('active'));
-                mobileLoginBtn.addEventListener('click', () => { loginModal.classList.add('active'); if (mobileNav) mobileNav.classList.add('hidden'); });
-                closeLoginModal.addEventListener('click', () => loginModal.classList.remove('active'));
-                loginModal.addEventListener('click', (e) => { if (e.target === loginModal) loginModal.classList.remove('active'); });
+<!-- CHAT PANEL -->
+<div id="chatbotPanel"
+class="fixed bottom-24 right-6 z-50 w-80 bg-white rounded-2xl shadow-2xl overflow-hidden 
+       transform opacity-0 scale-90 pointer-events-none transition-all duration-300">
+<!-- Header -->
+<div class="bg-gradient-to-r from-green-500 to-blue-600 p-4 flex items-center justify-between">
+  <div class="flex items-center">
+    <i class="fas fa-robot text-2xl text-white mr-2"></i>
+    <div>
+      <h3 class="text-white font-bold">Phương Nam Bot</h3>
+      <p class="text-gray-200 text-xs">Trực tuyến 24/7</p>
+    </div>
+  </div>
+  <button id="closeChatbot" class="text-white text-xl hover:text-gray-200 transition-colors">&times;</button>
+</div>
 
-                const loginTab = document.getElementById('loginTab');
-                const registerTab = document.getElementById('registerTab');
-                const loginForm = document.getElementById('loginForm');
-                const registerForm = document.getElementById('registerForm');
-                if (loginTab && registerTab && loginForm && registerForm) {
-                    loginTab.addEventListener('click', () => {
-                        loginTab.classList.add('text-primary', 'border-primary', 'border-b-2');
-                        registerTab.classList.remove('text-primary', 'border-primary', 'border-b-2');
-                        registerTab.classList.add('text-gray-500');
-                        loginForm.classList.remove('hidden');
-                        registerForm.classList.add('hidden');
-                    });
-                    registerTab.addEventListener('click', () => {
-                        registerTab.classList.add('text-primary', 'border-primary', 'border-b-2');
-                        loginTab.classList.remove('text-primary', 'border-primary', 'border-b-2');
-                        loginTab.classList.add('text-gray-500');
-                        registerForm.classList.remove('hidden');
-                        loginForm.classList.add('hidden');
-                    });
-                }
+<!-- Messages -->
+<div id="chatbotMessages" class="p-4 space-y-3 max-h-64 overflow-y-auto bg-gray-50">
+  <!-- Tin chào -->
+  <div class="flex">
+    <div class="bg-white p-3 rounded-2xl shadow-md inline-block max-w-[80%]">
+      <p>Xin chào! Tôi là trợ lý ảo Nhà hàng Phương Nam. Mình giúp gì cho bạn?</p>
+    </div>
+  </div>
+  <!-- Gợi ý -->
+  <div id="suggestionBox" class="flex justify-start">
+    <div
+      class="bg-yellow-100 text-yellow-800 px-3 py-2 rounded-full opacity-50 hover:opacity-100 transition-opacity duration-200 cursor-pointer">
+      Hôm nay bạn muốn ăn gì?
+    </div>
+  </div>
+</div>
 
-                if (loginForm) {
-                    // Check login status on page load
-                    const checkLoginStatus = () => {
-                        const user = JSON.parse(localStorage.getItem('user'));
-                        if (user) {
-                            document.getElementById('userName').textContent = user.full_name;
-                            document.getElementById('userDisplay').classList.remove('hidden');
-                            document.getElementById('loginBtn').style.display = 'none'; // Changed to display none
-                            document.getElementById('logoutBtn').style.display = 'block'; // Show logout button
-                            document.getElementById('mobileLoginBtn').style.display = 'none'; // Hide mobile login
-                        } else {
-                            document.getElementById('userDisplay').classList.add('hidden');
-                            document.getElementById('loginBtn').style.display = 'block'; // Show login button
-                            document.getElementById('logoutBtn').style.display = 'none'; // Hide logout button
-                            document.getElementById('mobileLoginBtn').style.display = 'block'; // Show mobile login
-                        }
-                    };
+<!-- Input -->
+<div class="p-4 bg-white border-t">
+  <div class="flex items-end space-x-2">
+    <textarea id="chatbotInput"
+      class="flex-1 h-8 resize-none border border-gray-300 rounded-2xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400 transition-all duration-200"
+      placeholder="Gõ tin nhắn..." rows="1"></textarea>
+    <button id="sendMessage"
+      class="w-10 h-10 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-white hover:scale-110 transition-transform duration-200">
+      <i class="fas fa-paper-plane"></i>
+    </button>
+  </div>
+</div>
+</div>
 
-                    // Check on page load
-                    window.addEventListener('DOMContentLoaded', checkLoginStatus);
+<script>
+const btnOpen    = document.getElementById('chatbotButton');
+const btnClose   = document.getElementById('closeChatbot');
+const panel      = document.getElementById('chatbotPanel');
+const suggestion = document.getElementById('suggestionBox').firstElementChild;
+const inputField = document.getElementById('chatbotInput');
 
-                    loginForm.addEventListener('submit', async (e) => {
-                        e.preventDefault();
-                        const email = document.getElementById('loginEmail').value.trim();
-                        const password = document.getElementById('loginPassword').value;
+function toggleChat() {
+  panel.classList.toggle('opacity-0');
+  panel.classList.toggle('scale-90');
+  panel.classList.toggle('pointer-events-none');
+  panel.classList.toggle('opacity-100');
+  panel.classList.toggle('scale-100');
+}
 
-                        try {
-                            const res = await fetch('http://localhost:3001/api/khachhang/login', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ email, password })
-                            });
-                            const data = await res.json();
-                            if (res.ok) {
-                                localStorage.setItem('user', JSON.stringify(data.khach_hang));
-                                
+btnOpen.addEventListener('click', toggleChat);
+btnClose.addEventListener('click', toggleChat);
 
-                                // Update UI immediately after successful login
-                                document.getElementById('loginBtn').style.display = 'none';
-                                document.getElementById('mobileLoginBtn').style.display = 'none';
-                                document.getElementById('logoutBtn').style.display = 'block';
-                                document.getElementById('userDisplay').classList.remove('hidden');
-                                document.getElementById('userName').textContent = data.khach_hang.full_name;
-                                
-                                loginModal.classList.remove('active');
-                                alert('Đăng nhập thành công!');
-                            } else {
-                                console.error('Login error:', data);
-                                alert(data.error || 'Đăng nhập thất bại!');
-                            }
-                        } catch (err) {
-                            alert('Lỗi kết nối máy chủ!');
-                        }
+suggestion.addEventListener('click', () => {
+  const text = suggestion.textContent.trim();
+  inputField.value = text;
+  inputField.focus();
+});
 
-                        // Prevent form resubmission on page refresh
-                        return false;
-                    });
+async function sendMessageToAPI(message, history) {
+  try {
+    const response = await fetch('http://localhost:3000/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        messages: [
+          ...history.map(msg => ({ role: msg.role, content: msg.content })),
+          { role: 'user', content: message }
+        ]
+      })
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Lỗi kết nối API:', error);
+    return { message: 'Xin lỗi, đã có lỗi xảy ra khi kết nối với trợ lý ảo.' };
+  }
+}
 
-                    // Logout handler
-                    document.getElementById('logoutBtn').addEventListener('click', () => {
-                        localStorage.removeItem('user');
-                        checkLoginStatus(); // Update UI after logout
-                        alert('Đã đăng xuất thành công!');
-                    });
-                }
-            }
+const chatHistory = [];
 
-            const addToCartButtons = document.querySelectorAll('.add-to-cart');
-            const cartCounter = document.querySelector('#cartBtn span');
-            let cartCount = 0; // Consider using localStorage for persistence
-            if (cartCounter) { cartCounter.textContent = cartCount; }
-            addToCartButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    cartCount++; if (cartCounter) { cartCounter.textContent = cartCount; } const menuItem = this.closest('.menu-item'); const itemName = menuItem?.querySelector('h3')?.textContent || 'Sản phẩm'; const notification = document.createElement('div'); notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50'; notification.textContent = `Đã thêm ${itemName} vào giỏ hàng!`; document.body.appendChild(notification); setTimeout(() => { notification.remove(); }, 3000);
-                });
-            });
+function addMessageToChat(role, content) {
+  const chatMessages = document.getElementById('chatbotMessages');
+  const messageDiv = document.createElement('div');
+  messageDiv.className = `flex ${role === 'assistant' ? 'justify-start' : 'justify-end'}`;
+  const messageBubble = document.createElement('div');
+  messageBubble.className = `bg-white p-3 rounded-2xl shadow-md inline-block max-w-[80%] ${role === 'assistant' ? 'bg-gray-200' : 'bg-primary'}`;
+  messageBubble.innerHTML = `<p>${content}</p>`;
+  messageDiv.appendChild(messageBubble);
+  chatMessages.appendChild(messageDiv);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
 
-            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-            const pageName = currentPage.replace('.html', '').toLowerCase();
-            const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
-            navLinks.forEach(link => {
-                const linkHref = link.getAttribute('href');
-                const linkPage = linkHref ? linkHref.split('/').pop().replace('.html', '').toLowerCase() : '';
-                const isIndex = (pageName === 'index' || pageName === '');
-                const linkIsIndex = (linkPage === 'index' || linkPage === '');
+document.getElementById('sendMessage').addEventListener('click', async () => {
+  const message = inputField.value.trim();
+  if (!message) return;
 
-                if ((isIndex && linkIsIndex) || (pageName !== '' && pageName !== 'index' && pageName === linkPage)) {
-                    link.classList.add('active');
-                     if(link.classList.contains('mobile-nav-link')) {
-                         link.classList.add('bg-gray-200', 'font-semibold');
-                     }
-                } else {
-                    link.classList.remove('active');
-                    if(link.classList.contains('mobile-nav-link')) {
-                         link.classList.remove('bg-gray-200', 'font-semibold');
-                    }
-                }
-            });
+  addMessageToChat('user', message);
+  chatHistory.push({ role: 'user', content: message });
 
-            const chatbotInput = document.getElementById('chatbotInput');
-            if (chatbotInput) {
-                 chatbotInput.addEventListener('input', autoResizeTextarea);
-                 // Also resize initially if there's any default text
-                 autoResizeTextarea.call(chatbotInput);
-            }
+  const data = await sendMessageToAPI(message, chatHistory);
 
-            function autoResizeTextarea() {
-                this.style.height = 'auto';
-                this.style.height = (this.scrollHeight) + 'px';
-            }
+  addMessageToChat('assistant', data.message);
+  chatHistory.push({ role: 'assistant', content: data.message });
+
+  inputField.value = '';
+});
+</script>
+
+  <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const menuToggle = document.getElementById('menuToggle');
+          const mobileNav = document.getElementById('mobileNav');
+          if (menuToggle && mobileNav) {
+              menuToggle.addEventListener('click', () => mobileNav.classList.toggle('hidden'));
+          }
+
+          const loginBtn = document.getElementById('loginBtn');
+          const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+          const loginModal = document.getElementById('loginModal');
+          const closeLoginModal = document.getElementById('closeLoginModal');
+          if (loginBtn && mobileLoginBtn && loginModal && closeLoginModal) {
+              loginBtn.addEventListener('click', () => loginModal.classList.add('active'));
+              mobileLoginBtn.addEventListener('click', () => { loginModal.classList.add('active'); if (mobileNav) mobileNav.classList.add('hidden'); });
+              closeLoginModal.addEventListener('click', () => loginModal.classList.remove('active'));
+              loginModal.addEventListener('click', (e) => { if (e.target === loginModal) loginModal.classList.remove('active'); });
+
+              const loginTab = document.getElementById('loginTab');
+              const registerTab = document.getElementById('registerTab');
+              const loginForm = document.getElementById('loginForm');
+              const registerForm = document.getElementById('registerForm');
+              if (loginTab && registerTab && loginForm && registerForm) {
+                  loginTab.addEventListener('click', () => {
+                      loginTab.classList.add('text-primary', 'border-primary', 'border-b-2');
+                      registerTab.classList.remove('text-primary', 'border-primary', 'border-b-2');
+                      registerTab.classList.add('text-gray-500');
+                      loginForm.classList.remove('hidden');
+                      registerForm.classList.add('hidden');
+                  });
+                  registerTab.addEventListener('click', () => {
+                      registerTab.classList.add('text-primary', 'border-primary', 'border-b-2');
+                      loginTab.classList.remove('text-primary', 'border-primary', 'border-b-2');
+                      loginTab.classList.add('text-gray-500');
+                      registerForm.classList.remove('hidden');
+                      loginForm.classList.add('hidden');
+                  });
+              }
+
+              if (loginForm) {
+                  // Check login status on page load
+                  const checkLoginStatus = () => {
+                      const user = JSON.parse(localStorage.getItem('user'));
+                      if (user) {
+                          document.getElementById('userName').textContent = user.full_name;
+                          document.getElementById('userDisplay').classList.remove('hidden');
+                          document.getElementById('loginBtn').style.display = 'none'; // Changed to display none
+                          document.getElementById('logoutBtn').style.display = 'block'; // Show logout button
+                          document.getElementById('mobileLoginBtn').style.display = 'none'; // Hide mobile login
+                      } else {
+                          document.getElementById('userDisplay').classList.add('hidden');
+                          document.getElementById('loginBtn').style.display = 'block'; // Show login button
+                          document.getElementById('logoutBtn').style.display = 'none'; // Hide logout button
+                          document.getElementById('mobileLoginBtn').style.display = 'block'; // Show mobile login
+                      }
+                  };
+
+                  // Check on page load
+                  window.addEventListener('DOMContentLoaded', checkLoginStatus);
+
+                  loginForm.addEventListener('submit', async (e) => {
+                      e.preventDefault();
+                      const email = document.getElementById('loginEmail').value.trim();
+                      const password = document.getElementById('loginPassword').value;
+
+                      try {
+                          const res = await fetch('http://localhost:3001/api/khachhang/login', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ email, password })
+                          });
+                          const data = await res.json();
+                          if (res.ok) {
+                              localStorage.setItem('user', JSON.stringify(data.khach_hang));
+                              
+
+                              // Update UI immediately after successful login
+                              document.getElementById('loginBtn').style.display = 'none';
+                              document.getElementById('mobileLoginBtn').style.display = 'none';
+                              document.getElementById('logoutBtn').style.display = 'block';
+                              document.getElementById('userDisplay').classList.remove('hidden');
+                              document.getElementById('userName').textContent = data.khach_hang.full_name;
+                              
+                              loginModal.classList.remove('active');
+                              alert('Đăng nhập thành công!');
+                          } else {
+                              console.error('Login error:', data);
+                              alert(data.error || 'Đăng nhập thất bại!');
+                          }
+                      } catch (err) {
+                          alert('Lỗi kết nối máy chủ!');
+                      }
+                  });
+
+                  // Logout handler
+                  document.getElementById('logoutBtn').addEventListener('click', () => {
+                      localStorage.removeItem('user');
+                      checkLoginStatus(); // Update UI after logout
+                      alert('Đã đăng xuất thành công!');
+                  });
+              }
+          }
+
+          const addToCartButtons = document.querySelectorAll('.add-to-cart');
+          const cartCounter = document.querySelector('#cartBtn span');
+          let cartCount = 0; // Consider using localStorage for persistence
+          if (cartCounter) { cartCounter.textContent = cartCount; }
+          addToCartButtons.forEach(button => {
+              button.addEventListener('click', function() {
+                  cartCount++; if (cartCounter) { cartCounter.textContent = cartCount; } const menuItem = this.closest('.menu-item'); const itemName = menuItem?.querySelector('h3')?.textContent || 'Sản phẩm'; const notification = document.createElement('div'); notification.className = 'fixed top-20 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50'; notification.textContent = `Đã thêm ${itemName} vào giỏ hàng!`; document.body.appendChild(notification); setTimeout(() => { notification.remove(); }, 3000);
+              });
+          });
+
+          const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+          const pageName = currentPage.replace('.html', '').toLowerCase();
+          const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+          navLinks.forEach(link => {
+              const linkHref = link.getAttribute('href');
+              const linkPage = linkHref ? linkHref.split('/').pop().replace('.html', '').toLowerCase() : '';
+              const isIndex = (pageName === 'index' || pageName === '');
+              const linkIsIndex = (linkPage === 'index' || linkPage === '');
+
+              if ((isIndex && linkIsIndex) || (pageName !== '' && pageName !== 'index' && pageName === linkPage)) {
+                  link.classList.add('active');
+                   if(link.classList.contains('mobile-nav-link')) {
+                       link.classList.add('bg-gray-200', 'font-semibold');
+                   }
+              } else {
+                  link.classList.remove('active');
+                  if(link.classList.contains('mobile-nav-link')) {
+                       link.classList.remove('bg-gray-200', 'font-semibold');
+                  }
+              }
+          });
+
+          const chatbotInput = document.getElementById('chatbotInput');
+          if (chatbotInput) {
+               chatbotInput.addEventListener('input', autoResizeTextarea);
+               // Also resize initially if there's any default text
+               autoResizeTextarea.call(chatbotInput);
+          }
+
+          function autoResizeTextarea() {
+              this.style.height = 'auto';
+              this.style.height = (this.scrollHeight) + 'px';
+          }
 
 
-           
-            const chatbotButton = document.getElementById('chatbotButton');
-            const chatbotPanel = document.getElementById('chatbotPanel');
-            const closeChatbot = document.getElementById('closeChatbot');
-            // chatbotInput is already defined above
-            const sendMessage = document.getElementById('sendMessage');
-            const chatbotMessages = document.getElementById('chatbotMessages');
-
-            
-            let chatHistory = [];
-
-            let currentBotMessageElement = null;
-            let currentBotFullText = '';
-
-
-            if (chatbotButton && chatbotPanel && closeChatbot && chatbotInput && sendMessage && chatbotMessages) {
-                 
-
-
-                chatbotButton.addEventListener('click', () => {
-                    chatbotPanel.style.display = chatbotPanel.style.display === 'block' ? 'none' : 'block';
-                    if (chatbotPanel.style.display === 'block') {
-                         chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-                         chatbotInput.focus();
-                    }
-                });
-
-                closeChatbot.addEventListener('click', () => {
-                    chatbotPanel.style.display = 'none';
-                });
-
-                sendMessage.addEventListener('click', handleSendMessage);
-
-
-                chatbotInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        handleSendMessage();
-                    }
-                });
-
-              
-
-                function addMessageToChat(role, text, isStreaming = false) {
-                    const messageDiv = document.createElement('div');
-                    messageDiv.classList.add('mb-4');
-
-                    const bubbleDiv = document.createElement('div');
-                    bubbleDiv.classList.add('rounded-lg', 'p-3', 'inline-block');
-
-                    if (role === 'user') {
-                        // Styles handled by CSS now based on bubble class
-                        bubbleDiv.classList.add('bg-primary', 'text-white');
-                    } else { // assistant (or model)
-                        bubbleDiv.classList.add('bg-gray-200', 'text-gray-800');
-                        if (isStreaming) {
-                            bubbleDiv.classList.add('streaming'); // Mark for updates
-                            text = 'Đang trả lời...'; // Initial placeholder
-                            currentBotMessageElement = bubbleDiv; // Store reference
-                            currentBotFullText = ''; // Reset accumulator
-                        }
-                    }
-
-                    const p = document.createElement('p');
-                    p.innerHTML = text.replace(/\n/g, '<br>'); // Render newlines correctly
-                    bubbleDiv.appendChild(p);
-                    messageDiv.appendChild(bubbleDiv);
-                    chatbotMessages.appendChild(messageDiv);
-
-                    // Scroll to the bottom
-                    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-                }
-
-                // --- Function to update the streaming bot message ---
-                function updateStreamingMessage(chunk) {
-                    if (currentBotMessageElement) {
-                         if (currentBotFullText === '') {
-                              currentBotMessageElement.querySelector('p').innerHTML = '';
-                         }
-                         currentBotFullText += chunk;
-                        
-                         currentBotMessageElement.querySelector('p').innerHTML = currentBotFullText.replace(/\n/g, '<br>');
-                         chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-                    }
-                }
-
-                
-                 function finalizeStreamingMessage() {
-                     if (currentBotMessageElement) {
-                         currentBotMessageElement.classList.remove('streaming');
-                         
-
-                         if (currentBotFullText.trim() !== '') {
-                              chatHistory.push({ role: 'assistant', content: currentBotFullText });
-                         }
-                         currentBotMessageElement = null;
-                         currentBotFullText = ''; // Clear for next message
-                         chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-                     }
-                 }
+         
+          const chatbotButton = document.getElementById('chatbotButton');
+          const chatbotPanel = document.getElementById('chatbotPanel');
+          const closeChatbot = document.getElementById('closeChatbot');
+          // chatbotInput is already defined above
+          const sendMessage = document.getElementById('sendMessage');
+          const chatbotMessages = document.getElementById('chatbotMessages');
 
           
-                 async function handleSendMessage() {
-                     if (GROQ_API_KEY === 'YOUR_GROQ_API_KEY') {
-                          addMessageToChat('assistant', '<strong class="text-red-600">Lỗi: Vui lòng thay thế \'YOUR_GROQ_API_KEY\' bằng API Key thật của bạn trong mã nguồn.</strong>');
-                          return;
-                     }
+          let chatHistory = [];
 
-                     const message = chatbotInput.value.trim();
-                     if (message === '') return;
+          let currentBotMessageElement = null;
+          let currentBotFullText = '';
 
-                   
 
-                     addMessageToChat('user', message);
+          if (chatbotButton && chatbotPanel && closeChatbot && chatbotInput && sendMessage && chatbotMessages) {
+               
 
-                     chatHistory.push({ role: 'user', content: message });
 
-                     chatbotInput.value = '';
-                     autoResizeTextarea.call(chatbotInput);
-                     sendMessage.disabled = true;
-                     chatbotInput.disabled = true;
+              chatbotButton.addEventListener('click', () => {
+                  chatbotPanel.style.display = chatbotPanel.style.display === 'block' ? 'none' : 'block';
+                  if (chatbotPanel.style.display === 'block') {
+                       chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                       chatbotInput.focus();
+                  }
+              });
 
-                    
-                     addMessageToChat('assistant', '', true);
+              closeChatbot.addEventListener('click', () => {
+                  chatbotPanel.style.display = 'none';
+              });
 
-                     try {
+              sendMessage.addEventListener('click', handleSendMessage);
 
-                         const response = await fetch(GROQ_API_URL, {
-                             method: 'POST',
-                             headers: {
-                                 'Content-Type': 'application/json',
-                                 'Authorization': `Bearer ${GROQ_API_KEY}` 
-                             },
-                             body: JSON.stringify({
-                                 messages: chatHistory,
-                                 model: GROQ_MODEL_NAME,
-                                 temperature: 1,
-                                 max_completion_tokens: 1024,
-                                 top_p: 1,
-                                 stream: true,
-                                 stop: null
-                             })
-                         });
 
-                         if (!response.ok) {
-                           
+              chatbotInput.addEventListener('keypress', (e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage();
+                  }
+              });
 
-                             const errorBody = await response.text().catch(() => `Status: ${response.status}`);
-                             console.error('API Error Response:', errorBody);
-                             throw new Error(`API request failed: ${response.status} ${response.statusText || ''}. Body: ${errorBody.substring(0, 200)}...`); // Limit body log
-                         }
+            
 
-                         if (!response.body) {
-                             throw new Error("Không nhận được nội dung phản hồi từ API.");
-                         }
+              function addMessageToChat(role, text, isStreaming = false) {
+                  const messageDiv = document.createElement('div');
+                  messageDiv.classList.add('mb-4');
 
+                  const bubbleDiv = document.createElement('div');
+                  bubbleDiv.classList.add('rounded-lg', 'p-3', 'inline-block');
+
+                  if (role === 'user') {
+                      // Styles handled by CSS now based on bubble class
+                      bubbleDiv.classList.add('bg-primary', 'text-white');
+                  } else { // assistant (or model)
+                      bubbleDiv.classList.add('bg-gray-200', 'text-gray-800');
+                      if (isStreaming) {
+                          bubbleDiv.classList.add('streaming'); // Mark for updates
+                          text = 'Đang trả lời...'; // Initial placeholder
+                          currentBotMessageElement = bubbleDiv; // Store reference
+                          currentBotFullText = ''; // Reset accumulator
+                      }
+                  }
+
+                  const p = document.createElement('p');
+                  p.innerHTML = text.replace(/\n/g, '<br>'); // Render newlines correctly
+                  bubbleDiv.appendChild(p);
+                  messageDiv.appendChild(bubbleDiv);
+                  chatbotMessages.appendChild(messageDiv);
+
+                  // Scroll to the bottom
+                  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+              }
+
+              // --- Function to update the streaming bot message ---
+              function updateStreamingMessage(chunk) {
+                  if (currentBotMessageElement) {
+                       if (currentBotFullText === '') {
+                            currentBotMessageElement.querySelector('p').innerHTML = '';
+                       }
+                       currentBotFullText += chunk;
+                      
+                       currentBotMessageElement.querySelector('p').innerHTML = currentBotFullText.replace(/\n/g, '<br>');
+                       chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                  }
+              }
+
+              
+               function finalizeStreamingMessage() {
+                   if (currentBotMessageElement) {
+                       currentBotMessageElement.classList.remove('streaming');
                        
 
-                         const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
-                         let buffer = '';
+                       if (currentBotFullText.trim() !== '') {
+                            chatHistory.push({ role: 'assistant', content: currentBotFullText });
+                       }
+                       currentBotMessageElement = null;
+                       currentBotFullText = ''; // Clear for next message
+                       chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                   }
+               }
 
-                         while (true) {
-                             const { value, done } = await reader.read();
-                             if (done) {
-                                 console.log('Stream finished.');
-                                 break;
-                             }
+        
+               async function handleSendMessage() {
+                   if (GROQ_API_KEY === 'YOUR_GROQ_API_KEY') {
+                        addMessageToChat('assistant', '<strong class="text-red-600">Lỗi: Vui lòng thay thế \'YOUR_GROQ_API_KEY\' bằng API Key thật của bạn trong mã nguồn.</strong>');
+                        return;
+                   }
 
-                             buffer += value;
+                   const message = chatbotInput.value.trim();
+                   if (message === '') return;
 
-                             let boundary = buffer.indexOf('\n\n');
-                             while (boundary !== -1) {
-                                 const line = buffer.substring(0, boundary).trim();
-                                 buffer = buffer.substring(boundary + 2); 
+                 
 
-                                 if (line.startsWith('data:')) {
-                                     const jsonData = line.substring(5).trim();
-                                     if (jsonData === '[DONE]') {
-                                       
-                                     } else {
-                                         try {
-                                             const data = JSON.parse(jsonData);
-                                           
-                                             const chunkContent = data.choices?.[0]?.delta?.content;
-                                             if (chunkContent) {
-                                                 updateStreamingMessage(chunkContent);
-                                             }
-                                            
+                   addMessageToChat('user', message);
 
-                                         } catch (parseError) {
-                                             console.error('Lỗi phân tích JSON từ stream:', parseError, 'Data:', jsonData);
-                                            
+                   chatHistory.push({ role: 'user', content: message });
 
-                                         }
-                                     }
-                                 }
-                                 boundary = buffer.indexOf('\n\n');
-                             }
-                         }
+                   chatbotInput.value = '';
+                   autoResizeTextarea.call(chatbotInput);
+                   sendMessage.disabled = true;
+                   chatbotInput.disabled = true;
+
+                  
+                   addMessageToChat('assistant', '', true);
+
+                   try {
+
+                       const response = await fetch(GROQ_API_URL, {
+                           method: 'POST',
+                           headers: {
+                               'Content-Type': 'application/json',
+                               'Authorization': `Bearer ${GROQ_API_KEY}` 
+                           },
+                           body: JSON.stringify({
+                               messages: chatHistory,
+                               model: GROQ_MODEL_NAME,
+                               temperature: 1,
+                               max_completion_tokens: 1024,
+                               top_p: 1,
+                               stream: true,
+                               stop: null
+                           })
+                       });
+
+                       if (!response.ok) {
                          
 
-                          if (buffer.length > 0) {
-                              console.warn('Remaining buffer after stream end:', buffer);
-                               
-                          }
+                           const errorBody = await response.text().catch(() => `Status: ${response.status}`);
+                           console.error('API Error Response:', errorBody);
+                           throw new Error(`API request failed: ${response.status} ${response.statusText || ''}. Body: ${errorBody.substring(0, 200)}...`); // Limit body log
+                       }
 
+                       if (!response.body) {
+                           throw new Error("Không nhận được nội dung phản hồi từ API.");
+                       }
 
-                     } catch (error) {
-                         console.error('Lỗi khi gọi Groq API:', error);
-                         // Display error in the chat
-                         if (currentBotMessageElement) {
-                              currentBotMessageElement.querySelector('p').innerHTML = `<strong class="text-red-600">Xin lỗi, đã có lỗi xảy ra khi kết nối tới trợ lý ảo. Vui lòng thử lại sau. (Chi tiết: ${error.message})</strong>`;
-                              currentBotMessageElement.classList.remove('streaming');
-                         } else {
-                              addMessageToChat('assistant', `<strong class="text-red-600">Xin lỗi, đã có lỗi xảy ra khi kết nối tới trợ lý ảo. Vui lòng thử lại sau. (Chi tiết: ${error.message})</strong>`);
-                         }
+                     
 
-                     } finally {
+                       const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+                       let buffer = '';
+
+                       while (true) {
+                           const { value, done } = await reader.read();
+                           if (done) {
+                               console.log('Stream finished.');
+                               break;
+                           }
+
+                           buffer += value;
+
+                           let boundary = buffer.indexOf('\n\n');
+                           while (boundary !== -1) {
+                               const line = buffer.substring(0, boundary).trim();
+                               buffer = buffer.substring(boundary + 2); 
+
+                               if (line.startsWith('data:')) {
+                                   const jsonData = line.substring(5).trim();
+                                   if (jsonData === '[DONE]') {
+                                     
+                                   } else {
+                                       try {
+                                           const data = JSON.parse(jsonData);
+                                         
+                                           const chunkContent = data.choices?.[0]?.delta?.content;
+                                           if (chunkContent) {
+                                               updateStreamingMessage(chunkContent);
+                                           }
+                                          
+
+                                       } catch (parseError) {
+                                           console.error('Lỗi phân tích JSON từ stream:', parseError, 'Data:', jsonData);
+                                          
+
+                                       }
+                                   }
+                               }
+                               boundary = buffer.indexOf('\n\n');
+                           }
+                       }
                        
 
-                         finalizeStreamingMessage();
-                         sendMessage.disabled = false;
-                         chatbotInput.disabled = false;
-                         chatbotInput.focus(); // Focus back on input
-                         console.log("Updated History:", chatHistory);
-                     }
-                 }
+                        if (buffer.length > 0) {
+                            console.warn('Remaining buffer after stream end:', buffer);
+                             
+                        }
 
-             }
-            });
-        
-    
-             </script>
+
+                   } catch (error) {
+                       console.error('Lỗi khi gọi Groq API:', error);
+                       // Display error in the chat
+                       if (currentBotMessageElement) {
+                            currentBotMessageElement.querySelector('p').innerHTML = `<strong class="text-red-600">Xin lỗi, đã có lỗi xảy ra khi kết nối tới trợ lý ảo. Vui lòng thử lại sau. (Chi tiết: ${error.message})</strong>`;
+                            currentBotMessageElement.classList.remove('streaming');
+                       } else {
+                            addMessageToChat('assistant', `<strong class="text-red-600">Xin lỗi, đã có lỗi xảy ra khi kết nối tới trợ lý ảo. Vui lòng thử lại sau. (Chi tiết: ${error.message})</strong>`);
+                       }
+
+                   } finally {
+                     
+
+                       finalizeStreamingMessage();
+                       sendMessage.disabled = false;
+                       chatbotInput.disabled = false;
+                       chatbotInput.focus(); // Focus back on input
+                       console.log("Updated History:", chatHistory);
+                   }
+               }
+
+           }
+          });
+
+    // Tích hợp hiệu ứng GSAP cho các phần chính
+    document.addEventListener('DOMContentLoaded', function() {
+      // ...existing code...
+
+      if (window.gsap && window.ScrollTrigger) {
+        // Tiêu đề giới thiệu
+        gsap.from("#aboutTitle", {
+          opacity: 0,
+          y: 40,
+          duration: 1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#aboutTitle",
+            start: "top 85%",
+            toggleActions: "play none none reset"
+          }
+        });
+
+        // Hành trình
+        gsap.from("#aboutJourney", {
+          opacity: 0,
+          x: -80,
+          duration: 1.1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: "#aboutJourney",
+            start: "top 85%",
+            toggleActions: "play none none reset"
+          }
+        });
+
+        // Triết lý ẩm thực
+        gsap.from("#aboutPhilosophy", {
+          opacity: 0,
+          x: 80,
+          duration: 1.1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: "#aboutPhilosophy",
+            start: "top 85%",
+            toggleActions: "play none none reset"
+          }
+        });
+
+        // Đội ngũ tiêu đề
+        gsap.from("#aboutTeamTitle", {
+          opacity: 0,
+          y: 40,
+          duration: 1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#aboutTeamTitle",
+            start: "top 90%",
+            toggleActions: "play none none reset"
+          }
+        });
+
+        // Đội ngũ từng thành viên
+        gsap.utils.toArray("#aboutTeam > div").forEach((item, i) => {
+          gsap.from(item, {
+            opacity: 0,
+            scale: 0.8,
+            duration: 0.8,
+            delay: i * 0.12,
+            ease: "back.out(1.7)",
+            scrollTrigger: {
+              trigger: item,
+              start: "top 95%",
+              toggleActions: "play none none reset"
+            }
+          });
+        });
+
+        // Không gian tiêu đề
+        gsap.from("#aboutSpaceTitle", {
+          opacity: 0,
+          y: 40,
+          duration: 1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#aboutSpaceTitle",
+            start: "top 90%",
+            toggleActions: "play none none reset"
+          }
+        });
+
+        // Ảnh không gian
+        gsap.utils.toArray("#aboutSpace > div").forEach((item, i) => {
+          gsap.from(item, {
+            opacity: 0,
+            y: 60,
+            duration: 0.9,
+            delay: i * 0.15,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: item,
+              start: "top 95%",
+              toggleActions: "play none none reset"
+            }
+          });
+        });
+      }
+    });
+
+  </script>
 
 </body>
 </html>
-
